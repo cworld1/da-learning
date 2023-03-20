@@ -3,10 +3,23 @@
 
 format: jb-book
 root: index
-chapters:
+parts:
+
+- caption: Tutorials
+  chapters:
+  # - file: index
+  #   title: Introduction
   - file: 00-at-the-beginning
+
+- caption: Main Chapters
+  chapters:
   - file: 01-getting-started-with-regression
   - file: 02-basics-of-simple-linear-regression
   - file: 03-the-null-model
   - file: 04-fitting-curves-with-the-linear-model
   - file: 05-linear-models-with-a-categorical-explanatory-variable
+
+- caption: About Project
+  chapters:
+  - url: https://blog.cworld.top
+    title: CWorld's Blog
