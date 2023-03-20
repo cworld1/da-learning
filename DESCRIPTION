@@ -1,0 +1,19 @@
+Package: ds-learning
+Title: Data Anaylsis
+Version: 2.1.4.9000
+Authors@R: c(
+    person("CWorld", "cworld0@qq.com", role = "aut"),
+  )
+Description: Some notes and code about CWorld learning Data Analysis.
+License: GPL-3.0 + file LICENSE
+URL: https://da.cworld.top
+BugReports: https://github.com/cworld1/da-learning/issues
+Depends:
+    R (>= 4.0)
+Imports:
+    IRkernel (>= 1.3.2)
+Suggests:
+LinkingTo:
+VignetteBuilder: 
+Encoding: UTF-8
+Language: cn-ZH

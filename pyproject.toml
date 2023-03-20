@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "data analysis learning"
 version = "0.1.0"
-description = "Some notes and code about CWorld learning Database Analysis."
+description = "Some notes and code about CWorld learning Data Analysis."
 authors = ["cworld1 <cworld0@qq.com>"]
 license = "GPL-3.0"
 readme = "README.md"

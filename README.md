@@ -1,11 +1,11 @@
-# Database Analysis Learning
+# Data Analysis Learning
 
 [![GitHub stars](https://img.shields.io/github/stars/cworld1/da-learning?style=flat-square)](https://github.com/cworld1/da-learning/stargazers)
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/y/cworld1/da-learning?label=commits&style=flat-square)](https://github.com/cworld1/da-learning/commits)
 <!-- [![Vercel Production Status](https://img.shields.io/github/deployments/cworld1/da-learning/production?label=vercel&logo=vercel&style=flat-square)](https://vercel.com/cworld0/da-learning) -->
 [![GitHub license](https://img.shields.io/github/license/cworld1/da-learning?style=flat-square)](https://github.com/cworld1/da-learning/blob/main/LICENSE)
 
-Some notes and code about CWorld learning Database Analysis.
+Some notes and code about CWorld learning Data Analysis.
 
 [前往阅读 →](https://da.cworld.top/)
 
@@ -46,7 +46,7 @@ This will build the website into static files in the `docs/_build/html` director
 
 ## Contributions
 
-As the author is only a beginner in learning Database Analysis, there are obvious mistakes in his notes. Readers are also invited to make a lot of mistakes. In addition, you are welcome to use PR or Issues to improve them.
+As the author is only a beginner in learning Data Analysis, there are obvious mistakes in his notes. Readers are also invited to make a lot of mistakes. In addition, you are welcome to use PR or Issues to improve them.
 
 ## Thanks
 
