@@ -27,8 +27,8 @@ jobs:
   html-build:
     runs-on: ubuntu-latest
     environment:
-      python-version: '3.10.10'
-      R-version: '4.2'
+      python-version: 3.10.10
+      R-version: 4.2
     permissions:
       contents: write
     steps:
