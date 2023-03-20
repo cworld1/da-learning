@@ -3,7 +3,7 @@
 
 title: Data Analysis Learning
 author: CWorld
-logo: logo.png
+logo: assets/logo.png
 email: cworld0@qq.com
 description: >- # this means to ignore newlines until "baseurl:"
   关于 CWorld 学习 Analysis Learning 一些笔记和代码。
