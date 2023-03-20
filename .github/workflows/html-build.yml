@@ -26,19 +26,16 @@ jobs:
 
   html-build:
     runs-on: ubuntu-latest
-    environment:
-      python-version: 3.10.10
-      R-version: 4.2
     permissions:
       contents: write
     steps:
     - uses: actions/checkout@v3
 
     # Setup Python
-    - name: Set up Python ${{ environment.python-version }}
+    - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: ${{ environment.python-version }}
+        python-version: 3.10.10
         cache: "pip"
     - name: Install Python dependencies
       run: |
@@ -49,7 +46,7 @@ jobs:
     - name: Setup R
       uses: r-lib/actions/setup-r@v2
       with:
-        r-version: ${{ environment.R-version }}
+        r-version: 4.2
     - name: Install R dependencies
       uses: r-lib/actions/setup-r-dependencies@v2
     - name: Setup Jupyter Notebook Kernel
