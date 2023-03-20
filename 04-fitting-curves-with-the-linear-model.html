@@ -152,13 +152,21 @@ const thebe_selector_output = ".output, .cell_output"
 </a></div>
         <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
-        <ul class="current nav bd-sidenav">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="00-at-the-beginning.html">At the beginning</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Main Chapters</span></p>
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="01-getting-started-with-regression.html">Chapter 1: Getting Started with Regression</a></li>
 <li class="toctree-l1"><a class="reference internal" href="02-basics-of-simple-linear-regression.html">Chapter 2: Basics of Simple Linear Regression</a></li>
 <li class="toctree-l1"><a class="reference internal" href="03-the-null-model.html">Chapter 3: The null model</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Chapter 4: Fitting curves with the linear model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="05-linear-models-with-a-categorical-explanatory-variable.html">Chapter 5: Linear models with a categorical (factor) explanatory variable</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">About Project</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference external" href="https://blog.cworld.top">CWorld's Blog</a></li>
 </ul>
 
     </div>
@@ -395,10 +403,6 @@ document.write(`
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading required package: s20x
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning message in library(package, lib.loc = lib.loc, character.only = TRUE, logical.return = TRUE, :
-“there is no package called ‘s20x’”
-</pre></div>
-</div>
 </div>
 </div>
 <section id="identifying-a-curved-relationship">
@@ -415,12 +419,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span>Error in library(s20x): there is no package called ‘s20x’
-Traceback:
-
-1. library(s20x)
-</pre></div>
-</div>
+<img alt="_images/a7fa9e926c7689fce5828e9f504f1d893a5d6266a0b9d41414807f0d76537dbd.png" src="_images/a7fa9e926c7689fce5828e9f504f1d893a5d6266a0b9d41414807f0d76537dbd.png" />
 </div>
 </div>
 <p>Hmmm, not quite a straight line – could be some curvature. Maybe will paint a clearer picture. 不是一条很直的线–可能是一些曲率。也许会描绘出一幅更清晰的图景。</p>
@@ -431,7 +430,7 @@ Traceback:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/00843bcb006a8a8f52b4cfc4c1f242f85c73f9d7253852579c8e8af9309e4a3b.png" src="_images/00843bcb006a8a8f52b4cfc4c1f242f85c73f9d7253852579c8e8af9309e4a3b.png" />
+<img alt="_images/060af6d23ecfee6dc7eced00b46aa666b51c5cd20318aa38339bc818da918d61.png" src="_images/060af6d23ecfee6dc7eced00b46aa666b51c5cd20318aa38339bc818da918d61.png" />
 </div>
 </div>
 <p>Let’s fit a simple linear model to these data and see if it works out or not.</p>
@@ -443,7 +442,7 @@ Traceback:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/f6c535a6bffdb3c5da65e0daad795e8ad7a15453f1d98765b43958b2c716d42d.png" src="_images/f6c535a6bffdb3c5da65e0daad795e8ad7a15453f1d98765b43958b2c716d42d.png" />
+<img alt="_images/da5ce33c1ede3f393664746e7d8f3169ba38c9247a37607e370e7f27d03b04c4.png" src="_images/da5ce33c1ede3f393664746e7d8f3169ba38c9247a37607e370e7f27d03b04c4.png" />
 </div>
 </div>
 <p>The assumption of identical distribution with expected value of 0 looks to be questionable here. There tend to be more negative residuals in the middle, but more positive residuals at the extremes of the fitted values. Potential solution – add a quadratic (squared term) for.</p>
@@ -473,7 +472,7 @@ E[Y|x] = \beta_0 + \beta_1 x + \beta_2 x^2
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/4cf6bb26ef98a9af247edd200fad47e957ae8449a9acf92a5b9fc4e253e2d03e.png" src="_images/4cf6bb26ef98a9af247edd200fad47e957ae8449a9acf92a5b9fc4e253e2d03e.png" />
+<img alt="_images/6cc5a9b59838d16238def7dc2be6ad3ed830c0b357681653c7008aa87db0fb34.png" src="_images/6cc5a9b59838d16238def7dc2be6ad3ed830c0b357681653c7008aa87db0fb34.png" />
 </div>
 </div>
 <p>That is looking much better.</p>
@@ -486,8 +485,8 @@ E[Y|x] = \beta_0 + \beta_1 x + \beta_2 x^2
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/0aae3fb8b150fce3e474dcfc7655779bb47b06d00cba2d1e2dad2a38a083b9b5.png" src="_images/0aae3fb8b150fce3e474dcfc7655779bb47b06d00cba2d1e2dad2a38a083b9b5.png" />
-<img alt="_images/5f9529e2319bfce109347216e153cee476c700eb2d43d56d508776d6b627b3c1.png" src="_images/5f9529e2319bfce109347216e153cee476c700eb2d43d56d508776d6b627b3c1.png" />
+<img alt="_images/83645a776ce12c42e33b57045f12b7368354907c8daa5b7ca33063407dee9ceb.png" src="_images/83645a776ce12c42e33b57045f12b7368354907c8daa5b7ca33063407dee9ceb.png" />
+<img alt="_images/15171dbf9611069ba0139cf2b568b708f8d4893664f15bef9d68f8f8ab2cd24a.png" src="_images/15171dbf9611069ba0139cf2b568b708f8d4893664f15bef9d68f8f8ab2cd24a.png" />
 </div>
 </div>
 <p>符合正态分布、方差齐性。我们可以尝试对照一下原来的模型和我们的新模型：</p>
@@ -503,7 +502,7 @@ E[Y|x] = \beta_0 + \beta_1 x + \beta_2 x^2
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/07c97c984d6c26081c08eafa0ceb72ac180d847d83f09b7380e6abb9cc1dc421.png" src="_images/07c97c984d6c26081c08eafa0ceb72ac180d847d83f09b7380e6abb9cc1dc421.png" />
+<img alt="_images/d288b0b1bfc3c677d8b7d793bae30c781c65ae22a882c324efc94dd37b9d70fd.png" src="_images/d288b0b1bfc3c677d8b7d793bae30c781c65ae22a882c324efc94dd37b9d70fd.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -526,7 +525,7 @@ Coefficients:
 Assign      -0.68172    1.07242  -0.636 0.525999    
 I(Assign^2)  0.16102    0.04545   3.542 0.000536 ***
 ---
-Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 12.65 on 143 degrees of freedom
 Multiple R-squared:  0.5477,	Adjusted R-squared:  0.5414 

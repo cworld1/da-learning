@@ -152,13 +152,21 @@ const thebe_selector_output = ".output, .cell_output"
 </a></div>
         <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
-        <ul class="current nav bd-sidenav">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="00-at-the-beginning.html">At the beginning</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Main Chapters</span></p>
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="01-getting-started-with-regression.html">Chapter 1: Getting Started with Regression</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Chapter 2: Basics of Simple Linear Regression</a></li>
 <li class="toctree-l1"><a class="reference internal" href="03-the-null-model.html">Chapter 3: The null model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="04-fitting-curves-with-the-linear-model.html">Chapter 4: Fitting curves with the linear model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="05-linear-models-with-a-categorical-explanatory-variable.html">Chapter 5: Linear models with a categorical (factor) explanatory variable</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">About Project</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference external" href="https://blog.cworld.top">CWorld's Blog</a></li>
 </ul>
 
     </div>
@@ -415,10 +423,6 @@ document.write(`
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading required package: s20x
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning message in library(package, lib.loc = lib.loc, character.only = TRUE, logical.return = TRUE, :
-“there is no package called ‘s20x’”
-</pre></div>
-</div>
 </div>
 </div>
 <section id="id1">
@@ -478,12 +482,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span>Error in library(s20x): there is no package called ‘s20x’
-Traceback:
-
-1. library(s20x)
-</pre></div>
-</div>
+<img alt="_images/34d76a83bf787f231ce5f8f13d178aed8e9b8aff4bbd080df35b642e7ade2adf.png" src="_images/34d76a83bf787f231ce5f8f13d178aed8e9b8aff4bbd080df35b642e7ade2adf.png" />
 </div>
 </div>
 </section>
@@ -510,7 +509,7 @@ Traceback:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/e3ccb80a440948b355ad36c3be092c7b4949fb2968c1357aa9def8ec9b772c8b.png" src="_images/e3ccb80a440948b355ad36c3be092c7b4949fb2968c1357aa9def8ec9b772c8b.png" />
+<img alt="_images/26500326400ce837a91c07379c031dc6912117dd46acad61965409ea9fc887b5.png" src="_images/26500326400ce837a91c07379c031dc6912117dd46acad61965409ea9fc887b5.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -532,7 +531,7 @@ Coefficients:
 (Intercept)   9.0845     3.2204   2.821  0.00547 ** 
 Test          3.7859     0.2647  14.301  &lt; 2e-16 ***
 ---
-Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 12.05 on 144 degrees of freedom
 Multiple R-squared:  0.5868,	Adjusted R-squared:  0.5839 
@@ -579,7 +578,7 @@ F-statistic: 204.5 on 1 and 144 DF,  p-value: &lt; 2.2e-16
 	<tr><td>9.1</td><td>42</td></tr>
 </tbody>
 </table>
-</div><div class="output text_html"><strong>1:</strong> 43.5363712056028</div><div class="output text_html"><strong>1:</strong> -1.53637120560281</div></div>
+</div><div class="output text_html"><strong>1:</strong> 43.5363712056029</div><div class="output text_html"><strong>1:</strong> -1.53637120560293</div></div>
 </div>
 <p>检验上，一个成功的拟合模型的残差应当有：</p>
 <ol class="arabic simple">
@@ -600,7 +599,7 @@ F-statistic: 204.5 on 1 and 144 DF,  p-value: &lt; 2.2e-16
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/af4fce1b72efdb6c2fb0aafdf3c3b72e463d90f7292374304efda7d8bd556d8d.png" src="_images/af4fce1b72efdb6c2fb0aafdf3c3b72e463d90f7292374304efda7d8bd556d8d.png" />
+<img alt="_images/35b823fba3ff7f30750d0a34b2f71cce609a26453fb2de6eb74ee2892c173ced.png" src="_images/35b823fba3ff7f30750d0a34b2f71cce609a26453fb2de6eb74ee2892c173ced.png" />
 </div>
 </div>
 </section>
@@ -615,7 +614,7 @@ F-statistic: 204.5 on 1 and 144 DF,  p-value: &lt; 2.2e-16
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/eb97b73923cf13222cf8a63930eb566ddc9467417fbdea87bced81586b5a12ab.png" src="_images/eb97b73923cf13222cf8a63930eb566ddc9467417fbdea87bced81586b5a12ab.png" />
+<img alt="_images/6bb11d1306b3725cf8f06bdd65fffe66f8b03070d6091ad9954ad10dc6ca2135.png" src="_images/6bb11d1306b3725cf8f06bdd65fffe66f8b03070d6091ad9954ad10dc6ca2135.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -632,11 +631,11 @@ F-statistic: 204.5 on 1 and 144 DF,  p-value: &lt; 2.2e-16
 <span class="nf">points</span><span class="p">(</span><span class="m">25</span><span class="p">,</span><span class="w"> </span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="n">pch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">19</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;red&quot;</span><span class="p">)</span>
 
 <span class="c1"># 如果有的观测值是异常值，那么回归直线就会受到影响</span>
+<span class="n">examtest2.fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Test</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">course2.df</span><span class="p">)</span>
 <span class="nf">summary</span><span class="p">(</span><span class="n">examtest2.fit</span><span class="p">)</span>
 
 <span class="c1"># 或者直接画图验证该点造成的影响</span>
 <span class="nf">abline</span><span class="p">(</span><span class="n">examtest.fit</span><span class="p">,</span><span class="w"> </span><span class="n">lty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;blue&quot;</span><span class="p">)</span>
-<span class="n">examtest2.fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Test</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">course2.df</span><span class="p">)</span>
 <span class="nf">abline</span><span class="p">(</span><span class="n">examtest2.fit</span><span class="p">,</span><span class="w"> </span><span class="n">lty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;red&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -654,14 +653,14 @@ Coefficients:
 (Intercept)  15.2374     3.7172   4.099 6.88e-05 ***
 Test          3.2006     0.3023  10.588  &lt; 2e-16 ***
 ---
-Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 14.34 on 145 degrees of freedom
 Multiple R-squared:  0.436,	Adjusted R-squared:  0.4322 
 F-statistic: 112.1 on 1 and 145 DF,  p-value: &lt; 2.2e-16
 </pre></div>
 </div>
-<img alt="_images/a74330dd8a3aa7d80a6567b9d3afaa20ca7bafbf76d7da871a2854eeadf73dfc.png" src="_images/a74330dd8a3aa7d80a6567b9d3afaa20ca7bafbf76d7da871a2854eeadf73dfc.png" />
+<img alt="_images/82d6aab155747efdc5bac4cb79629862729d50606337f73129b42121b70fa956.png" src="_images/82d6aab155747efdc5bac4cb79629862729d50606337f73129b42121b70fa956.png" />
 </div>
 </div>
 <p>对其进行观测值差异分析：</p>
@@ -675,27 +674,8 @@ F-statistic: 112.1 on 1 and 145 DF,  p-value: &lt; 2.2e-16
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
-lm(formula = Exam ~ Test, data = course2.df)
-
-Residuals:
-    Min      1Q  Median      3Q     Max 
--90.251  -6.846   2.638   9.456  33.996 
-
-Coefficients:
-            Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)  15.2374     3.7172   4.099 6.88e-05 ***
-Test          3.2006     0.3023  10.588  &lt; 2e-16 ***
----
-Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-
-Residual standard error: 14.34 on 145 degrees of freedom
-Multiple R-squared:  0.436,	Adjusted R-squared:  0.4322 
-F-statistic: 112.1 on 1 and 145 DF,  p-value: &lt; 2.2e-16
-</pre></div>
-</div>
-<img alt="_images/12142699b0f9ddae68eff1b16bce48473b9fb57d0ca4b358364bfc9925679087.png" src="_images/12142699b0f9ddae68eff1b16bce48473b9fb57d0ca4b358364bfc9925679087.png" />
-<img alt="_images/af36bb315ae94afea2dc06ad4852aaeeea40731222311ea54854543f669f5a5e.png" src="_images/af36bb315ae94afea2dc06ad4852aaeeea40731222311ea54854543f669f5a5e.png" />
+<img alt="_images/ceedb9466e85863351e21d28c8d36e5c808714e5bd54868e94eab2bb4fb73243.png" src="_images/ceedb9466e85863351e21d28c8d36e5c808714e5bd54868e94eab2bb4fb73243.png" />
+<img alt="_images/72fd3b7a07256369ba4cd0417cff708c48608f03541b3678a1d4435cb28d8bfe.png" src="_images/72fd3b7a07256369ba4cd0417cff708c48608f03541b3678a1d4435cb28d8bfe.png" />
 </div>
 </div>
 </section>
@@ -706,11 +686,10 @@ F-statistic: 112.1 on 1 and 145 DF,  p-value: &lt; 2.2e-16
 <p>SSR 即回归平方和，是因变量的预测值与因变量的均值之差的平方和，即 <span class="math notranslate nohighlight">\(SSR = \sum_{i=1}^n (y_i - \bar{y})^2\)</span>，其中 <span class="math notranslate nohighlight">\(y_i\)</span> 为第 <span class="math notranslate nohighlight">\(i\)</span> 个观测值，<span class="math notranslate nohighlight">\(\bar{y}\)</span> 为因变量的均值。下面将简要介绍 SSR 的计算方法。</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># 消除</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># 消除一次项</span>
 <span class="n">examnull.fit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">course.df</span><span class="p">)</span>
 <span class="nf">summary</span><span class="p">(</span><span class="n">examnull.fit</span><span class="p">)</span>
 <span class="c1"># 对比之前的 Summary</span>
-<span class="nf">cat</span><span class="p">(</span><span class="s">&quot;--------------------------&quot;</span><span class="p">)</span>
 <span class="nf">summary</span><span class="p">(</span><span class="n">examtest.fit</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -727,12 +706,9 @@ Coefficients:
             Estimate Std. Error t value Pr(&gt;|t|)    
 (Intercept)   52.877      1.546   34.21   &lt;2e-16 ***
 ---
-Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 18.68 on 145 degrees of freedom
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>--------------------------
 </pre></div>
 </div>
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
@@ -747,7 +723,7 @@ Coefficients:
 (Intercept)   9.0845     3.2204   2.821  0.00547 ** 
 Test          3.7859     0.2647  14.301  &lt; 2e-16 ***
 ---
-Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 12.05 on 144 degrees of freedom
 Multiple R-squared:  0.5868,	Adjusted R-squared:  0.5839 
@@ -784,7 +760,7 @@ Coefficients:
 (Intercept)   9.0845     3.2204   2.821  0.00547 ** 
 Test          3.7859     0.2647  14.301  &lt; 2e-16 ***
 ---
-Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 12.05 on 144 degrees of freedom
 Multiple R-squared:  0.5868,	Adjusted R-squared:  0.5839 
