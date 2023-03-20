@@ -57,8 +57,8 @@ jobs:
         r-version: ${{ matrix.R-version }}
     - name: Install R dependencies
       uses: r-lib/actions/setup-r-dependencies@v2
-      # with:
-      #   extra-packages: IRkernel
+      with:
+        extra-packages: s20x
     - name: Setup Jupyter Notebook Kernel
       run: |
         Rscript -e 'IRkernel::installspec()' # Add R kernel to Jupyter
