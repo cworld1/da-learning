@@ -2,12 +2,12 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/cworld1/da-learning?style=flat-square)](https://github.com/cworld1/da-learning/stargazers)
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/y/cworld1/da-learning?label=commits&style=flat-square)](https://github.com/cworld1/da-learning/commits)
-<!-- [![Vercel Production Status](https://img.shields.io/github/deployments/cworld1/da-learning/production?label=vercel&logo=vercel&style=flat-square)](https://vercel.com/cworld0/da-learning) -->
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/cworld1/da-learning/.github/workflows/html-build.yml?branch=main&style=flat-square)](https://github.com/cworld1/da-learning/actions/workflows/html-build.yml)
 [![GitHub license](https://img.shields.io/github/license/cworld1/da-learning?style=flat-square)](https://github.com/cworld1/da-learning/blob/main/LICENSE)
 
 Some notes and code about CWorld learning Data Analysis.
 
-[前往阅读 →](https://da.cworld.top/)
+[Get Started 前往阅读 →](https://da.cworld.top/)
 
 ## Local Development
 
@@ -52,9 +52,7 @@ As the author is only a beginner in learning Data Analysis, there are obvious mi
 
 Some of the electronic textbooks have helped the author a lot in his studies, and without them, this notebook would not have been possible. I would like to express my gratitude to the original authors of these materials. If you have any doubts about this project, you can also read the following textbooks carefully to remedy them.
 
-<!-- - [数据库原理及应用 - shark-Gao 的博客](https://blog.csdn.net/qq_58608526/article/details/122922114)
-- [数据库原理及应用教程（微课版）](https://annas-archive.org/md5/08cf09ef24ff4989641044caa544b29e)
-- [数据库系统概论（第 5 版）](https://z-lib.io/book/13860288) -->
+- [STATS 201 : Data Analysis](https://courseoutline.auckland.ac.nz/dco/course/STATS/201/1215)
 
 ## License
 
