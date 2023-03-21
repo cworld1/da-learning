@@ -7,17 +7,16 @@ parts:
 
 - caption: Tutorials
   chapters:
-  # - file: index
-  #   title: Introduction
   - file: 00-at-the-beginning
 
 - caption: Main Chapters
+  numbered: true
   chapters:
-  - file: 01-getting-started-with-regression
-  - file: 02-basics-of-simple-linear-regression
-  - file: 03-the-null-model
-  - file: 04-fitting-curves-with-the-linear-model
-  - file: 05-linear-models-with-a-categorical-explanatory-variable
+  - file: 01-get-start-with-regres
+  - file: 02-basics-of-simp-linear-regres
+  - file: 03-null-model
+  - file: 04-fit-curves-with-linear-model
+  - file: 05-linear-model-with-a-categ-explan-var
 
 - caption: About Project
   chapters:
