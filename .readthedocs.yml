@@ -6,6 +6,13 @@ build:
     python: "3.10"
   jobs:
     pre_build:
+      # Install R
+      - "sudo apt install r-base"
+      # Install R dependencies
+      - "r -e 'install.packages(\"devtools\")'"
+      - "r -e 'devtools::install_deps()'"
+      # Install Jupyter Notebook Kernel
+      - "r -e 'IRkernel::installspec()'"
       # Generate the Sphinx configuration for this Jupyter Book so it builds.
       - "jupyter-book config sphinx docs/"
 
