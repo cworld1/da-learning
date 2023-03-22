@@ -11,13 +11,7 @@ build:
 
 python:
   install:
-    - requirements: requirements.txt
-      extra_requirements:
-      - sphinx
-      - sphinx-inline-tabs
-      - sphinx-examples
-      - sphinx-proof
-      - sphinx-hoverxref
+    - requirements: docs/requirements.txt
 
 sphinx:
   builder: html
