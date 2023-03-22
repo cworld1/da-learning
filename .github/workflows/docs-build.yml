@@ -1,4 +1,4 @@
-name: Build HTML of Docs
+name: Build of Docs
 
 on:
   push:
@@ -24,7 +24,7 @@ env:
 
 jobs:
 
-  html-build:
+  docs-build:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -57,6 +57,14 @@ jobs:
     - name: Build HTML of docs
       run: |
         jupyter-book build docs
+
+    # Build PDF
+    - name: Build PDF of docs
+      run: |
+        jupyter-book build docs --builder pdfhtml
+    - name: Upload PDF of docs
+      run: |
+        mv docs/_build/pdf/*.pdf docs/_build/html
 
     # Deploy to GitHub Pages
     - name: Deploy to GitHub Pages

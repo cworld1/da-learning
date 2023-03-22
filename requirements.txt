@@ -2,3 +2,4 @@ jupyter
 jupyter-book==0.15.1
 matplotlib
 numpy==1.24.2
+pyppeteer
