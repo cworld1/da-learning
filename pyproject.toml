@@ -1,15 +1,52 @@
-[tool.poetry]
-name = "data analysis learning"
-version = "0.1.0"
-description = "Some notes and code about CWorld learning Data Analysis."
-authors = ["cworld1 <cworld0@qq.com>"]
-license = "GPL-3.0"
-readme = "README.md"
-
-[tool.poetry.dependencies]
-python = "^3.11"
-
-
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["flit_core >=3.5,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "data analysis learning"
+authors = ["cworld1 <cworld0@qq.com>"]
+keywords = [
+    "science",
+    "environments",
+    "notebook",
+]
+dynamic = ["description", "version"]
+requires-python = ">=3.9"
+dependencies = [
+    "sphinx>=4,<6",
+]
+
+[project.license]
+file = "LICENSE"
+
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+
+[project.urls]
+Homepage = "https://da.cworld.top"
+Documentation = "https://da.cworld.top"
+
+[project.optional-dependencies]
+sphinx = [
+    "matplotlib",
+    "numpy",
+]
+testing = [
+    "matplotlib",
+    "numpy",
+]
+
+[tool.flit.sdist]
+exclude = [
+  ".*",  # Any hidden folders or files
+  "docs/",
+  "tests/",
+  "scripts/",
+  "tox.ini",
+  "codecov.yml",
+  "conftest.py",
+]
+
+[tool.isort]
+profile = "black"
