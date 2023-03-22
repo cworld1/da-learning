@@ -7,7 +7,7 @@ build:
   jobs:
     pre_build:
       # Install R
-      - "sudo apt install r-base"
+      - "apt-get -y install r-base"
       # Install R dependencies
       - "r -e 'install.packages(\"devtools\")'"
       - "r -e 'devtools::install_deps()'"
