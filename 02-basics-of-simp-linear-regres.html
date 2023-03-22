@@ -61,7 +61,8 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '02-basics-of-simp-linear-regres';</script>
     <link rel="canonical" href="https://da.cworld.top/02-basics-of-simp-linear-regres.html" />
     <link rel="shortcut icon" href="_static/favicon.ico"/>
@@ -151,6 +152,14 @@ const thebe_selector_output = ".output, .cell_output"
 </a></div>
         <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="index.html">
+                    Data Analysis Learning
+                </a>
+            </li>
+        </ul>
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="00-at-the-beginning.html">At the beginning</a></li>
@@ -409,7 +418,7 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section id="basics-of-simple-linear-regression">
+  <section class="tex2jax_ignore mathjax_ignore" id="basics-of-simple-linear-regression">
 <h1><span class="section-number">2. </span>Basics of Simple Linear Regression<a class="headerlink" href="#basics-of-simple-linear-regression" title="Permalink to this heading">#</a></h1>
 <p>本课程前置需要装的包：</p>
 <div class="cell docutils container">
@@ -543,10 +552,10 @@ F-statistic: 204.5 on 1 and 144 DF,  p-value: &lt; 2.2e-16
 <ul class="simple">
 <li><p>Call：表示回归方程，指明了自变量和因变量</p></li>
 <li><p>Risiduals：残差，指明了残差的分布，如最大、最小、中值等</p></li>
-<li><p>Coefficients：系数，此处即 $a_i$ 和 $b_i$ 的值</p></li>
+<li><p>Coefficients：系数，此处即 <span class="math notranslate nohighlight">\(a_i\)</span> 和 <span class="math notranslate nohighlight">\(b_i\)</span> 的值</p></li>
 <li><p>Residual standard error：残差标准差，即残差的标准差</p></li>
-<li><p>Multiple R-squared：多元 $R^2$ 值</p></li>
-<li><p>Adjusted R-squared：调整后的 $R^2$ 值</p></li>
+<li><p>Multiple R-squared：多元 <span class="math notranslate nohighlight">\(R^2\)</span> 值</p></li>
+<li><p>Adjusted R-squared：调整后的 <span class="math notranslate nohighlight">\(R^2\)</span> 值</p></li>
 <li><p>F-statistic：F 统计量，即 F 统计量。F 统计量的分子是回归平方和，分母是残差平方和。F 统计量的值越大，说明回归平方和越大，即回归模型的拟合效果越好。F 统计量的值越小，说明回归平方和越小，即回归模型的拟合效果越差。p-value 则相反。</p></li>
 </ul>
 </section>
@@ -681,8 +690,8 @@ F-statistic: 112.1 on 1 and 145 DF,  p-value: &lt; 2.2e-16
 </section>
 <section id="r">
 <h3><span class="section-number">2.2.2. </span>R 方观测<a class="headerlink" href="#r" title="Permalink to this heading">#</a></h3>
-<p>R Squared 即 R 平方，是回归平方和与总平方和的比值，即 $R^2 = \frac{SSR}{SST}$，其中 SSR 为回归平方和，SST 为总平方和。R 平方的值越大，说明回归平方和越大，即回归模型的拟合效果越好。R 平方的值越小，说明回归平方和越小，即回归模型的拟合效果越差。</p>
-<p>SSR 即回归平方和，是因变量的预测值与因变量的均值之差的平方和，即 $SSR = \sum_{i=1}^n (y_i - \bar{y})^2$，其中 $y_i$ 为第 $i$ 个观测值，$\bar{y}$ 为因变量的均值。下面将简要介绍 SSR 的计算方法。</p>
+<p>R Squared 即 R 平方，是回归平方和与总平方和的比值，即 <span class="math notranslate nohighlight">\(R^2 = \frac{SSR}{SST}\)</span>，其中 SSR 为回归平方和，SST 为总平方和。R 平方的值越大，说明回归平方和越大，即回归模型的拟合效果越好。R 平方的值越小，说明回归平方和越小，即回归模型的拟合效果越差。</p>
+<p>SSR 即回归平方和，是因变量的预测值与因变量的均值之差的平方和，即 <span class="math notranslate nohighlight">\(SSR = \sum_{i=1}^n (y_i - \bar{y})^2\)</span>，其中 <span class="math notranslate nohighlight">\(y_i\)</span> 为第 <span class="math notranslate nohighlight">\(i\)</span> 个观测值，<span class="math notranslate nohighlight">\(\bar{y}\)</span> 为因变量的均值。下面将简要介绍 SSR 的计算方法。</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># 消除一次项</span>
@@ -733,7 +742,7 @@ F-statistic: 204.5 on 1 and 144 DF,  p-value: &lt; 2.2e-16
 </div>
 <p>此时我们可以得到 SS（Null）的值 18.68，以及 SS（Test）的值 12.05。</p>
 <p>R 方的值即 1 - SS（Null）/SS（Test）的值，即 0.5868。</p>
-<p>置信区间：$[a_i - 2SE(a_i), a_i + 2SE(a_i)]$，即 $[a_i - 2\sqrt{Var(a_i)}, a_i + 2\sqrt{Var(a_i)}]$，其中 $Var(a_i)$ 为 $a_i$ 的方差。</p>
+<p>置信区间：<span class="math notranslate nohighlight">\([a_i - 2SE(a_i), a_i + 2SE(a_i)]\)</span>，即 <span class="math notranslate nohighlight">\([a_i - 2\sqrt{Var(a_i)}, a_i + 2\sqrt{Var(a_i)}]\)</span>，其中 <span class="math notranslate nohighlight">\(Var(a_i)\)</span> 为 <span class="math notranslate nohighlight">\(a_i\)</span> 的方差。</p>
 </section>
 <section id="t">
 <h3><span class="section-number">2.2.3. </span>每一个拟合值的 T 检验<a class="headerlink" href="#t" title="Permalink to this heading">#</a></h3>
@@ -770,13 +779,14 @@ F-statistic: 204.5 on 1 and 144 DF,  p-value: &lt; 2.2e-16
 </div>
 <p>可以看出 Test 行的 Pr（P-value）的值小于 2.2x10^-16，远小于 0.05，故拒绝原假设，即拟合值的系（旁边的3颗*也表示可信度极高，即该斜率的线性拟合极好）</p>
 <ul class="simple">
-<li><p>零假设 $H_0$：Test 和 Exam 之间的线性关系系数为 0（没有线性关系），即 即 $a_i$ 的系数为 0</p></li>
-<li><p>备择假设 $H_1$：Test 和 Exam 之间的线性关系系数不为 0（有线性关系），即 即 $a_i$ 的系数不为 0</p></li>
+<li><p>零假设 <span class="math notranslate nohighlight">\(H_0\)</span>：Test 和 Exam 之间的线性关系系数为 0（没有线性关系），即 即 <span class="math notranslate nohighlight">\(a_i\)</span> 的系数为 0</p></li>
+<li><p>备择假设 <span class="math notranslate nohighlight">\(H_1\)</span>：Test 和 Exam 之间的线性关系系数不为 0（有线性关系），即 即 <span class="math notranslate nohighlight">\(a_i\)</span> 的系数不为 0</p></li>
 </ul>
-<p>我们对于斜率的置信程度，是由标准误差决定的，即 $SE(a_i)$，即 $SE(a_i) = \sqrt{\frac{SSE}{n-2}}$，其中 SSE 为残差平方和，即 $SSE = \sum_{i=1}^n (y_i - \hat{y_i})^2$，其中 $\hat{y_i}$ 为第 $i$ 个观测值的预测值，即 $\hat{y_i} = a_i + b_i x_i$，$x_i$ 为第 $i$ 个观测值的自变量值。此处的 $se(a)$ 为 0.2647。于是我们有：</p>
-<p>$$
+<p>我们对于斜率的置信程度，是由标准误差决定的，即 <span class="math notranslate nohighlight">\(SE(a_i)\)</span>，即 <span class="math notranslate nohighlight">\(SE(a_i) = \sqrt{\frac{SSE}{n-2}}\)</span>，其中 SSE 为残差平方和，即 <span class="math notranslate nohighlight">\(SSE = \sum_{i=1}^n (y_i - \hat{y_i})^2\)</span>，其中 <span class="math notranslate nohighlight">\(\hat{y_i}\)</span> 为第 <span class="math notranslate nohighlight">\(i\)</span> 个观测值的预测值，即 <span class="math notranslate nohighlight">\(\hat{y_i} = a_i + b_i x_i\)</span>，<span class="math notranslate nohighlight">\(x_i\)</span> 为第 <span class="math notranslate nohighlight">\(i\)</span> 个观测值的自变量值。此处的 <span class="math notranslate nohighlight">\(se(a)\)</span> 为 0.2647。于是我们有：</p>
+<div class="math notranslate nohighlight">
+\[
 \frac{3.7859 - 0}{0.2647} = 14.34
-$$</p>
+\]</div>
 <p>此结果表示偏离此结果的标准差，这个数字越大，代表我们对于斜率的置信程度越高。</p>
 </section>
 </section>
@@ -876,9 +886,10 @@ $$</p>
 <p>遇到此类问题，通用思路（适用于分析x和y两个未知数的某种关系）：</p>
 <ul>
 <li><p>绘制数据散点图并简要查看自变量与因变量之间是哪种关系（如果有关系），最好是能够通过工具分析（也可能会有一份研究意图的声明可以被指导）。提出适当的研究方式。在上边的例子中，我们就决定采用了线性模型：</p>
-<p>$$
-y = β_0 + β_1x_i + ε_i, ε_i ∼ N(0, σ^2) (where β_1 &gt; 0)
-$$</p>
+<div class="math notranslate nohighlight">
+\[
+    y = β_0 + β_1x_i + ε_i, ε_i ∼ N(0, σ^2) (where β_1 &gt; 0)
+    \]</div>
 </li>
 <li><p>使用 <code class="docutils literal notranslate"><span class="pre">lm</span></code> 函数进行模型拟合。</p></li>
 <li><p>检查我们提出的假设进行合适方式的验证。</p>

@@ -61,7 +61,8 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '03-null-model';</script>
     <link rel="canonical" href="https://da.cworld.top/03-null-model.html" />
     <link rel="shortcut icon" href="_static/favicon.ico"/>
@@ -151,6 +152,14 @@ const thebe_selector_output = ".output, .cell_output"
 </a></div>
         <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="index.html">
+                    Data Analysis Learning
+                </a>
+            </li>
+        </ul>
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="00-at-the-beginning.html">At the beginning</a></li>
@@ -390,7 +399,7 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section id="the-null-model">
+  <section class="tex2jax_ignore mathjax_ignore" id="the-null-model">
 <h1><span class="section-number">3. </span>The null model<a class="headerlink" href="#the-null-model" title="Permalink to this heading">#</a></h1>
 <p>本课程前置需要装的包：</p>
 <div class="cell docutils container">
@@ -504,21 +513,23 @@ document.write(`
 </div>
 <p>Conclusion:</p>
 <ul class="simple">
-<li><p>The near zero $Pr(&gt;|t|)$ p-value totally rejects(拒绝) the null hypothesis(零假设) that $H0 : µ ≡ β0 = 0$.</p></li>
-<li><p>The 95% confidence interval(置信区间) for $µ$ is 49.82 to 55.93.</p></li>
+<li><p>The near zero <span class="math notranslate nohighlight">\(Pr(&gt;|t|)\)</span> p-value totally rejects(拒绝) the null hypothesis(零假设) that <span class="math notranslate nohighlight">\(H0 : µ ≡ β0 = 0\)</span>.</p></li>
+<li><p>The 95% confidence interval(置信区间) for <span class="math notranslate nohighlight">\(µ\)</span> is 49.82 to 55.93.</p></li>
 </ul>
 </section>
 <section id="revisiting-the-t-test">
 <h2><span class="section-number">3.2. </span>Revisiting the t-test<a class="headerlink" href="#revisiting-the-t-test" title="Permalink to this heading">#</a></h2>
-<p>$$
+<div class="math notranslate nohighlight">
+\[
 T = \frac
 {\bar{y} - \mu}
 {\frac{s}{\sqrt n}} \sim t_{n-1}
-$$</p>
-<p>其中 $\bar{y}$ 为样本均值，$s$ 为样本标准差。</p>
-<p>$$
+\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(\bar{y}\)</span> 为样本均值，<span class="math notranslate nohighlight">\(s\)</span> 为样本标准差。</p>
+<div class="math notranslate nohighlight">
+\[
 s=\sqrt{\frac{1}{n-1}\sum_{i=1}^n(X_i-\bar X)^2}
-$$</p>
+\]</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">n</span><span class="o">=</span><span class="nf">length</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="c1">#146 students</span>
@@ -574,7 +585,7 @@ $$</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html">52.8944417808219</div></div>
+<div class="output text_html">52.8913198630137</div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">

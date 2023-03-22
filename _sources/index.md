@@ -7,8 +7,17 @@
 
 关于 CWorld 学习 Analysis Learning 一些笔记和代码。该课程使用 R 语言进行数据分析。
 
+```{button-ref} 00-at-the-beginning
+:ref-type: doc
+:color: primary
+:class: sd-rounded-pill float-left
+
+Get started
+```
+
 ```{hint}
-点击侧栏的目录或滑到底部的下一篇文章以阅览更多章节。
+点击侧栏的目录或下滑以阅览更多章节。
+当然，你也可以下载 [PDF 版本](./book.pdf) 的笔记。
 ```
 
 ## Development

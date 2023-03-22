@@ -61,6 +61,8 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '04-fit-curves-with-linear-model';</script>
     <link rel="canonical" href="https://da.cworld.top/04-fit-curves-with-linear-model.html" />
     <link rel="shortcut icon" href="_static/favicon.ico"/>
@@ -150,6 +152,14 @@ const thebe_selector_output = ".output, .cell_output"
 </a></div>
         <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="index.html">
+                    Data Analysis Learning
+                </a>
+            </li>
+        </ul>
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="00-at-the-beginning.html">At the beginning</a></li>
@@ -388,7 +398,7 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section id="fitting-curves-with-the-linear-model">
+  <section class="tex2jax_ignore mathjax_ignore" id="fitting-curves-with-the-linear-model">
 <h1><span class="section-number">4. </span>Fitting curves with the linear model<a class="headerlink" href="#fitting-curves-with-the-linear-model" title="Permalink to this heading">#</a></h1>
 <p>本节需要的包：</p>
 <div class="cell docutils container">
@@ -449,17 +459,19 @@ document.write(`
 <section id="fitting-a-quadratic-model">
 <h2><span class="section-number">4.2. </span>Fitting a quadratic model 拟合二次模型<a class="headerlink" href="#fitting-a-quadratic-model" title="Permalink to this heading">#</a></h2>
 <p>The standard notation for a quadratic curve is:</p>
-<p>$$
+<div class="math notranslate nohighlight">
+\[
 y = a x^2 + b x + c
-$$</p>
-<p>Here we will use different notation: $\beta_0 = c$, $\beta_1 = b$ and $\beta_2 = a$ and use the quadratic curve to describe the expected value of our dependent variable $y$. That is, we will use the following notation:</p>
-<p>$$
+\]</div>
+<p>Here we will use different notation: <span class="math notranslate nohighlight">\(\beta_0 = c\)</span>, <span class="math notranslate nohighlight">\(\beta_1 = b\)</span> and <span class="math notranslate nohighlight">\(\beta_2 = a\)</span> and use the quadratic curve to describe the expected value of our dependent variable <span class="math notranslate nohighlight">\(y\)</span>. That is, we will use the following notation:</p>
+<div class="math notranslate nohighlight">
+\[
 E[Y|x] = \beta_0 + \beta_1 x + \beta_2 x^2
-$$</p>
+\]</div>
 <blockquote>
-<div><p>If $\beta_2 &gt; 0$, then the quadratic has slope that increases with increasing x(斜率随着x增大而增大). If $\beta_2 &lt; 0$, then the quadratic has slope that decreases with increasing x. If $\beta_2 = 0$, then the quadratic(该“二次曲线”) has a constant slope(倾斜直线的外观).</p>
+<div><p>If <span class="math notranslate nohighlight">\(\beta_2 &gt; 0\)</span>, then the quadratic has slope that increases with increasing x(斜率随着x增大而增大). If <span class="math notranslate nohighlight">\(\beta_2 &lt; 0\)</span>, then the quadratic has slope that decreases with increasing x. If <span class="math notranslate nohighlight">\(\beta_2 = 0\)</span>, then the quadratic(该“二次曲线”) has a constant slope(倾斜直线的外观).</p>
 </div></blockquote>
-<p>让我们回到之前的学生数据集。我们将使用一个新的变量 $x^2$ 来拟合一个二次模型：</p>
+<p>让我们回到之前的学生数据集。我们将使用一个新的变量 <span class="math notranslate nohighlight">\(x^2\)</span> 来拟合一个二次模型：</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">examassign.fit2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Assign</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nf">I</span><span class="p">(</span><span class="n">Assign</span><span class="o">^</span><span class="m">2</span><span class="p">),</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="p">)</span>
@@ -530,7 +542,7 @@ F-statistic: 86.59 on 2 and 143 DF,  p-value: &lt; 2.2e-16
 </div>
 </div>
 </div>
-<p>Note that the coefficient $β_2 &gt; 0$ associated with the term $I(Assign)^2$ indicates an increase that starts slowly and ‘accelerates’(加速) as Assign increases.</p>
+<p>Note that the coefficient <span class="math notranslate nohighlight">\(β_2 &gt; 0\)</span> associated with the term <span class="math notranslate nohighlight">\(I(Assign)^2\)</span> indicates an increase that starts slowly and ‘accelerates’(加速) as Assign increases.</p>
 </section>
 </section>
 

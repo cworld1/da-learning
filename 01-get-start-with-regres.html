@@ -61,6 +61,8 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '01-get-start-with-regres';</script>
     <link rel="canonical" href="https://da.cworld.top/01-get-start-with-regres.html" />
     <link rel="shortcut icon" href="_static/favicon.ico"/>
@@ -150,6 +152,14 @@ const thebe_selector_output = ".output, .cell_output"
 </a></div>
         <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="index.html">
+                    Data Analysis Learning
+                </a>
+            </li>
+        </ul>
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="00-at-the-beginning.html">At the beginning</a></li>
@@ -388,57 +398,63 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section id="getting-started-with-regression">
+  <section class="tex2jax_ignore mathjax_ignore" id="getting-started-with-regression">
 <h1><span class="section-number">1. </span>Getting Started with Regression<a class="headerlink" href="#getting-started-with-regression" title="Permalink to this heading">#</a></h1>
 <section id="id1">
 <h2><span class="section-number">1.1. </span>什么是线性回归<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h2>
 <p>线性样本回归分析：</p>
-<p>$$
+<div class="math notranslate nohighlight">
+\[
 \hat{y_0} = a_i + b_ix
-$$</p>
+\]</div>
 <p>原则：残差平方和最小</p>
-<p>怎么算 $a_i$ 和 $b_i$：</p>
-<p>$$
+<p>怎么算 <span class="math notranslate nohighlight">\(a_i\)</span> 和 <span class="math notranslate nohighlight">\(b_i\)</span>：</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
 \begin{cases}
 b=\frac
 {\sum_{i=1}^{n}(x-x_i)(y-y_i)}
-{\sum_{i=1}^{n}(x-\bar{x})^2} \
+{\sum_{i=1}^{n}(x-\bar{x})^2} \\
 a=\bar{y}-b\bar{x}
 \end{cases}
-$$</p>
+\end{split}\]</div>
 </section>
 <section id="id2">
 <h2><span class="section-number">1.2. </span>线性回归的残差与模型误差分析<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h2>
-<p>残差表示预测值与真实值的差值，有正负号，一般使用 $\varepsilon$ 表示。</p>
-<p>$$
+<p>残差表示预测值与真实值的差值，有正负号，一般使用 <span class="math notranslate nohighlight">\(\varepsilon\)</span> 表示。</p>
+<div class="math notranslate nohighlight">
+\[
 y_i = ax_i + b + \varepsilon
-$$</p>
-<p>且 $\varepsilon$ 的值符合正态分布：$\varepsilon \sim N(0, \sigma^2)$</p>
+\]</div>
+<p>且 <span class="math notranslate nohighlight">\(\varepsilon\)</span> 的值符合正态分布：<span class="math notranslate nohighlight">\(\varepsilon \sim N(0, \sigma^2)\)</span></p>
 <p>误差：</p>
-<p>$$
+<div class="math notranslate nohighlight">
+\[\begin{split}
 \begin{split}
-Y - \hat{Y} &amp;= Y - \bar{Y} - \hat{Y} + \bar{Y} \
-&amp;= (Y - \bar{Y}) - (\hat{Y} - \bar{Y}) \
+Y - \hat{Y} &amp;= Y - \bar{Y} - \hat{Y} + \bar{Y} \\
+&amp;= (Y - \bar{Y}) - (\hat{Y} - \bar{Y}) \\
 Y - \bar{Y} &amp;= (Y-\hat{Y}) + (\hat{Y} - \bar{Y})
 \end{split}
-$$</p>
-<p>其中 $Y - \bar{Y}$ 称为总体差异，$Y-\hat{Y}$ 称为随机变量，$\hat{Y} - \bar{Y}$ 称为可以用自变量 x 进行解释的差异。</p>
+\end{split}\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(Y - \bar{Y}\)</span> 称为总体差异，<span class="math notranslate nohighlight">\(Y-\hat{Y}\)</span> 称为随机变量，<span class="math notranslate nohighlight">\(\hat{Y} - \bar{Y}\)</span> 称为可以用自变量 x 进行解释的差异。</p>
 <p>于是，我们有：</p>
-<p>$$
+<div class="math notranslate nohighlight">
+\[\begin{split}
 \begin{split}
-\sum{Y - \bar{Y}} &amp;= \sum{Y-\hat{Y}} + \sum{\hat{Y}-\bar{Y}} \
-SST &amp;= \ \ \ \ \ SSE \ \ \ \ \ + \ \ \ \ \ SSR \
+\sum{Y - \bar{Y}} &amp;= \sum{Y-\hat{Y}} + \sum{\hat{Y}-\bar{Y}} \\
+SST &amp;= \ \ \ \ \ SSE \ \ \ \ \ + \ \ \ \ \ SSR \\
 df = n-1 &amp; \ \ \ \ \  df=n-2 \ \ \ \ \ \ \ \ df = 1
 \end{split}
-$$</p>
+\end{split}\]</div>
 <p>并且有：</p>
-<p>$$
+<div class="math notranslate nohighlight">
+\[\begin{split}
 \begin{cases}
-MST &amp;= \frac{SST}{df} \
-MSE &amp;= \frac{SSE}{df} \
+MST &amp;= \frac{SST}{df} \\
+MSE &amp;= \frac{SSE}{df} \\
 MSR &amp;= \frac{SSR}{df}
 \end{cases}
-$$</p>
+\end{split}\]</div>
 </section>
 </section>
 
