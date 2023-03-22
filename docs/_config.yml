@@ -44,13 +44,8 @@ repository:
 # See https://jupyterbook.org/customize/config.html#add-a-link-to-your-repository
 html:
   favicon: assets/favicon.ico
-  home_page_in_navbar: false
+  home_page_in_navbar: true
   use_edit_page_button: true
   use_issues_button: true
   use_repository_button: true
   baseurl: https://da.cworld.top/
-
-# Parse and render settings
-parse:
-  myst_enable_extensions:
-    - html_admonition
