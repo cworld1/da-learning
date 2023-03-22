@@ -11,11 +11,13 @@ build:
 
 python:
   install:
-    - method: pip
-      path: .
+    - requirements: docs/requirements.txt
       extra_requirements:
       - sphinx
-      - jupyter-book
+      - sphinx-inline-tabs
+      - sphinx-examples
+      - sphinx-proof
+      - sphinx-hoverxref
 
 sphinx:
   builder: html
