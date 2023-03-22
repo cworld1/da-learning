@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>Chapter 1: Getting Started with Regression &#8212; Data Analysis Learning</title>
+    <title>5. Linear models with a categorical (factor) explanatory variable &#8212; Data Analysis Learning</title>
   
   
   
@@ -61,15 +61,12 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
-    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '01-getting-started-with-regression';</script>
-    <link rel="canonical" href="https://da.cworld.top/01-getting-started-with-regression.html" />
+    <script>DOCUMENTATION_OPTIONS.pagename = '05-linear-model-with-a-categ-explan-var';</script>
+    <link rel="canonical" href="https://da.cworld.top/05-linear-model-with-a-categ-explan-var.html" />
     <link rel="shortcut icon" href="_static/favicon.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Chapter 2: Basics of Simple Linear Regression" href="02-basics-of-simple-linear-regression.html" />
-    <link rel="prev" title="At the beginning" href="00-at-the-beginning.html" />
+    <link rel="prev" title="4. Fitting curves with the linear model" href="04-fit-curves-with-linear-model.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -158,11 +155,11 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Main Chapters</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Chapter 1: Getting Started with Regression</a></li>
-<li class="toctree-l1"><a class="reference internal" href="02-basics-of-simple-linear-regression.html">Chapter 2: Basics of Simple Linear Regression</a></li>
-<li class="toctree-l1"><a class="reference internal" href="03-the-null-model.html">Chapter 3: The null model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="04-fitting-curves-with-the-linear-model.html">Chapter 4: Fitting curves with the linear model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="05-linear-models-with-a-categorical-explanatory-variable.html">Chapter 5: Linear models with a categorical (factor) explanatory variable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01-get-start-with-regres.html">1. Getting Started with Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02-basics-of-simp-linear-regres.html">2. Basics of Simple Linear Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03-null-model.html">3. The null model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04-fit-curves-with-linear-model.html">4. Fitting curves with the linear model</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">5. Linear models with a categorical (factor) explanatory variable</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">About Project</span></p>
 <ul class="nav bd-sidenav">
@@ -221,7 +218,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/cworld/da-learning" target="_blank"
+      <li><a href="https://github.com/cworld1/da-learning" target="_blank"
    class="btn btn-sm btn-source-repository-button dropdown-item"
    title="Source repository"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -238,7 +235,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/cworld/da-learning/edit/main/docs/01-getting-started-with-regression.md" target="_blank"
+      <li><a href="https://github.com/cworld1/da-learning/edit/main/docs/05-linear-model-with-a-categ-explan-var.ipynb" target="_blank"
    class="btn btn-sm btn-source-edit-button dropdown-item"
    title="Suggest edit"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -255,7 +252,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/cworld/da-learning/issues/new?title=Issue%20on%20page%20%2F01-getting-started-with-regression.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/cworld1/da-learning/issues/new?title=Issue%20on%20page%20%2F05-linear-model-with-a-categ-explan-var.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -285,7 +282,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="_sources/01-getting-started-with-regression.md" target="_blank"
+      <li><a href="_sources/05-linear-model-with-a-categ-explan-var.ipynb" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -295,7 +292,7 @@ const thebe_selector_output = ".output, .cell_output"
 <span class="btn__icon-container">
   <i class="fas fa-file"></i>
   </span>
-<span class="btn__text-container">.md</span>
+<span class="btn__text-container">.ipynb</span>
 </a>
 </li>
       
@@ -367,7 +364,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Chapter 1: Getting Started with Regression</h1>
+    <h1>Linear models with a categorical (factor) explanatory variable</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -377,8 +374,7 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">什么是线性回归</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">线性回归的残差与模型误差分析</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-categorical-variables-as-explanatory-variables-by-using-indicator-variables">5.1. Using categorical variables as explanatory variables by using indicator variables 使用指标变量将分类变量用作解释变量</a></li>
 </ul>
             </nav>
         </div>
@@ -390,63 +386,23 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="chapter-1-getting-started-with-regression">
-<h1>Chapter 1: Getting Started with Regression<a class="headerlink" href="#chapter-1-getting-started-with-regression" title="Permalink to this heading">#</a></h1>
-<section id="id1">
-<h2>什么是线性回归<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h2>
-<p>线性样本回归分析：</p>
-<div class="math notranslate nohighlight">
-\[
-\hat{y_0} = a_i + b_ix
-\]</div>
-<p>原则：残差平方和最小</p>
-<p>怎么算 <span class="math notranslate nohighlight">\(a_i\)</span> 和 <span class="math notranslate nohighlight">\(b_i\)</span>：</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\begin{cases}
-b=\frac
-{\sum_{i=1}^{n}(x-x_i)(y-y_i)}
-{\sum_{i=1}^{n}(x-\bar{x})^2} \\
-a=\bar{y}-b\bar{x}
-\end{cases}
-\end{split}\]</div>
-</section>
-<section id="id2">
-<h2>线性回归的残差与模型误差分析<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h2>
-<p>残差表示预测值与真实值的差值，有正负号，一般使用 <span class="math notranslate nohighlight">\(\varepsilon\)</span> 表示。</p>
-<div class="math notranslate nohighlight">
-\[
-y_i = ax_i + b + \varepsilon
-\]</div>
-<p>且 <span class="math notranslate nohighlight">\(\varepsilon\)</span> 的值符合正态分布：<span class="math notranslate nohighlight">\(\varepsilon \sim N(0, \sigma^2)\)</span></p>
-<p>误差：</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\begin{split}
-Y - \hat{Y} &amp;= Y - \bar{Y} - \hat{Y} + \bar{Y} \\
-&amp;= (Y - \bar{Y}) - (\hat{Y} - \bar{Y}) \\
-Y - \bar{Y} &amp;= (Y-\hat{Y}) + (\hat{Y} - \bar{Y})
-\end{split}
-\end{split}\]</div>
-<p>其中 <span class="math notranslate nohighlight">\(Y - \bar{Y}\)</span> 称为总体差异，<span class="math notranslate nohighlight">\(Y-\hat{Y}\)</span> 称为随机变量，<span class="math notranslate nohighlight">\(\hat{Y} - \bar{Y}\)</span> 称为可以用自变量 x 进行解释的差异。</p>
-<p>于是，我们有：</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\begin{split}
-\sum{Y - \bar{Y}} &amp;= \sum{Y-\hat{Y}} + \sum{\hat{Y}-\bar{Y}} \\
-SST &amp;= \ \ \ \ \ SSE \ \ \ \ \ + \ \ \ \ \ SSR \\
-df = n-1 &amp; \ \ \ \ \  df=n-2 \ \ \ \ \ \ \ \ df = 1
-\end{split}
-\end{split}\]</div>
-<p>并且有：</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\begin{cases}
-MST &amp;= \frac{SST}{df} \\
-MSE &amp;= \frac{SSE}{df} \\
-MSR &amp;= \frac{SSR}{df}
-\end{cases}
-\end{split}\]</div>
+  <section id="linear-models-with-a-categorical-factor-explanatory-variable">
+<h1><span class="section-number">5. </span>Linear models with a categorical (factor) explanatory variable<a class="headerlink" href="#linear-models-with-a-categorical-factor-explanatory-variable" title="Permalink to this heading">#</a></h1>
+<p>本节需要的包：</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">require</span><span class="p">(</span><span class="n">s20x</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading required package: s20x
+</pre></div>
+</div>
+</div>
+</div>
+<section id="using-categorical-variables-as-explanatory-variables-by-using-indicator-variables">
+<h2><span class="section-number">5.1. </span>Using categorical variables as explanatory variables by using indicator variables 使用指标变量将分类变量用作解释变量<a class="headerlink" href="#using-categorical-variables-as-explanatory-variables-by-using-indicator-variables" title="Permalink to this heading">#</a></h2>
 </section>
 </section>
 
@@ -459,16 +415,16 @@ MSR &amp;= \frac{SSR}{df}
         },
         codeMirrorConfig: {
             theme: "abcdef",
-            mode: "python"
+            mode: "r"
         },
         kernelOptions: {
-            name: "python3",
+            name: "ir",
             path: "./."
         },
         predefinedOutput: true
     }
     </script>
-    <script>kernelName = 'python3'</script>
+    <script>kernelName = 'ir'</script>
 
                 </article>
               
@@ -479,22 +435,13 @@ MSR &amp;= \frac{SSR}{df}
                   <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="00-at-the-beginning.html"
+       href="04-fit-curves-with-linear-model.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">At the beginning</p>
+        <p class="prev-next-title"><span class="section-number">4. </span>Fitting curves with the linear model</p>
       </div>
-    </a>
-    <a class="right-next"
-       href="02-basics-of-simple-linear-regression.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Chapter 2: Basics of Simple Linear Regression</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
                 </footer>
@@ -511,8 +458,7 @@ MSR &amp;= \frac{SSR}{df}
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">什么是线性回归</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">线性回归的残差与模型误差分析</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-categorical-variables-as-explanatory-variables-by-using-indicator-variables">5.1. Using categorical variables as explanatory variables by using indicator variables 使用指标变量将分类变量用作解释变量</a></li>
 </ul>
   </nav></div>
 

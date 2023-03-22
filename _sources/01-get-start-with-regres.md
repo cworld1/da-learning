@@ -1,4 +1,4 @@
-# Chapter 1: Getting Started with Regression
+# Getting Started with Regression
 
 ## 什么是线性回归
 
