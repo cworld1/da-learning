@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 
 
-<html lang="en" >
+<html lang="zh-Hans" >
 
   <head>
     <meta charset="utf-8" />
@@ -53,6 +53,40 @@
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js"></script>
+    <script kind="utterances">
+
+    var commentsRunWhenDOMLoaded = cb => {
+    if (document.readyState != 'loading') {
+        cb()
+    } else if (document.addEventListener) {
+        document.addEventListener('DOMContentLoaded', cb)
+    } else {
+        document.attachEvent('onreadystatechange', function() {
+        if (document.readyState == 'complete') cb()
+        })
+    }
+}
+
+var addUtterances = () => {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = "https://utteranc.es/client.js";
+    script.async = "async";
+
+    script.setAttribute("repo", "cworld1/da-learning");
+    script.setAttribute("issue-term", "pathname");
+    script.setAttribute("theme", "github-light");
+    script.setAttribute("label", "💬 comment");
+    script.setAttribute("crossorigin", "anonymous");
+
+    sections = document.querySelectorAll("div.section");
+    if (sections !== null) {
+        section = sections[sections.length-1];
+        section.appendChild(script);
+    }
+}
+commentsRunWhenDOMLoaded(addUtterances);
+</script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script src="_static/design-tabs.js"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
@@ -71,7 +105,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="next" title="5. Linear models with a categorical (factor) explanatory variable" href="05-linear-model-with-a-categ-explan-var.html" />
     <link rel="prev" title="3. The null model" href="03-null-model.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:language" content="zh-Hans"/>
   </head>
   
   
@@ -401,17 +435,23 @@ document.write(`
   <section class="tex2jax_ignore mathjax_ignore" id="fitting-curves-with-the-linear-model">
 <h1><span class="section-number">4. </span>Fitting curves with the linear model<a class="headerlink" href="#fitting-curves-with-the-linear-model" title="Permalink to this heading">#</a></h1>
 <p>本节需要的包：</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input above-output-prompt docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">require</span><span class="p">(</span><span class="n">s20x</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
+<details class="hide below-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell output</span>
+<span class="expanded">Hide code cell output</span>
+</summary>
 <div class="cell_output docutils container">
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>载入需要的程辑包：s20x
 </pre></div>
 </div>
 </div>
+</details>
 </div>
 <section id="identifying-a-curved-relationship">
 <h2><span class="section-number">4.1. </span>Identifying a curved relationship 初步探究曲线关系<a class="headerlink" href="#identifying-a-curved-relationship" title="Permalink to this heading">#</a></h2>
@@ -430,7 +470,7 @@ document.write(`
 <img alt="_images/646abebe9d6b2d94dda1f6876f41ce86b402502e014a54791fe952dc58c08262.png" src="_images/646abebe9d6b2d94dda1f6876f41ce86b402502e014a54791fe952dc58c08262.png" />
 </div>
 </div>
-<p>Hmmm, not quite a straight line – could be some curvature. Maybe will paint a clearer picture. 不是一条很直的线–可能是一些曲率。也许会描绘出一幅更清晰的图景。</p>
+<p>Hmmm, not quite a straight line – could be some curvature. Maybe will paint a clearer picture. 不是一条很直的线--可能是一些曲率。也许会描绘出一幅更清晰的图景。</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">trendscatter</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Assign</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="p">)</span>
@@ -632,7 +672,7 @@ By CWorld
     
   <p class="copyright">
     
-      © Copyright 2022.
+      © Copyright 2023.
       <br/>
     
   </p>

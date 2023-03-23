@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 
 
-<html lang="en" >
+<html lang="zh-Hans" >
 
   <head>
     <meta charset="utf-8" />
@@ -53,6 +53,40 @@
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js"></script>
+    <script kind="utterances">
+
+    var commentsRunWhenDOMLoaded = cb => {
+    if (document.readyState != 'loading') {
+        cb()
+    } else if (document.addEventListener) {
+        document.addEventListener('DOMContentLoaded', cb)
+    } else {
+        document.attachEvent('onreadystatechange', function() {
+        if (document.readyState == 'complete') cb()
+        })
+    }
+}
+
+var addUtterances = () => {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = "https://utteranc.es/client.js";
+    script.async = "async";
+
+    script.setAttribute("repo", "cworld1/da-learning");
+    script.setAttribute("issue-term", "pathname");
+    script.setAttribute("theme", "github-light");
+    script.setAttribute("label", "💬 comment");
+    script.setAttribute("crossorigin", "anonymous");
+
+    sections = document.querySelectorAll("div.section");
+    if (sections !== null) {
+        section = sections[sections.length-1];
+        section.appendChild(script);
+    }
+}
+commentsRunWhenDOMLoaded(addUtterances);
+</script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script src="_static/design-tabs.js"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
@@ -71,7 +105,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="next" title="4. Fitting curves with the linear model" href="04-fit-curves-with-linear-model.html" />
     <link rel="prev" title="2. Basics of Simple Linear Regression" href="02-basics-of-simp-linear-regres.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:language" content="zh-Hans"/>
   </head>
   
   
@@ -402,13 +436,18 @@ document.write(`
   <section class="tex2jax_ignore mathjax_ignore" id="the-null-model">
 <h1><span class="section-number">3. </span>The null model<a class="headerlink" href="#the-null-model" title="Permalink to this heading">#</a></h1>
 <p>本课程前置需要装的包：</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input above-output-prompt docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">require</span><span class="p">(</span><span class="n">s20x</span><span class="p">)</span>
 <span class="nf">require</span><span class="p">(</span><span class="n">bootstrap</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
+<details class="hide below-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell output</span>
+<span class="expanded">Hide code cell output</span>
+</summary>
 <div class="cell_output docutils container">
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading required package: s20x
 </pre></div>
@@ -416,11 +455,8 @@ document.write(`
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading required package: bootstrap
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning message in library(package, lib.loc = lib.loc, character.only = TRUE, logical.return = TRUE, :
-“there is no package called ‘bootstrap’”
-</pre></div>
 </div>
-</div>
+</details>
 </div>
 <section id="revisiting-the-null-model">
 <h2><span class="section-number">3.1. </span>Revisiting the null model 回顾零模型<a class="headerlink" href="#revisiting-the-null-model" title="Permalink to this heading">#</a></h2>
@@ -585,7 +621,7 @@ s=\sqrt{\frac{1}{n-1}\sum_{i=1}^n(X_i-\bar X)^2}
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html">52.8913198630137</div></div>
+<div class="output text_html">52.8891465753425</div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -596,13 +632,7 @@ s=\sqrt{\frac{1}{n-1}\sum_{i=1}^n(X_i-\bar X)^2}
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span>Error in library(bootstrap): there is no package called ‘bootstrap’
-Traceback:
-
-1. library(bootstrap)
-</pre></div>
-</div>
-</div>
+<div class="output text_html">52.8758698630137</div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -612,7 +642,7 @@ Traceback:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/8a4dab117db842b07905539cd1c4bfb39513de1e36a4a1214078c633930e5115.png" src="_images/8a4dab117db842b07905539cd1c4bfb39513de1e36a4a1214078c633930e5115.png" />
+<img alt="_images/fe013aa1aa734ebf4c7535bda627632d8af960502e473990a917aca5b6677dcb.png" src="_images/fe013aa1aa734ebf4c7535bda627632d8af960502e473990a917aca5b6677dcb.png" />
 </div>
 </div>
 </section>
@@ -674,7 +704,7 @@ Traceback:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/ebe49c6b832ec1025ba44e20311ac14bfc036ba10c355e70babec9235c6b5cdb.png" src="_images/ebe49c6b832ec1025ba44e20311ac14bfc036ba10c355e70babec9235c6b5cdb.png" />
+<img alt="_images/9765b0cabb357c4e1495cd7f15d6615775a22a6fa583ccd18e717f4e86d127e9.png" src="_images/9765b0cabb357c4e1495cd7f15d6615775a22a6fa583ccd18e717f4e86d127e9.png" />
 </div>
 </div>
 </section>
@@ -767,7 +797,7 @@ By CWorld
     
   <p class="copyright">
     
-      © Copyright 2022.
+      © Copyright 2023.
       <br/>
     
   </p>

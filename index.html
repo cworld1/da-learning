@@ -3,13 +3,13 @@
 <!DOCTYPE html>
 
 
-<html lang="en" >
+<html lang="zh-Hans" >
 
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>Data Analysis Learning</title>
+    <title>Data Analysis Learning &#8212; Data Analysis Learning</title>
   
   
   
@@ -53,6 +53,40 @@
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js"></script>
+    <script kind="utterances">
+
+    var commentsRunWhenDOMLoaded = cb => {
+    if (document.readyState != 'loading') {
+        cb()
+    } else if (document.addEventListener) {
+        document.addEventListener('DOMContentLoaded', cb)
+    } else {
+        document.attachEvent('onreadystatechange', function() {
+        if (document.readyState == 'complete') cb()
+        })
+    }
+}
+
+var addUtterances = () => {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = "https://utteranc.es/client.js";
+    script.async = "async";
+
+    script.setAttribute("repo", "cworld1/da-learning");
+    script.setAttribute("issue-term", "pathname");
+    script.setAttribute("theme", "github-light");
+    script.setAttribute("label", "💬 comment");
+    script.setAttribute("crossorigin", "anonymous");
+
+    sections = document.querySelectorAll("div.section");
+    if (sections !== null) {
+        section = sections[sections.length-1];
+        section.appendChild(script);
+    }
+}
+commentsRunWhenDOMLoaded(addUtterances);
+</script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script src="_static/design-tabs.js"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
@@ -61,15 +95,14 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
-    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
     <link rel="canonical" href="https://da.cworld.top/index.html" />
     <link rel="shortcut icon" href="_static/favicon.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="At the beginning" href="00-at-the-beginning.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:language" content="zh-Hans"/>
   </head>
   
   
@@ -160,15 +193,15 @@ const thebe_selector_output = ".output, .cell_output"
         </ul>
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="nav bd-sidenav">
-
+<li class="toctree-l1"><a class="reference internal" href="00-at-the-beginning.html">At the beginning</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Main Chapters</span></p>
 <ul class="nav bd-sidenav">
-
-
-
-
-
+<li class="toctree-l1"><a class="reference internal" href="01-get-start-with-regres.html">1. Getting Started with Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02-basics-of-simp-linear-regres.html">2. Basics of Simple Linear Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03-null-model.html">3. The null model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04-fit-curves-with-linear-model.html">4. Fitting curves with the linear model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05-linear-model-with-a-categ-explan-var.html">5. Linear models with a categorical (factor) explanatory variable</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">About Project</span></p>
 <ul class="nav bd-sidenav">
@@ -244,6 +277,23 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
+      <li><a href="https://github.com/cworld1/da-learning/edit/main/docs/index.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
       <li><a href="https://github.com/cworld1/da-learning/issues/new?title=Issue%20on%20page%20%2Findex.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
@@ -256,6 +306,54 @@ const thebe_selector_output = ".output, .cell_output"
   </span>
 <span class="btn__text-container">Open issue</span>
 </a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/index.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
 </li>
       
   </ul>
@@ -295,7 +393,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
 </div></div>
       
     </div>
@@ -311,6 +411,20 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#development">Development</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contributions">Contributions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#thanks">Thanks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">Table of Contents</a><ul class="nav section-nav flex-column">
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#license">License</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -324,14 +438,14 @@ document.write(`
 <h1>Data Analysis Learning<a class="headerlink" href="#data-analysis-learning" title="Permalink to this heading">#</a></h1>
 <p><a class="reference external" href="https://github.com/cworld1/da-learning/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/cworld1/da-learning?style=flat-square" /></a>
 <a class="reference external" href="https://github.com/cworld1/da-learning/commits"><img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/y/cworld1/da-learning?label=commits&amp;style=flat-square" /></a>
-<a class="reference external" href="https://github.com/cworld1/da-learning/actions/workflows/html-build.yml"><img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/cworld1/da-learning/.github/workflows/html-build.yml?branch=main&amp;style=flat-square" /></a>
+<a class="reference external" href="https://github.com/cworld1/da-learning/actions/workflows/docs-build.yml"><img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/cworld1/da-learning/.github/workflows/docs-build.yml?branch=main&amp;style=flat-square" /></a>
 <a class="reference external" href="https://github.com/cworld1/da-learning/blob/main/LICENSE"><img alt="GitHub license" src="https://img.shields.io/github/license/cworld1/da-learning?style=flat-square" /></a></p>
 <p>关于 CWorld 学习 Analysis Learning 一些笔记和代码。该课程使用 R 语言进行数据分析。</p>
-<p><a class="sd-sphinx-override sd-btn sd-text-wrap sd-btn-primary sd-rounded-pill float-left reference internal" href="index.html#document-00-at-the-beginning"><span class="doc">Get started</span></a></p>
+<p><a class="sd-sphinx-override sd-btn sd-text-wrap sd-btn-primary sd-rounded-pill float-left reference internal" href="00-at-the-beginning.html"><span class="doc">Get started</span></a></p>
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
 <p>点击侧栏的目录或下滑以阅览更多章节。
-当然，你也可以下载 <span class="xref myst">PDF 版本</span> 的笔记。</p>
+当然，你也可以下载 <a class="reference download internal" download="" href="_downloads/37f066d38b702c1305e207bf69aea665/book.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PDF</span> <span class="pre">版本</span></code></a> 的笔记。它来自 Github Actions 的自动构建。</p>
 </div>
 <section id="development">
 <h2>Development<a class="headerlink" href="#development" title="Permalink to this heading">#</a></h2>
@@ -351,1057 +465,26 @@ document.write(`
 <section id="table-of-contents">
 <h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Permalink to this heading">#</a></h2>
 <div class="toctree-wrapper compound">
-<span id="document-00-at-the-beginning"></span><section class="tex2jax_ignore mathjax_ignore" id="at-the-beginning">
-<h3>At the beginning<a class="headerlink" href="#at-the-beginning" title="Permalink to this heading">#</a></h3>
-<section id="id1">
-<h4>章节<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h4>
-<ul class="simple">
-<li><p>Chapter1: Getting started with regression</p></li>
-<li><p>Chapter2: Basics of simple linear regression</p></li>
-<li><p>Chapter3: The null model</p></li>
-<li><p>Chapter4: Dealing with Curves</p></li>
-<li><p>Chapter5: Dealing with fact or data with two levels</p></li>
-<li><p>Chapter6: Dealing with multiplicative relationships</p></li>
-<li><p>Chapter7: Dealing with power relationships</p></li>
-<li><p>Chapter8: Dealing with numerical and fact or explanatory variables - part 1</p></li>
-<li><p>Chapter9: Dealing with numerical and fact or explanatory variables - part 2</p></li>
-<li><p>Chapter10: Multiple linear regression</p></li>
-<li><p>Chapter11: Dealing with factors with more than two levels</p></li>
-<li><p>Chapter12: Dealing with two factors</p></li>
-<li><p>Chapter13: Modelling count data</p></li>
-<li><p>Chapter14: Modelling count data responses - two examples</p></li>
-<li><p>Chapter15: Modelling binary data</p></li>
-<li><p>Chapter16: Analysing categorical data - an introduction</p></li>
-<li><p>Chapter17: Analysis of contingency tables</p></li>
-</ul>
-</section>
-<section id="id2">
-<h4>学习提要<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h4>
-<p>本门课程主要研究：线性回归模型、常见问题的解决方法</p>
-<section id="id3">
-<h5>分数分布<a class="headerlink" href="#id3" title="Permalink to this heading">#</a></h5>
-<table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p>平时分数</p></th>
-<th class="head"><p>期末测验</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>20% 作业 +20% 课堂</p></td>
-<td><p>60% 期末考试</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="id4">
-<h5>环境搭建<a class="headerlink" href="#id4" title="Permalink to this heading">#</a></h5>
-<p>本课程使用工具：R Language（交互式、开放、免费）</p>
-<ol class="arabic simple">
-<li><p>安装 R Studio</p></li>
-<li><p>安装 R Tools</p></li>
-<li><p>安装 RMarkdown 库</p></li>
-</ol>
-</section>
-</section>
-</section>
-</div>
-<div class="toctree-wrapper compound">
-<span id="document-01-get-start-with-regres"></span><section class="tex2jax_ignore mathjax_ignore" id="getting-started-with-regression">
-<h3><span class="section-number">1. </span>Getting Started with Regression<a class="headerlink" href="#getting-started-with-regression" title="Permalink to this heading">#</a></h3>
-<section id="id1">
-<h4><span class="section-number">1.1. </span>什么是线性回归<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h4>
-<p>线性样本回归分析：</p>
-<div class="math notranslate nohighlight">
-\[
-\hat{y_0} = a_i + b_ix
-\]</div>
-<p>原则：残差平方和最小</p>
-<p>怎么算 <span class="math notranslate nohighlight">\(a_i\)</span> 和 <span class="math notranslate nohighlight">\(b_i\)</span>：</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\begin{cases}
-b=\frac
-{\sum_{i=1}^{n}(x-x_i)(y-y_i)}
-{\sum_{i=1}^{n}(x-\bar{x})^2} \\
-a=\bar{y}-b\bar{x}
-\end{cases}
-\end{split}\]</div>
-</section>
-<section id="id2">
-<h4><span class="section-number">1.2. </span>线性回归的残差与模型误差分析<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h4>
-<p>残差表示预测值与真实值的差值，有正负号，一般使用 <span class="math notranslate nohighlight">\(\varepsilon\)</span> 表示。</p>
-<div class="math notranslate nohighlight">
-\[
-y_i = ax_i + b + \varepsilon
-\]</div>
-<p>且 <span class="math notranslate nohighlight">\(\varepsilon\)</span> 的值符合正态分布：<span class="math notranslate nohighlight">\(\varepsilon \sim N(0, \sigma^2)\)</span></p>
-<p>误差：</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\begin{split}
-Y - \hat{Y} &amp;= Y - \bar{Y} - \hat{Y} + \bar{Y} \\
-&amp;= (Y - \bar{Y}) - (\hat{Y} - \bar{Y}) \\
-Y - \bar{Y} &amp;= (Y-\hat{Y}) + (\hat{Y} - \bar{Y})
-\end{split}
-\end{split}\]</div>
-<p>其中 <span class="math notranslate nohighlight">\(Y - \bar{Y}\)</span> 称为总体差异，<span class="math notranslate nohighlight">\(Y-\hat{Y}\)</span> 称为随机变量，<span class="math notranslate nohighlight">\(\hat{Y} - \bar{Y}\)</span> 称为可以用自变量 x 进行解释的差异。</p>
-<p>于是，我们有：</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\begin{split}
-\sum{Y - \bar{Y}} &amp;= \sum{Y-\hat{Y}} + \sum{\hat{Y}-\bar{Y}} \\
-SST &amp;= \ \ \ \ \ SSE \ \ \ \ \ + \ \ \ \ \ SSR \\
-df = n-1 &amp; \ \ \ \ \  df=n-2 \ \ \ \ \ \ \ \ df = 1
-\end{split}
-\end{split}\]</div>
-<p>并且有：</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\begin{cases}
-MST &amp;= \frac{SST}{df} \\
-MSE &amp;= \frac{SSE}{df} \\
-MSR &amp;= \frac{SSR}{df}
-\end{cases}
-\end{split}\]</div>
-</section>
-</section>
-<span id="document-02-basics-of-simp-linear-regres"></span><section class="tex2jax_ignore mathjax_ignore" id="basics-of-simple-linear-regression">
-<h3><span class="section-number">2. </span>Basics of Simple Linear Regression<a class="headerlink" href="#basics-of-simple-linear-regression" title="Permalink to this heading">#</a></h3>
-<p>本课程前置需要装的包：</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">require</span><span class="p">(</span><span class="n">s20x</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading required package: s20x
-</pre></div>
-</div>
-</div>
-</div>
-<section id="id1">
-<h4><span class="section-number">2.1. </span>分析数据过程<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h4>
-<section id="id2">
-<h5><span class="section-number">2.1.1. </span>读取数据<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h5>
-<p>读取数据表格，<code class="docutils literal notranslate"><span class="pre">header=TRUE</span></code> 表示第一行是表头，<code class="docutils literal notranslate"><span class="pre">sep=&quot;,&quot;</span></code> 表示分隔符是逗号。</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">course.df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">read.table</span><span class="p">(</span><span class="s">&quot;../data/STATS20x.txt&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">header</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="n">sep</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;\t&quot;</span><span class="p">)</span>
-<span class="nf">head</span><span class="p">(</span><span class="n">course.df</span><span class="p">)</span><span class="w"> </span><span class="c1"># 看前面大约10行的内容</span>
-<span class="nf">dim</span><span class="p">(</span><span class="n">course.df</span><span class="p">)</span><span class="w"> </span><span class="c1"># 看有多少行、多少列</span>
-<span class="n">course.df</span><span class="o">$</span><span class="n">Exam</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">20</span><span class="p">]</span><span class="w"> </span><span class="c1"># 看前20行的Exam列</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><table class="dataframe">
-<caption>A data.frame: 6 × 15</caption>
-<thead>
-	<tr><th></th><th scope=col>Grade</th><th scope=col>Pass</th><th scope=col>Exam</th><th scope=col>Degree</th><th scope=col>Gender</th><th scope=col>Attend</th><th scope=col>Assign</th><th scope=col>Test</th><th scope=col>B</th><th scope=col>C</th><th scope=col>MC</th><th scope=col>Colour</th><th scope=col>Stage1</th><th scope=col>Years.Since</th><th scope=col>Repeat</th></tr>
-	<tr><th></th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><th scope=row>1</th><td>C</td><td>Yes</td><td>42</td><td>BSc  </td><td>Male  </td><td>Yes</td><td>17.2</td><td> 9.1</td><td> 5</td><td>13</td><td>12</td><td>Blue  </td><td>C</td><td>2.5</td><td>Yes</td></tr>
-	<tr><th scope=row>2</th><td>B</td><td>Yes</td><td>58</td><td>BCom </td><td>Female</td><td>Yes</td><td>17.2</td><td>13.6</td><td>12</td><td>12</td><td>17</td><td>Yellow</td><td>A</td><td>2.0</td><td>No </td></tr>
-	<tr><th scope=row>3</th><td>A</td><td>Yes</td><td>81</td><td>Other</td><td>Female</td><td>Yes</td><td>17.2</td><td>14.5</td><td>14</td><td>17</td><td>25</td><td>Blue  </td><td>A</td><td>3.0</td><td>No </td></tr>
-	<tr><th scope=row>4</th><td>A</td><td>Yes</td><td>86</td><td>Other</td><td>Female</td><td>Yes</td><td>19.6</td><td>19.1</td><td>15</td><td>17</td><td>27</td><td>Yellow</td><td>A</td><td>0.0</td><td>No </td></tr>
-	<tr><th scope=row>5</th><td>D</td><td>No </td><td>35</td><td>Other</td><td>Male  </td><td>No </td><td> 8.0</td><td> 8.2</td><td> 4</td><td> 1</td><td>15</td><td>Blue  </td><td>C</td><td>3.0</td><td>No </td></tr>
-	<tr><th scope=row>6</th><td>A</td><td>Yes</td><td>72</td><td>BCom </td><td>Female</td><td>Yes</td><td>18.4</td><td>12.7</td><td>15</td><td>17</td><td>20</td><td>Blue  </td><td>A</td><td>1.5</td><td>No </td></tr>
-</tbody>
-</table>
-</div><div class="output text_html"><style>
-.list-inline {list-style: none; margin:0; padding: 0}
-.list-inline>li {display: inline-block}
-.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
-</style>
-<ol class=list-inline><li>146</li><li>15</li></ol>
-</div><div class="output text_html"><style>
-.list-inline {list-style: none; margin:0; padding: 0}
-.list-inline>li {display: inline-block}
-.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
-</style>
-<ol class=list-inline><li>42</li><li>58</li><li>81</li><li>86</li><li>35</li><li>72</li><li>42</li><li>25</li><li>36</li><li>48</li><li>29</li><li>54</li><li>49</li><li>52</li><li>28</li><li>34</li><li>51</li><li>81</li><li>80</li><li>41</li></ol>
-</div></div>
-</div>
-</section>
-<section id="id3">
-<h5><span class="section-number">2.1.2. </span>绘图观测数据<a class="headerlink" href="#id3" title="Permalink to this heading">#</a></h5>
-<p>对数据进行绘图分析，着重分析 <code class="docutils literal notranslate"><span class="pre">Exam</span></code> 和 <code class="docutils literal notranslate"><span class="pre">Test</span></code> 两个变量之间的关系。</p>
-<p>首先应当粗略查看两者的关系，如线性、二次、曲线、正弦等</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">s20x</span><span class="p">)</span>
-<span class="nf">trendscatter</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Test</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">course.df</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/34d76a83bf787f231ce5f8f13d178aed8e9b8aff4bbd080df35b642e7ade2adf.png" src="_images/34d76a83bf787f231ce5f8f13d178aed8e9b8aff4bbd080df35b642e7ade2adf.png" />
-</div>
-</div>
-</section>
-<section id="id4">
-<h5><span class="section-number">2.1.3. </span>进行初步拟合<a class="headerlink" href="#id4" title="Permalink to this heading">#</a></h5>
-<p>可以看到整体大致呈线性关系，故我们采用线性回归模型。</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Test</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">course.df</span><span class="p">)</span>
-<span class="c1"># 绘制回归直线</span>
-<span class="n">examtest.fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Test</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">course.df</span><span class="p">)</span>
-<span class="c1"># lty = 2 表示虚线，col = &quot;red&quot; 表示红色</span>
-<span class="nf">abline</span><span class="p">(</span><span class="n">examtest.fit</span><span class="p">,</span><span class="w"> </span><span class="n">lty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;red&quot;</span><span class="p">)</span>
-
-<span class="nf">points</span><span class="p">(</span>
-<span class="w">    </span><span class="m">0</span><span class="p">,</span>
-<span class="w">    </span><span class="nf">predict</span><span class="p">(</span><span class="n">examtest.fit</span><span class="p">,</span><span class="w"> </span><span class="n">newdata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span><span class="n">Test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">)),</span>
-<span class="w">    </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;blue&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="n">pch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">19</span>
-<span class="p">)</span>
-<span class="nf">points</span><span class="p">(</span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="n">examtest.fit</span><span class="p">,</span><span class="w"> </span><span class="n">newdata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span><span class="n">Test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span><span class="p">)),</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;blue&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">pch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">19</span><span class="p">)</span>
-<span class="nf">points</span><span class="p">(</span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="n">examtest.fit</span><span class="p">,</span><span class="w"> </span><span class="n">newdata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span><span class="n">Test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">20</span><span class="p">)),</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;blue&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">pch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">19</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/26500326400ce837a91c07379c031dc6912117dd46acad61965409ea9fc887b5.png" src="_images/26500326400ce837a91c07379c031dc6912117dd46acad61965409ea9fc887b5.png" />
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">summary</span><span class="p">(</span><span class="n">examtest.fit</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
-lm(formula = Exam ~ Test, data = course.df)
-
-Residuals:
-    Min      1Q  Median      3Q     Max 
--39.980  -6.471   0.826   8.575  33.242 
-
-Coefficients:
-            Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)   9.0845     3.2204   2.821  0.00547 ** 
-Test          3.7859     0.2647  14.301  &lt; 2e-16 ***
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-Residual standard error: 12.05 on 144 degrees of freedom
-Multiple R-squared:  0.5868,	Adjusted R-squared:  0.5839 
-F-statistic: 204.5 on 1 and 144 DF,  p-value: &lt; 2.2e-16
-</pre></div>
-</div>
-</div>
-</div>
-<p>其中：</p>
-<ul class="simple">
-<li><p>Call：表示回归方程，指明了自变量和因变量</p></li>
-<li><p>Risiduals：残差，指明了残差的分布，如最大、最小、中值等</p></li>
-<li><p>Coefficients：系数，此处即 <span class="math notranslate nohighlight">\(a_i\)</span> 和 <span class="math notranslate nohighlight">\(b_i\)</span> 的值</p></li>
-<li><p>Residual standard error：残差标准差，即残差的标准差</p></li>
-<li><p>Multiple R-squared：多元 <span class="math notranslate nohighlight">\(R^2\)</span> 值</p></li>
-<li><p>Adjusted R-squared：调整后的 <span class="math notranslate nohighlight">\(R^2\)</span> 值</p></li>
-<li><p>F-statistic：F 统计量，即 F 统计量。F 统计量的分子是回归平方和，分母是残差平方和。F 统计量的值越大，说明回归平方和越大，即回归模型的拟合效果越好。F 统计量的值越小，说明回归平方和越小，即回归模型的拟合效果越差。p-value 则相反。</p></li>
-</ul>
-</section>
-</section>
-<section id="id5">
-<h4><span class="section-number">2.2. </span>分析数据是否可以接受<a class="headerlink" href="#id5" title="Permalink to this heading">#</a></h4>
-<section id="id6">
-<h5><span class="section-number">2.2.1. </span>残差观测<a class="headerlink" href="#id6" title="Permalink to this heading">#</a></h5>
-<p>针对指定行分析预测值和残差：</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">data.frame</span><span class="p">(</span><span class="n">course.df</span><span class="o">$</span><span class="n">Test</span><span class="p">[</span><span class="m">1</span><span class="p">],</span><span class="w"> </span><span class="n">course.df</span><span class="o">$</span><span class="n">Exam</span><span class="p">[</span><span class="m">1</span><span class="p">])</span><span class="w"> </span><span class="c1"># 原第一行</span>
-<span class="c1"># 按照 tidyverse 的风格，也可以使用 dplyr 包的 select 函数来选择列</span>
-<span class="c1"># dplyr::select(course.df[1, ], Exam, Test)</span>
-<span class="nf">fitted</span><span class="p">(</span><span class="n">examtest.fit</span><span class="p">)[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="c1"># 拟合值</span>
-<span class="nf">resid</span><span class="p">(</span><span class="n">examtest.fit</span><span class="p">)[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="c1"># 残差</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><table class="dataframe">
-<caption>A data.frame: 1 × 2</caption>
-<thead>
-	<tr><th scope=col>course.df.Test.1.</th><th scope=col>course.df.Exam.1.</th></tr>
-	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;int&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><td>9.1</td><td>42</td></tr>
-</tbody>
-</table>
-</div><div class="output text_html"><strong>1:</strong> 43.5363712056029</div><div class="output text_html"><strong>1:</strong> -1.53637120560293</div></div>
-</div>
-<p>检验上，一个成功的拟合模型的残差应当有：</p>
-<ol class="arabic simple">
-<li><p>残差均值接近于 0</p></li>
-<li><p>残差满足正态分布</p></li>
-<li><p>没有或排除了异常点</p></li>
-</ol>
-<section id="id7">
-<h6><span class="section-number">2.2.1.1. </span>残差均值接近于 0<a class="headerlink" href="#id7" title="Permalink to this heading">#</a></h6>
-<p>分析残差，看是否符合均值等于0</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># 其中 which = 1 表示残差直方图（histogram of residuals），</span>
-<span class="c1"># which = 2 表示残差QQ图（qqplot，即 normal quantile-quantile-plot），</span>
-<span class="c1"># which = 3 表示残差标准化图</span>
-<span class="nf">plot</span><span class="p">(</span><span class="n">examtest.fit</span><span class="p">,</span><span class="w"> </span><span class="n">which</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/35b823fba3ff7f30750d0a34b2f71cce609a26453fb2de6eb74ee2892c173ced.png" src="_images/35b823fba3ff7f30750d0a34b2f71cce609a26453fb2de6eb74ee2892c173ced.png" />
-</div>
-</div>
-</section>
-<section id="id8">
-<h6><span class="section-number">2.2.1.2. </span>残差满足正态分布<a class="headerlink" href="#id8" title="Permalink to this heading">#</a></h6>
-<p>残差在分布上在符合正态同分布：iid – independence（并且这是根据学生在考试中应该相互独立的表现）。残差应该有大致恒定的散布。这其实是 Equality Of Variance (EOV，方差相等) 原则。</p>
-<p>检查残差是否满足正态分布：</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">normcheck</span><span class="p">(</span><span class="n">examtest.fit</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/6bb11d1306b3725cf8f06bdd65fffe66f8b03070d6091ad9954ad10dc6ca2135.png" src="_images/6bb11d1306b3725cf8f06bdd65fffe66f8b03070d6091ad9954ad10dc6ca2135.png" />
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># 创造一个包含异常点的数据集并验证异常点对回归直线的影响</span>
-<span class="n">n</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">nrow</span><span class="p">(</span><span class="n">course.df</span><span class="p">)</span>
-<span class="c1"># 复制一数据集的最后一行</span>
-<span class="n">course2.df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">course.df</span><span class="p">[</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="p">]</span>
-<span class="c1"># 修改新数据集的最后一行的 Test 和 Exam 列的值，故意创造一个差异极大的观测值</span>
-<span class="n">course2.df</span><span class="p">[</span><span class="n">n</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Test&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Exam&quot;</span><span class="p">)]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">25</span><span class="p">,</span><span class="w"> </span><span class="m">5</span><span class="p">)</span>
-<span class="c1"># 画出散点图</span>
-<span class="nf">plot</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Test</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">course2.df</span><span class="p">)</span>
-<span class="c1">## 并标记我们创建的新的观测点</span>
-<span class="nf">points</span><span class="p">(</span><span class="m">25</span><span class="p">,</span><span class="w"> </span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="n">pch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">19</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;red&quot;</span><span class="p">)</span>
-
-<span class="c1"># 如果有的观测值是异常值，那么回归直线就会受到影响</span>
-<span class="n">examtest2.fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Test</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">course2.df</span><span class="p">)</span>
-<span class="nf">summary</span><span class="p">(</span><span class="n">examtest2.fit</span><span class="p">)</span>
-
-<span class="c1"># 或者直接画图验证该点造成的影响</span>
-<span class="nf">abline</span><span class="p">(</span><span class="n">examtest.fit</span><span class="p">,</span><span class="w"> </span><span class="n">lty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;blue&quot;</span><span class="p">)</span>
-<span class="nf">abline</span><span class="p">(</span><span class="n">examtest2.fit</span><span class="p">,</span><span class="w"> </span><span class="n">lty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;red&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
-lm(formula = Exam ~ Test, data = course2.df)
-
-Residuals:
-    Min      1Q  Median      3Q     Max 
--90.251  -6.846   2.638   9.456  33.996 
-
-Coefficients:
-            Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)  15.2374     3.7172   4.099 6.88e-05 ***
-Test          3.2006     0.3023  10.588  &lt; 2e-16 ***
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-Residual standard error: 14.34 on 145 degrees of freedom
-Multiple R-squared:  0.436,	Adjusted R-squared:  0.4322 
-F-statistic: 112.1 on 1 and 145 DF,  p-value: &lt; 2.2e-16
-</pre></div>
-</div>
-<img alt="_images/82d6aab155747efdc5bac4cb79629862729d50606337f73129b42121b70fa956.png" src="_images/82d6aab155747efdc5bac4cb79629862729d50606337f73129b42121b70fa956.png" />
-</div>
-</div>
-<p>对其进行观测值差异分析：</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># 画出异常值的影响</span>
-<span class="nf">cooks20x</span><span class="p">(</span><span class="n">examtest2.fit</span><span class="p">)</span>
-<span class="c1"># 对比原来的值影响</span>
-<span class="nf">cooks20x</span><span class="p">(</span><span class="n">examtest.fit</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/ceedb9466e85863351e21d28c8d36e5c808714e5bd54868e94eab2bb4fb73243.png" src="_images/ceedb9466e85863351e21d28c8d36e5c808714e5bd54868e94eab2bb4fb73243.png" />
-<img alt="_images/72fd3b7a07256369ba4cd0417cff708c48608f03541b3678a1d4435cb28d8bfe.png" src="_images/72fd3b7a07256369ba4cd0417cff708c48608f03541b3678a1d4435cb28d8bfe.png" />
-</div>
-</div>
-</section>
-</section>
-<section id="r">
-<h5><span class="section-number">2.2.2. </span>R 方观测<a class="headerlink" href="#r" title="Permalink to this heading">#</a></h5>
-<p>R Squared 即 R 平方，是回归平方和与总平方和的比值，即 <span class="math notranslate nohighlight">\(R^2 = \frac{SSR}{SST}\)</span>，其中 SSR 为回归平方和，SST 为总平方和。R 平方的值越大，说明回归平方和越大，即回归模型的拟合效果越好。R 平方的值越小，说明回归平方和越小，即回归模型的拟合效果越差。</p>
-<p>SSR 即回归平方和，是因变量的预测值与因变量的均值之差的平方和，即 <span class="math notranslate nohighlight">\(SSR = \sum_{i=1}^n (y_i - \bar{y})^2\)</span>，其中 <span class="math notranslate nohighlight">\(y_i\)</span> 为第 <span class="math notranslate nohighlight">\(i\)</span> 个观测值，<span class="math notranslate nohighlight">\(\bar{y}\)</span> 为因变量的均值。下面将简要介绍 SSR 的计算方法。</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># 消除一次项</span>
-<span class="n">examnull.fit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">course.df</span><span class="p">)</span>
-<span class="nf">summary</span><span class="p">(</span><span class="n">examnull.fit</span><span class="p">)</span>
-<span class="c1"># 对比之前的 Summary</span>
-<span class="nf">summary</span><span class="p">(</span><span class="n">examtest.fit</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
-lm(formula = Exam ~ 1, data = course.df)
-
-Residuals:
-    Min      1Q  Median      3Q     Max 
--41.877 -12.877  -1.377  15.623  40.123 
-
-Coefficients:
-            Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)   52.877      1.546   34.21   &lt;2e-16 ***
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-Residual standard error: 18.68 on 145 degrees of freedom
-</pre></div>
-</div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
-lm(formula = Exam ~ Test, data = course.df)
-
-Residuals:
-    Min      1Q  Median      3Q     Max 
--39.980  -6.471   0.826   8.575  33.242 
-
-Coefficients:
-            Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)   9.0845     3.2204   2.821  0.00547 ** 
-Test          3.7859     0.2647  14.301  &lt; 2e-16 ***
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-Residual standard error: 12.05 on 144 degrees of freedom
-Multiple R-squared:  0.5868,	Adjusted R-squared:  0.5839 
-F-statistic: 204.5 on 1 and 144 DF,  p-value: &lt; 2.2e-16
-</pre></div>
-</div>
-</div>
-</div>
-<p>此时我们可以得到 SS（Null）的值 18.68，以及 SS（Test）的值 12.05。</p>
-<p>R 方的值即 1 - SS（Null）/SS（Test）的值，即 0.5868。</p>
-<p>置信区间：<span class="math notranslate nohighlight">\([a_i - 2SE(a_i), a_i + 2SE(a_i)]\)</span>，即 <span class="math notranslate nohighlight">\([a_i - 2\sqrt{Var(a_i)}, a_i + 2\sqrt{Var(a_i)}]\)</span>，其中 <span class="math notranslate nohighlight">\(Var(a_i)\)</span> 为 <span class="math notranslate nohighlight">\(a_i\)</span> 的方差。</p>
-</section>
-<section id="t">
-<h5><span class="section-number">2.2.3. </span>每一个拟合值的 T 检验<a class="headerlink" href="#t" title="Permalink to this heading">#</a></h5>
-<blockquote>
-<div><p>知道看什么，什么意思，怎么看</p>
-</div></blockquote>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">summary</span><span class="p">(</span><span class="n">examtest.fit</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
-lm(formula = Exam ~ Test, data = course.df)
-
-Residuals:
-    Min      1Q  Median      3Q     Max 
--39.980  -6.471   0.826   8.575  33.242 
-
-Coefficients:
-            Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)   9.0845     3.2204   2.821  0.00547 ** 
-Test          3.7859     0.2647  14.301  &lt; 2e-16 ***
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-Residual standard error: 12.05 on 144 degrees of freedom
-Multiple R-squared:  0.5868,	Adjusted R-squared:  0.5839 
-F-statistic: 204.5 on 1 and 144 DF,  p-value: &lt; 2.2e-16
-</pre></div>
-</div>
-</div>
-</div>
-<p>可以看出 Test 行的 Pr（P-value）的值小于 2.2x10^-16，远小于 0.05，故拒绝原假设，即拟合值的系（旁边的3颗*也表示可信度极高，即该斜率的线性拟合极好）</p>
-<ul class="simple">
-<li><p>零假设 <span class="math notranslate nohighlight">\(H_0\)</span>：Test 和 Exam 之间的线性关系系数为 0（没有线性关系），即 即 <span class="math notranslate nohighlight">\(a_i\)</span> 的系数为 0</p></li>
-<li><p>备择假设 <span class="math notranslate nohighlight">\(H_1\)</span>：Test 和 Exam 之间的线性关系系数不为 0（有线性关系），即 即 <span class="math notranslate nohighlight">\(a_i\)</span> 的系数不为 0</p></li>
-</ul>
-<p>我们对于斜率的置信程度，是由标准误差决定的，即 <span class="math notranslate nohighlight">\(SE(a_i)\)</span>，即 <span class="math notranslate nohighlight">\(SE(a_i) = \sqrt{\frac{SSE}{n-2}}\)</span>，其中 SSE 为残差平方和，即 <span class="math notranslate nohighlight">\(SSE = \sum_{i=1}^n (y_i - \hat{y_i})^2\)</span>，其中 <span class="math notranslate nohighlight">\(\hat{y_i}\)</span> 为第 <span class="math notranslate nohighlight">\(i\)</span> 个观测值的预测值，即 <span class="math notranslate nohighlight">\(\hat{y_i} = a_i + b_i x_i\)</span>，<span class="math notranslate nohighlight">\(x_i\)</span> 为第 <span class="math notranslate nohighlight">\(i\)</span> 个观测值的自变量值。此处的 <span class="math notranslate nohighlight">\(se(a)\)</span> 为 0.2647。于是我们有：</p>
-<div class="math notranslate nohighlight">
-\[
-\frac{3.7859 - 0}{0.2647} = 14.34
-\]</div>
-<p>此结果表示偏离此结果的标准差，这个数字越大，代表我们对于斜率的置信程度越高。</p>
-</section>
-</section>
-<section id="id9">
-<h4><span class="section-number">2.3. </span>利用分析结果做预测<a class="headerlink" href="#id9" title="Permalink to this heading">#</a></h4>
-<section id="id10">
-<h5><span class="section-number">2.3.1. </span>拟合值的置信区间<a class="headerlink" href="#id10" title="Permalink to this heading">#</a></h5>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">confint</span><span class="p">(</span><span class="n">examtest.fit</span><span class="p">)</span>
-<span class="c1"># Intercept 即截距，Test 即斜率</span>
-<span class="c1"># 也可以自己修改置信水平</span>
-<span class="nf">confint</span><span class="p">(</span><span class="n">examtest.fit</span><span class="p">,</span><span class="w"> </span><span class="n">level</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.99</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><table class="dataframe">
-<caption>A matrix: 2 × 2 of type dbl</caption>
-<thead>
-	<tr><th></th><th scope=col>2.5 %</th><th scope=col>97.5 %</th></tr>
-</thead>
-<tbody>
-	<tr><th scope=row>(Intercept)</th><td>2.719020</td><td>15.449907</td></tr>
-	<tr><th scope=row>Test</th><td>3.262659</td><td> 4.309189</td></tr>
-</tbody>
-</table>
-</div><div class="output text_html"><table class="dataframe">
-<caption>A matrix: 2 × 2 of type dbl</caption>
-<thead>
-	<tr><th></th><th scope=col>0.5 %</th><th scope=col>99.5 %</th></tr>
-</thead>
-<tbody>
-	<tr><th scope=row>(Intercept)</th><td>0.6778171</td><td>17.491110</td></tr>
-	<tr><th scope=row>Test</th><td>3.0948635</td><td> 4.476984</td></tr>
-</tbody>
-</table>
-</div></div>
-</div>
-</section>
-<section id="id11">
-<h5><span class="section-number">2.3.2. </span>预测<a class="headerlink" href="#id11" title="Permalink to this heading">#</a></h5>
-<ol class="arabic simple">
-<li><p>准确预测值</p></li>
-<li><p>预测的均值范围</p></li>
-<li><p>预测每一个个体的取值范围</p></li>
-</ol>
-<p>区间估计和点估计的区别：</p>
-<ul class="simple">
-<li><p>区间估计：给出一个区间，表示参数的可能取值范围</p></li>
-<li><p>点估计：给出一个点，表示参数的可能取值</p></li>
-</ul>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># 区间估计</span>
-<span class="n">preds.df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span><span class="n">Test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">seq</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span><span class="p">))</span>
-<span class="nf">predict</span><span class="p">(</span><span class="n">examtest.fit</span><span class="p">,</span><span class="w"> </span><span class="n">newdata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">preds.df</span><span class="p">,</span><span class="w"> </span><span class="n">interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;confidence&quot;</span><span class="p">)</span>
-<span class="c1"># 点估计</span>
-<span class="nf">predict</span><span class="p">(</span><span class="n">examtest.fit</span><span class="p">,</span><span class="w"> </span><span class="n">newdata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">preds.df</span><span class="p">,</span><span class="w"> </span><span class="n">interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;prediction&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><table class="dataframe">
-<caption>A matrix: 3 × 3 of type dbl</caption>
-<thead>
-	<tr><th></th><th scope=col>fit</th><th scope=col>lwr</th><th scope=col>upr</th></tr>
-</thead>
-<tbody>
-	<tr><th scope=row>1</th><td> 9.084463</td><td> 2.71902</td><td>15.44991</td></tr>
-	<tr><th scope=row>2</th><td>46.943703</td><td>44.80912</td><td>49.07828</td></tr>
-	<tr><th scope=row>3</th><td>84.802942</td><td>79.97021</td><td>89.63568</td></tr>
-</tbody>
-</table>
-</div><div class="output text_html"><table class="dataframe">
-<caption>A matrix: 3 × 3 of type dbl</caption>
-<thead>
-	<tr><th></th><th scope=col>fit</th><th scope=col>lwr</th><th scope=col>upr</th></tr>
-</thead>
-<tbody>
-	<tr><th scope=row>1</th><td> 9.084463</td><td>-15.56475</td><td> 33.73368</td></tr>
-	<tr><th scope=row>2</th><td>46.943703</td><td> 23.03510</td><td> 70.85231</td></tr>
-	<tr><th scope=row>3</th><td>84.802942</td><td> 60.50438</td><td>109.10151</td></tr>
-</tbody>
-</table>
-</div></div>
-</div>
-<p>其中：</p>
-<ul class="simple">
-<li><p>区间估计表格的 [2,2:3] 表示所有半期考试10分，期末考试的分数的均值的范围</p></li>
-<li><p>区间估计表格的 [2,2:3] 表示所有半期考试10分个体的分数的范围，落在这个范围即为正常值</p></li>
-</ul>
-</section>
-</section>
-<section id="id12">
-<h4><span class="section-number">2.4. </span>总结<a class="headerlink" href="#id12" title="Permalink to this heading">#</a></h4>
-<p>遇到此类问题，通用思路（适用于分析x和y两个未知数的某种关系）：</p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
-<li><p>绘制数据散点图并简要查看自变量与因变量之间是哪种关系（如果有关系），最好是能够通过工具分析（也可能会有一份研究意图的声明可以被指导）。提出适当的研究方式。在上边的例子中，我们就决定采用了线性模型：</p>
-<div class="math notranslate nohighlight">
-\[
-    y = β_0 + β_1x_i + ε_i, ε_i ∼ N(0, σ^2) (where β_1 &gt; 0)
-    \]</div>
-</li>
-<li><p>使用 <code class="docutils literal notranslate"><span class="pre">lm</span></code> 函数进行模型拟合。</p></li>
-<li><p>检查我们提出的假设进行合适方式的验证。</p>
-<ul class="simple">
-<li><p>Independence OK? (how were the data collected?)</p></li>
-<li><p>EOV Okay? Using <code class="docutils literal notranslate"><span class="pre">plot(examtest.fit,</span> <span class="pre">which</span> <span class="pre">=</span> <span class="pre">1)</span></code>.</p></li>
-<li><p>Normality Okay? Using <code class="docutils literal notranslate"><span class="pre">normcheck</span></code>.</p></li>
+<li class="toctree-l1"><a class="reference internal" href="00-at-the-beginning.html">At the beginning</a></li>
 </ul>
-<p>If these are okay then go to next step.</p>
-</li>
-<li><p>尝试适时删除任何不重要的解释变量（后面会讲）。如果能删除，请检查新的研究方式。</p></li>
-<li><p>确保个别要点不会产生过分的不适当的影响，并尝试删除/纠正它们。Using <code class="docutils literal notranslate"><span class="pre">cooks20x</span></code>.</p></li>
-<li><p>做出结论/预测，讨论极限，并回答相关的研究问题。</p></li>
-</ul>
-<p>注意：在上述步骤中，在对当前步骤满意之前，切记不要匆忙进行下一步。</p>
-</section>
-</section>
-<span id="document-03-null-model"></span><section class="tex2jax_ignore mathjax_ignore" id="the-null-model">
-<h3><span class="section-number">3. </span>The null model<a class="headerlink" href="#the-null-model" title="Permalink to this heading">#</a></h3>
-<p>本课程前置需要装的包：</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">require</span><span class="p">(</span><span class="n">s20x</span><span class="p">)</span>
-<span class="nf">require</span><span class="p">(</span><span class="n">bootstrap</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading required package: s20x
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading required package: bootstrap
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning message in library(package, lib.loc = lib.loc, character.only = TRUE, logical.return = TRUE, :
-“there is no package called ‘bootstrap’”
-</pre></div>
-</div>
-</div>
-</div>
-<section id="revisiting-the-null-model">
-<h4><span class="section-number">3.1. </span>Revisiting the null model 回顾零模型<a class="headerlink" href="#revisiting-the-null-model" title="Permalink to this heading">#</a></h4>
-<p>本节同样以 Stats20x 的学生考试成绩为例：</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">Stats20x.df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">read.table</span><span class="p">(</span><span class="s">&quot;../data/STATS20x.txt&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">header</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="n">sep</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;\t&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>零模型就是把线性模型中的斜率去掉，或斜率指定常数，从而排除其影响单独分析截距。本节将重点讲述零模型的最大作用：T检验。</p>
-<blockquote>
-<div><p><a class="reference external" href="https://zhuanlan.zhihu.com/p/138711532">一文详解t检验 - 知乎</a></p>
-<p>t检验（t test）又称学生t检验（Student t-test）可以说是统计推断中非常常见的一种检验方法，用于统计量服从正态分布，但方差未知的情况。</p>
-<p>t检验的前提是要求样本服从正态分布或近似正态分布，不然可以利用一些变换（取对数、开根号、倒数等等）试图将其转化为服从正态分布是数据，如若还是不满足正态分布，只能利用非参数检验方法。不过当样本量大于30的时候，可以认为数据近似正态分布。</p>
-<p>t检验最常见的四个用途：</p>
-<ul class="simple">
-<li><p>单样本均值检验（One-sample t-test）
-用于检验 “总体方差未知、正态数据或近似正态的” 单样本的均值，是否与已知的总体均值相等。</p></li>
-<li><p>两独立样本均值检验（Independent two-sample t-test）
-用于检验两对 “独立的，正态数据或近似正态的” 样本的均值是否相等，这里可根据总体方差是否相等分类讨论。</p></li>
-<li><p>配对样本均值检验（Dependent t-test for paired samples）
-用于检验一对配对样本的均值的差，是否等于某一个值</p></li>
-<li><p>回归系数的显著性检验（t-test for regression coefficient significance）
-用于检验回归模型的解释变量，对被解释变量是否有显著影响</p></li>
-</ul>
-</div></blockquote>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># 建立回归模型</span>
-<span class="n">examtest.fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Test</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="p">)</span>
-<span class="n">examtest.fit2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="p">)</span>
-
-<span class="c1"># 绘图</span>
-<span class="nf">plot</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Test</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;grey&quot;</span><span class="p">)</span>
-<span class="nf">abline</span><span class="p">(</span><span class="n">examtest.fit</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;blue&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">lty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
-<span class="nf">abline</span><span class="p">(</span><span class="n">examtest.fit2</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;red&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">lty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/1ee74b505046c0c49cdcc088cd1bee4466264bd5b27132cb21cb9e9bbb5d919c.png" src="_images/1ee74b505046c0c49cdcc088cd1bee4466264bd5b27132cb21cb9e9bbb5d919c.png" />
-</div>
-</div>
-<p>推断总体均值：</p>
-<p>To save some typing we’ll let y be the vector Stats20x.df$Exam of exam scores.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">y</span><span class="o">=</span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Exam</span>
-<span class="nf">hist</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">breaks</span><span class="o">=</span><span class="m">20</span><span class="p">,</span><span class="n">main</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span><span class="w"> </span><span class="c1">#Use main to suppress plot title</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/d2937701b7f33a5d6132ce8034339f7792c0877f27fd024d5f8d7bbc422a4b25.png" src="_images/d2937701b7f33a5d6132ce8034339f7792c0877f27fd024d5f8d7bbc422a4b25.png" />
-</div>
-</div>
-<p>继续使用零模型做线性回归，使其更关注于y值的置信关系与p检验。</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">null.fit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
-<span class="c1"># Only give coefficients from summary 将系数板块单独提取出做展示</span>
-<span class="nf">coef</span><span class="p">(</span><span class="nf">summary</span><span class="p">(</span><span class="n">null.fit</span><span class="p">))</span>
-<span class="c1"># 获得该零模型的对应置信区间</span>
-<span class="nf">confint</span><span class="p">(</span><span class="n">null.fit</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><table class="dataframe">
-<caption>A matrix: 1 × 4 of type dbl</caption>
-<thead>
-	<tr><th></th><th scope=col>Estimate</th><th scope=col>Std. Error</th><th scope=col>t value</th><th scope=col>Pr(&gt;|t|)</th></tr>
-</thead>
-<tbody>
-	<tr><th scope=row>(Intercept)</th><td>52.87671</td><td>1.545802</td><td>34.20666</td><td>2.632011e-71</td></tr>
-</tbody>
-</table>
-</div><div class="output text_html"><table class="dataframe">
-<caption>A matrix: 1 × 2 of type dbl</caption>
-<thead>
-	<tr><th></th><th scope=col>2.5 %</th><th scope=col>97.5 %</th></tr>
-</thead>
-<tbody>
-	<tr><th scope=row>(Intercept)</th><td>49.8215</td><td>55.93193</td></tr>
-</tbody>
-</table>
-</div></div>
-</div>
-<p>Conclusion:</p>
-<ul class="simple">
-<li><p>The near zero <span class="math notranslate nohighlight">\(Pr(&gt;|t|)\)</span> p-value totally rejects(拒绝) the null hypothesis(零假设) that <span class="math notranslate nohighlight">\(H0 : µ ≡ β0 = 0\)</span>.</p></li>
-<li><p>The 95% confidence interval(置信区间) for <span class="math notranslate nohighlight">\(µ\)</span> is 49.82 to 55.93.</p></li>
-</ul>
-</section>
-<section id="revisiting-the-t-test">
-<h4><span class="section-number">3.2. </span>Revisiting the t-test<a class="headerlink" href="#revisiting-the-t-test" title="Permalink to this heading">#</a></h4>
-<div class="math notranslate nohighlight">
-\[
-T = \frac
-{\bar{y} - \mu}
-{\frac{s}{\sqrt n}} \sim t_{n-1}
-\]</div>
-<p>其中 <span class="math notranslate nohighlight">\(\bar{y}\)</span> 为样本均值，<span class="math notranslate nohighlight">\(s\)</span> 为样本标准差。</p>
-<div class="math notranslate nohighlight">
-\[
-s=\sqrt{\frac{1}{n-1}\sum_{i=1}^n(X_i-\bar X)^2}
-\]</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">n</span><span class="o">=</span><span class="nf">length</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="c1">#146 students</span>
-<span class="n">tstat</span><span class="o">=</span><span class="p">(</span><span class="nf">mean</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="m">-0</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="nf">sd</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">))</span><span class="w"> </span>
-<span class="n">tstat</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html">34.2066579217089</div></div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">## t-multiplier</span>
-<span class="n">tmult</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">qt</span><span class="p">(</span><span class="m">1-.05</span><span class="o">/</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">df</span><span class="o">=</span><span class="n">n</span><span class="m">-1</span><span class="p">)</span>
-<span class="c1">## We want the upper 97.5% (or 1-.05/2) bound of the CI</span>
-<span class="c1">## NOTE: mean = sample mean; sd = standard deviation; sqrt = square root</span>
-<span class="nf">mean</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">tmult</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nf">sd</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nf">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-
-<span class="c1">## Upper bound of CI 置信区间上限</span>
-<span class="nf">mean</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">tmult</span><span class="o">*</span><span class="nf">sd</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-<span class="c1">## Or if we want both the lower and upper bounds of the CI in one statement</span>
-<span class="c1">## 置信区间下限</span>
-<span class="nf">mean</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">-1</span><span class="p">,</span><span class="m">1</span><span class="p">)</span><span class="o">*</span><span class="n">tmult</span><span class="o">*</span><span class="nf">sd</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html">49.8214976403875</div><div class="output text_html">55.9319270171467</div><div class="output text_html"><style>
-.list-inline {list-style: none; margin:0; padding: 0}
-.list-inline>li {display: inline-block}
-.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
-</style>
-<ol class=list-inline><li>49.8214976403875</li><li>55.9319270171467</li></ol>
-</div></div>
-</div>
-<p>零模型就是单样本T检验。</p>
-<p>手动随机抽样检验我们的结果：</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">## Resampling the exam marks, N times with replacement:</span>
-<span class="n">N</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">10000</span><span class="w"> </span><span class="c1"># The number of bootstrap resamples we want</span>
-<span class="c1"># The new sample means are stored in ybar</span>
-<span class="n">ybar</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="kc">NA</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="p">)</span><span class="w"> </span><span class="c1">## A vector of length N to store our resampled means</span>
-
-<span class="c1">## A loop - allows us to do something N (10,000) times</span>
-<span class="nf">for </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="n">N</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="c1">## Take the average of this sample (below) from a sample of size n = 146 from y - with replacement</span>
-<span class="w">    </span><span class="n">ybar</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="nf">sample</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">replace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">T</span><span class="p">))</span>
-<span class="p">}</span>
-<span class="nf">mean</span><span class="p">(</span><span class="n">ybar</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html">52.8913198630137</div></div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">bootstrap</span><span class="p">)</span>
-<span class="n">ybar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">bootstrap</span><span class="p">(</span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Exam</span><span class="p">,</span><span class="w"> </span><span class="m">10000</span><span class="p">,</span><span class="w"> </span><span class="n">mean</span><span class="p">)</span><span class="o">$</span><span class="n">thetastar</span>
-<span class="nf">mean</span><span class="p">(</span><span class="n">ybar</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span>Error in library(bootstrap): there is no package called ‘bootstrap’
-Traceback:
-
-1. library(bootstrap)
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">## Histogram of these 10,000 bootstrap means </span>
-<span class="nf">hist</span><span class="p">(</span><span class="n">ybar</span><span class="p">,</span><span class="n">xlab</span><span class="o">=</span><span class="s">&quot;Bootstrapped sample means&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/8a4dab117db842b07905539cd1c4bfb39513de1e36a4a1214078c633930e5115.png" src="_images/8a4dab117db842b07905539cd1c4bfb39513de1e36a4a1214078c633930e5115.png" />
-</div>
-</div>
-</section>
-<section id="the-paired-t-test">
-<h4><span class="section-number">3.3. </span>The paired t-test<a class="headerlink" href="#the-paired-t-test" title="Permalink to this heading">#</a></h4>
-<p>For a meaningful comparison, We will need to make them have the same scale, so we multiply the test mark by 5 so that it is also out of 100.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Test2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Test</span><span class="w"> </span>
-<span class="c1">## Check that it worked</span>
-<span class="n">Stats20x.df</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Exam&quot;</span><span class="p">,</span><span class="s">&quot;Test&quot;</span><span class="p">,</span><span class="s">&quot;Test2&quot;</span><span class="p">)]</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><table class="dataframe">
-<caption>A data.frame: 3 × 3</caption>
-<thead>
-	<tr><th></th><th scope=col>Exam</th><th scope=col>Test</th><th scope=col>Test2</th></tr>
-	<tr><th></th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><th scope=row>1</th><td>42</td><td> 9.1</td><td>45.5</td></tr>
-	<tr><th scope=row>2</th><td>58</td><td>13.6</td><td>68.0</td></tr>
-	<tr><th scope=row>3</th><td>81</td><td>14.5</td><td>72.5</td></tr>
-</tbody>
-</table>
-</div></div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Diff</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Test2</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Exam</span><span class="w"> </span>
-<span class="c1">## Check the first 5 measurements</span>
-<span class="n">Stats20x.df</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Test2&quot;</span><span class="p">,</span><span class="s">&quot;Exam&quot;</span><span class="p">,</span><span class="s">&quot;Diff&quot;</span><span class="p">)]</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><table class="dataframe">
-<caption>A data.frame: 5 × 3</caption>
-<thead>
-	<tr><th></th><th scope=col>Test2</th><th scope=col>Exam</th><th scope=col>Diff</th></tr>
-	<tr><th></th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><th scope=row>1</th><td>45.5</td><td>42</td><td> 3.5</td></tr>
-	<tr><th scope=row>2</th><td>68.0</td><td>58</td><td>10.0</td></tr>
-	<tr><th scope=row>3</th><td>72.5</td><td>81</td><td>-8.5</td></tr>
-	<tr><th scope=row>4</th><td>95.5</td><td>86</td><td> 9.5</td></tr>
-	<tr><th scope=row>5</th><td>41.0</td><td>35</td><td> 6.0</td></tr>
-</tbody>
-</table>
-</div></div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">hist</span><span class="p">(</span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Diff</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/ebe49c6b832ec1025ba44e20311ac14bfc036ba10c355e70babec9235c6b5cdb.png" src="_images/ebe49c6b832ec1025ba44e20311ac14bfc036ba10c355e70babec9235c6b5cdb.png" />
-</div>
-</div>
-</section>
-</section>
-<span id="document-04-fit-curves-with-linear-model"></span><section class="tex2jax_ignore mathjax_ignore" id="fitting-curves-with-the-linear-model">
-<h3><span class="section-number">4. </span>Fitting curves with the linear model<a class="headerlink" href="#fitting-curves-with-the-linear-model" title="Permalink to this heading">#</a></h3>
-<p>本节需要的包：</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">require</span><span class="p">(</span><span class="n">s20x</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>载入需要的程辑包：s20x
-</pre></div>
-</div>
-</div>
-</div>
-<section id="identifying-a-curved-relationship">
-<h4><span class="section-number">4.1. </span>Identifying a curved relationship 初步探究曲线关系<a class="headerlink" href="#identifying-a-curved-relationship" title="Permalink to this heading">#</a></h4>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">## Load the s20x library into our R session </span>
-<span class="nf">library</span><span class="p">(</span><span class="n">s20x</span><span class="p">)</span><span class="w"> </span>
-<span class="c1">## Importing data into R </span>
-<span class="n">Stats20x.df</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">read.table</span><span class="p">(</span><span class="s">&quot;../data/STATS20x.txt&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">header</span><span class="o">=</span><span class="bp">T</span><span class="p">)</span><span class="w"> </span>
-<span class="c1">## Examine the data</span>
-<span class="nf">plot</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Assign</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/646abebe9d6b2d94dda1f6876f41ce86b402502e014a54791fe952dc58c08262.png" src="_images/646abebe9d6b2d94dda1f6876f41ce86b402502e014a54791fe952dc58c08262.png" />
-</div>
-</div>
-<p>Hmmm, not quite a straight line – could be some curvature. Maybe will paint a clearer picture. 不是一条很直的线–可能是一些曲率。也许会描绘出一幅更清晰的图景。</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">trendscatter</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Assign</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/00843bcb006a8a8f52b4cfc4c1f242f85c73f9d7253852579c8e8af9309e4a3b.png" src="_images/00843bcb006a8a8f52b4cfc4c1f242f85c73f9d7253852579c8e8af9309e4a3b.png" />
-</div>
-</div>
-<p>Let’s fit a simple linear model to these data and see if it works out or not.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">examassign.fit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Assign</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="p">)</span>
-<span class="nf">plot</span><span class="p">(</span><span class="n">examassign.fit</span><span class="p">,</span><span class="w"> </span><span class="n">which</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/f6c535a6bffdb3c5da65e0daad795e8ad7a15453f1d98765b43958b2c716d42d.png" src="_images/f6c535a6bffdb3c5da65e0daad795e8ad7a15453f1d98765b43958b2c716d42d.png" />
-</div>
-</div>
-<p>The assumption of identical distribution with expected value of 0 looks to be questionable here. There tend to be more negative residuals in the middle, but more positive residuals at the extremes of the fitted values. Potential solution – add a quadratic (squared term) for.</p>
-<p>假设相同的分布与预期值0看起来可疑的。会有更多负面的残差在中间,但更积极的残差的极端值。潜在的解决方案应该是：添加一个二次项(平方项)。</p>
-</section>
-<section id="fitting-a-quadratic-model">
-<h4><span class="section-number">4.2. </span>Fitting a quadratic model 拟合二次模型<a class="headerlink" href="#fitting-a-quadratic-model" title="Permalink to this heading">#</a></h4>
-<p>The standard notation for a quadratic curve is:</p>
-<div class="math notranslate nohighlight">
-\[
-y = a x^2 + b x + c
-\]</div>
-<p>Here we will use different notation: <span class="math notranslate nohighlight">\(\beta_0 = c\)</span>, <span class="math notranslate nohighlight">\(\beta_1 = b\)</span> and <span class="math notranslate nohighlight">\(\beta_2 = a\)</span> and use the quadratic curve to describe the expected value of our dependent variable <span class="math notranslate nohighlight">\(y\)</span>. That is, we will use the following notation:</p>
-<div class="math notranslate nohighlight">
-\[
-E[Y|x] = \beta_0 + \beta_1 x + \beta_2 x^2
-\]</div>
-<blockquote>
-<div><p>If <span class="math notranslate nohighlight">\(\beta_2 &gt; 0\)</span>, then the quadratic has slope that increases with increasing x(斜率随着x增大而增大). If <span class="math notranslate nohighlight">\(\beta_2 &lt; 0\)</span>, then the quadratic has slope that decreases with increasing x. If <span class="math notranslate nohighlight">\(\beta_2 = 0\)</span>, then the quadratic(该“二次曲线”) has a constant slope(倾斜直线的外观).</p>
-</div></blockquote>
-<p>让我们回到之前的学生数据集。我们将使用一个新的变量 <span class="math notranslate nohighlight">\(x^2\)</span> 来拟合一个二次模型：</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">examassign.fit2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Assign</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nf">I</span><span class="p">(</span><span class="n">Assign</span><span class="o">^</span><span class="m">2</span><span class="p">),</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="p">)</span>
-<span class="nf">plot</span><span class="p">(</span><span class="n">examassign.fit2</span><span class="p">,</span><span class="w"> </span><span class="n">which</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/4cf6bb26ef98a9af247edd200fad47e957ae8449a9acf92a5b9fc4e253e2d03e.png" src="_images/4cf6bb26ef98a9af247edd200fad47e957ae8449a9acf92a5b9fc4e253e2d03e.png" />
-</div>
-</div>
-<p>That is looking much better.</p>
-<p>接下来我们会进行“三步走”中的后两步：</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">normcheck</span><span class="p">(</span><span class="n">examassign.fit2</span><span class="p">)</span>
-<span class="nf">cooks20x</span><span class="p">(</span><span class="n">examassign.fit2</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/0aae3fb8b150fce3e474dcfc7655779bb47b06d00cba2d1e2dad2a38a083b9b5.png" src="_images/0aae3fb8b150fce3e474dcfc7655779bb47b06d00cba2d1e2dad2a38a083b9b5.png" />
-<img alt="_images/5f9529e2319bfce109347216e153cee476c700eb2d43d56d508776d6b627b3c1.png" src="_images/5f9529e2319bfce109347216e153cee476c700eb2d43d56d508776d6b627b3c1.png" />
-</div>
-</div>
-<p>符合正态分布、方差齐性。我们可以尝试对照一下原来的模型和我们的新模型：</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Assign</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="p">)</span><span class="w"> </span>
-<span class="n">x</span><span class="o">=</span><span class="m">0</span><span class="o">:</span><span class="m">20</span><span class="w"> </span><span class="c1">#Assignment values at which to predict exam mark</span>
-<span class="c1">## Plot model 1</span>
-<span class="nf">lines</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="n">examassign.fit</span><span class="p">,</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">Assign</span><span class="o">=</span><span class="n">x</span><span class="p">)),</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s">&quot;red&quot;</span><span class="p">)</span>
-<span class="c1">## Plot model 2</span>
-<span class="nf">lines</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="n">examassign.fit2</span><span class="p">,</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">Assign</span><span class="o">=</span><span class="n">x</span><span class="p">)),</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s">&quot;blue&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/07c97c984d6c26081c08eafa0ceb72ac180d847d83f09b7380e6abb9cc1dc421.png" src="_images/07c97c984d6c26081c08eafa0ceb72ac180d847d83f09b7380e6abb9cc1dc421.png" />
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">summary</span><span class="p">(</span><span class="n">examassign.fit2</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
-lm(formula = Exam ~ Assign + I(Assign^2), data = Stats20x.df)
-
-Residuals:
-    Min      1Q  Median      3Q     Max 
--32.541  -9.149   1.273   9.087  41.116 
-
-Coefficients:
-            Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept) 28.41396    5.99081   4.743 5.05e-06 ***
-Assign      -0.68172    1.07242  -0.636 0.525999    
-I(Assign^2)  0.16102    0.04545   3.542 0.000536 ***
----
-Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-
-Residual standard error: 12.65 on 143 degrees of freedom
-Multiple R-squared:  0.5477,	Adjusted R-squared:  0.5414 
-F-statistic: 86.59 on 2 and 143 DF,  p-value: &lt; 2.2e-16
-</pre></div>
-</div>
-</div>
-</div>
-<p>Note that the coefficient <span class="math notranslate nohighlight">\(β_2 &gt; 0\)</span> associated with the term <span class="math notranslate nohighlight">\(I(Assign)^2\)</span> indicates an increase that starts slowly and ‘accelerates’(加速) as Assign increases.</p>
-</section>
-</section>
-<span id="document-05-linear-model-with-a-categ-explan-var"></span><section class="tex2jax_ignore mathjax_ignore" id="linear-models-with-a-categorical-factor-explanatory-variable">
-<h3><span class="section-number">5. </span>Linear models with a categorical (factor) explanatory variable<a class="headerlink" href="#linear-models-with-a-categorical-factor-explanatory-variable" title="Permalink to this heading">#</a></h3>
-<p>本节需要的包：</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">require</span><span class="p">(</span><span class="n">s20x</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading required package: s20x
-</pre></div>
-</div>
-</div>
-</div>
-<section id="using-categorical-variables-as-explanatory-variables-by-using-indicator-variables">
-<h4><span class="section-number">5.1. </span>Using categorical variables as explanatory variables by using indicator variables 使用指标变量将分类变量用作解释变量<a class="headerlink" href="#using-categorical-variables-as-explanatory-variables-by-using-indicator-variables" title="Permalink to this heading">#</a></h4>
-</section>
-</section>
 </div>
 <div class="toctree-wrapper compound">
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Main Chapters</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="01-get-start-with-regres.html">1. Getting Started with Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02-basics-of-simp-linear-regres.html">2. Basics of Simple Linear Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03-null-model.html">3. The null model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04-fit-curves-with-linear-model.html">4. Fitting curves with the linear model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05-linear-model-with-a-categ-explan-var.html">5. Linear models with a categorical (factor) explanatory variable</a></li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">About Project</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://blog.cworld.top">CWorld's Blog</a></li>
+</ul>
 </div>
 </section>
 <section id="license">
@@ -1409,9 +492,10 @@ F-statistic: 86.59 on 2 and 143 DF,  p-value: &lt; 2.2e-16
 <p>This project is licensed under the GPL 3.0 License.</p>
 <p><a class="reference external" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en"><img alt="Creative Commons" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a></p>
 <p>This documention is admitted by <a class="reference external" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)</a>.</p>
-<blockquote>
-<div><p><strong>Note</strong> This website is built using <a class="reference external" href="https://nextra.site">Nextra</a>, a modern static website generator.</p>
-</div></blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This website is built using <a class="reference external" href="https://jupyterbook.org/en/stable/">Jupyter Book</a>, a <a class="reference external" href="https://jupyter.org/">Jupyter</a> static website generator.</p>
+</div>
 </section>
 </section>
 
@@ -1443,12 +527,41 @@ F-statistic: 86.59 on 2 and 143 DF,  p-value: &lt; 2.2e-16
                 <footer class="bd-footer-article">
                   <!-- Previous / next buttons -->
 <div class="prev-next-area">
+    <a class="right-next"
+       href="00-at-the-beginning.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">At the beginning</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
 </div>
                 </footer>
               
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#development">Development</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contributions">Contributions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#thanks">Thanks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">Table of Contents</a><ul class="nav section-nav flex-column">
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#license">License</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
@@ -1468,7 +581,7 @@ By CWorld
     
   <p class="copyright">
     
-      © Copyright 2022.
+      © Copyright 2023.
       <br/>
     
   </p>
