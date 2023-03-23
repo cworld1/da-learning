@@ -1,5 +1,6 @@
 # Data Analysis Learning
 
+[![Jupyter Book Badge](https://jupyterbook.org/badge.svg)](https://da.cworld.top)
 [![GitHub stars](https://img.shields.io/github/stars/cworld1/da-learning?style=flat-square)](https://github.com/cworld1/da-learning/stargazers)
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/y/cworld1/da-learning?label=commits&style=flat-square)](https://github.com/cworld1/da-learning/commits)
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/cworld1/da-learning/.github/workflows/docs-build.yml?branch=main&style=flat-square)](https://github.com/cworld1/da-learning/actions/workflows/docs-build.yml)

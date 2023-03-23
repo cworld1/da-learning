@@ -48,5 +48,5 @@ This project is licensed under the GPL 3.0 License.
 This documention is admitted by [Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)](http://creativecommons.org/licenses/by-nc-sa/4.0/).
 
 ```{note}
-This website is built using [Nextra](https://nextra.site), a modern static website generator.
+This website is built using [Jupyter Book](https://jupyterbook.org/en/stable/), a [Jupyter](https://jupyter.org/) static website generator.
 ```
