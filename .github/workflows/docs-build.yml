@@ -53,18 +53,18 @@ jobs:
       run: |
         Rscript -e 'IRkernel::installspec()' # Add R kernel to Jupyter
 
-    # Build HTML
-    - name: Build HTML of docs
-      run: |
-        jupyter-book build docs
-
     # Build PDF
     - name: Build PDF of docs
       run: |
         jupyter-book build docs --builder pdfhtml
     - name: Upload PDF of docs
       run: |
-        mv docs/_build/pdf/*.pdf docs/_build/html
+        mv docs/_build/pdf/*.pdf docs/
+
+    # Build HTML
+    - name: Build HTML of docs
+      run: |
+        jupyter-book build docs
 
     # Deploy to GitHub Pages
     - name: Deploy to GitHub Pages
