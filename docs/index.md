@@ -2,7 +2,7 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/cworld1/da-learning?style=flat-square)](https://github.com/cworld1/da-learning/stargazers)
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/y/cworld1/da-learning?label=commits&style=flat-square)](https://github.com/cworld1/da-learning/commits)
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/cworld1/da-learning/.github/workflows/html-build.yml?branch=main&style=flat-square)](https://github.com/cworld1/da-learning/actions/workflows/html-build.yml)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/cworld1/da-learning/.github/workflows/docs-build.yml?branch=main&style=flat-square)](https://github.com/cworld1/da-learning/actions/workflows/docs-build.yml)
 [![GitHub license](https://img.shields.io/github/license/cworld1/da-learning?style=flat-square)](https://github.com/cworld1/da-learning/blob/main/LICENSE)
 
 关于 CWorld 学习 Analysis Learning 一些笔记和代码。该课程使用 R 语言进行数据分析。
@@ -17,7 +17,7 @@ Get started
 
 ```{hint}
 点击侧栏的目录或下滑以阅览更多章节。
-当然，你也可以下载 [PDF 版本](./book.pdf) 的笔记。
+当然，你也可以下载 {download}`PDF 版本 <./book.pdf>` 的笔记。它来自 Github Actions 的自动构建。
 ```
 
 ## Development
@@ -47,4 +47,6 @@ This project is licensed under the GPL 3.0 License.
 
 This documention is admitted by [Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)](http://creativecommons.org/licenses/by-nc-sa/4.0/).
 
-> **Note** This website is built using [Nextra](https://nextra.site), a modern static website generator.
+```{note}
+This website is built using [Nextra](https://nextra.site), a modern static website generator.
+```
