@@ -3,7 +3,7 @@
 
 title: Data Analysis Learning  # The title of the book. Will be placed in the left navbar.
 author: CWorld # The author of the book
-copyright: "2022"  # Copyright year to be placed in the footer
+copyright: "2023"  # Copyright year to be placed in the footer
 logo: assets/logo.png
 email: cworld0@qq.com
 description: >- # this means to ignore newlines until "baseurl:"
