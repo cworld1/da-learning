@@ -4,21 +4,21 @@
 format: jb-book
 root: index
 parts:
+  - caption: Tutorials
+    chapters:
+      - file: 00-at-the-beginning
 
-- caption: Tutorials
-  chapters:
-  - file: 00-at-the-beginning
+  - caption: Main Chapters
+    numbered: true
+    chapters:
+      - file: 01-get-start-with-regres
+      - file: 02-basics-of-simp-linear-regres
+      - file: 03-null-model
+      - file: 04-fit-curves-with-linear-model
+      - file: 05-linear-model-with-a-categ-explan-var
+      - file: 06-multiplicative-linear-models
 
-- caption: Main Chapters
-  numbered: true
-  chapters:
-  - file: 01-get-start-with-regres
-  - file: 02-basics-of-simp-linear-regres
-  - file: 03-null-model
-  - file: 04-fit-curves-with-linear-model
-  - file: 05-linear-model-with-a-categ-explan-var
-
-- caption: About Project
-  chapters:
-  - url: https://blog.cworld.top
-    title: CWorld's Blog
+  - caption: About Project
+    chapters:
+      - url: https://blog.cworld.top
+        title: CWorld's Blog
