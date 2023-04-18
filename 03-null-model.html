@@ -19,12 +19,12 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
 
   
-  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
@@ -38,8 +38,8 @@
     <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=12da95d707ffb74b382d" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=12da95d707ffb74b382d" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
@@ -205,6 +205,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">3. The null model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="04-fit-curves-with-linear-model.html">4. Fitting curves with the linear model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="05-linear-model-with-a-categ-explan-var.html">5. Linear models with a categorical (factor) explanatory variable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06-multiplicative-linear-models.html">6. Multiplicative linear models</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">About Project</span></p>
 <ul class="nav bd-sidenav">
@@ -506,8 +507,8 @@ document.write(`
 <p>To save some typing we’ll let y be the vector Stats20x.df$Exam of exam scores.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">y</span><span class="o">=</span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Exam</span>
-<span class="nf">hist</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">breaks</span><span class="o">=</span><span class="m">20</span><span class="p">,</span><span class="n">main</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span><span class="w"> </span><span class="c1">#Use main to suppress plot title</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Exam</span>
+<span class="nf">hist</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">breaks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="n">main</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span><span class="w"> </span><span class="c1"># Use main to suppress plot title</span>
 </pre></div>
 </div>
 </div>
@@ -518,7 +519,7 @@ document.write(`
 <p>继续使用零模型做线性回归，使其更关注于y值的置信关系与p检验。</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">null.fit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">null.fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
 <span class="c1"># Only give coefficients from summary 将系数板块单独提取出做展示</span>
 <span class="nf">coef</span><span class="p">(</span><span class="nf">summary</span><span class="p">(</span><span class="n">null.fit</span><span class="p">))</span>
 <span class="c1"># 获得该零模型的对应置信区间</span>
@@ -568,8 +569,8 @@ s=\sqrt{\frac{1}{n-1}\sum_{i=1}^n(X_i-\bar X)^2}
 \]</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">n</span><span class="o">=</span><span class="nf">length</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="c1">#146 students</span>
-<span class="n">tstat</span><span class="o">=</span><span class="p">(</span><span class="nf">mean</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="m">-0</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="nf">sd</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">))</span><span class="w"> </span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">n</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="c1"># 146 students</span>
+<span class="n">tstat</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="p">(</span><span class="nf">mean</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">0</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="nf">sd</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nf">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
 <span class="n">tstat</span>
 </pre></div>
 </div>
@@ -580,16 +581,16 @@ s=\sqrt{\frac{1}{n-1}\sum_{i=1}^n(X_i-\bar X)^2}
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">## t-multiplier</span>
-<span class="n">tmult</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">qt</span><span class="p">(</span><span class="m">1-.05</span><span class="o">/</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">df</span><span class="o">=</span><span class="n">n</span><span class="m">-1</span><span class="p">)</span>
+<span class="n">tmult</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">qt</span><span class="p">(</span><span class="m">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">.</span><span class="m">05</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">df</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
 <span class="c1">## We want the upper 97.5% (or 1-.05/2) bound of the CI</span>
 <span class="c1">## NOTE: mean = sample mean; sd = standard deviation; sqrt = square root</span>
 <span class="nf">mean</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">tmult</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nf">sd</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nf">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 
 <span class="c1">## Upper bound of CI 置信区间上限</span>
-<span class="nf">mean</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">tmult</span><span class="o">*</span><span class="nf">sd</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="nf">mean</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">tmult</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nf">sd</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nf">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 <span class="c1">## Or if we want both the lower and upper bounds of the CI in one statement</span>
 <span class="c1">## 置信区间下限</span>
-<span class="nf">mean</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">-1</span><span class="p">,</span><span class="m">1</span><span class="p">)</span><span class="o">*</span><span class="n">tmult</span><span class="o">*</span><span class="nf">sd</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="nf">mean</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">-1</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">tmult</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nf">sd</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nf">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -621,28 +622,28 @@ s=\sqrt{\frac{1}{n-1}\sum_{i=1}^n(X_i-\bar X)^2}
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html">52.8891465753425</div></div>
+<div class="output text_html">52.8827602739726</div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">bootstrap</span><span class="p">)</span>
-<span class="n">ybar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">bootstrap</span><span class="p">(</span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Exam</span><span class="p">,</span><span class="w"> </span><span class="m">10000</span><span class="p">,</span><span class="w"> </span><span class="n">mean</span><span class="p">)</span><span class="o">$</span><span class="n">thetastar</span>
+<span class="n">ybar</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">bootstrap</span><span class="p">(</span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Exam</span><span class="p">,</span><span class="w"> </span><span class="m">10000</span><span class="p">,</span><span class="w"> </span><span class="n">mean</span><span class="p">)</span><span class="o">$</span><span class="n">thetastar</span>
 <span class="nf">mean</span><span class="p">(</span><span class="n">ybar</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html">52.8758698630137</div></div>
+<div class="output text_html">52.8711184931507</div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">## Histogram of these 10,000 bootstrap means </span>
-<span class="nf">hist</span><span class="p">(</span><span class="n">ybar</span><span class="p">,</span><span class="n">xlab</span><span class="o">=</span><span class="s">&quot;Bootstrapped sample means&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">## Histogram of these 10,000 bootstrap means</span>
+<span class="nf">hist</span><span class="p">(</span><span class="n">ybar</span><span class="p">,</span><span class="w"> </span><span class="n">xlab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Bootstrapped sample means&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/fe013aa1aa734ebf4c7535bda627632d8af960502e473990a917aca5b6677dcb.png" src="_images/fe013aa1aa734ebf4c7535bda627632d8af960502e473990a917aca5b6677dcb.png" />
+<img alt="_images/e1a8658efb79ac284b784667845200f258802bea390d17ce3d073b128170ec91.png" src="_images/e1a8658efb79ac284b784667845200f258802bea390d17ce3d073b128170ec91.png" />
 </div>
 </div>
 </section>
@@ -651,9 +652,9 @@ s=\sqrt{\frac{1}{n-1}\sum_{i=1}^n(X_i-\bar X)^2}
 <p>For a meaningful comparison, We will need to make them have the same scale, so we multiply the test mark by 5 so that it is also out of 100.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Test2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Test</span><span class="w"> </span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Test2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Test</span>
 <span class="c1">## Check that it worked</span>
-<span class="n">Stats20x.df</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Exam&quot;</span><span class="p">,</span><span class="s">&quot;Test&quot;</span><span class="p">,</span><span class="s">&quot;Test2&quot;</span><span class="p">)]</span>
+<span class="n">Stats20x.df</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Exam&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Test&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Test2&quot;</span><span class="p">)]</span>
 </pre></div>
 </div>
 </div>
@@ -674,9 +675,9 @@ s=\sqrt{\frac{1}{n-1}\sum_{i=1}^n(X_i-\bar X)^2}
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Diff</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Test2</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Exam</span><span class="w"> </span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Diff</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Test2</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Exam</span>
 <span class="c1">## Check the first 5 measurements</span>
-<span class="n">Stats20x.df</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Test2&quot;</span><span class="p">,</span><span class="s">&quot;Exam&quot;</span><span class="p">,</span><span class="s">&quot;Diff&quot;</span><span class="p">)]</span>
+<span class="n">Stats20x.df</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Test2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Exam&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Diff&quot;</span><span class="p">)]</span>
 </pre></div>
 </div>
 </div>
@@ -736,7 +737,10 @@ s=\sqrt{\frac{1}{n-1}\sum_{i=1}^n(X_i-\bar X)^2}
               
               
                 <footer class="bd-footer-article">
-                  <!-- Previous / next buttons -->
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
        href="02-basics-of-simp-linear-regres.html"
@@ -756,7 +760,10 @@ s=\sqrt{\frac{1}{n-1}\sum_{i=1}^n(X_i-\bar X)^2}
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
+</div></div>
+  
 </div>
+
                 </footer>
               
             </div>
@@ -782,7 +789,7 @@ s=\sqrt{\frac{1}{n-1}\sum_{i=1}^n(X_i-\bar X)^2}
             
           </div>
           <footer class="bd-footer-content">
-            <div class="bd-footer-content__inner">
+            
 <div class="bd-footer-content__inner container">
   
   <div class="footer-item">
@@ -812,7 +819,7 @@ By CWorld
     
   </div>
   
-</div></div>
+</div>
           </footer>
         
 
@@ -821,8 +828,8 @@ By CWorld
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=12da95d707ffb74b382d"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=12da95d707ffb74b382d"></script>
+  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
 
   <footer class="bd-footer">
   </footer>

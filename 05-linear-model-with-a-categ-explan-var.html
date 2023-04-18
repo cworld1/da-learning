@@ -19,12 +19,12 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
 
   
-  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
@@ -38,8 +38,8 @@
     <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=12da95d707ffb74b382d" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=12da95d707ffb74b382d" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
@@ -95,11 +95,14 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '05-linear-model-with-a-categ-explan-var';</script>
     <link rel="canonical" href="https://da.cworld.top/05-linear-model-with-a-categ-explan-var.html" />
     <link rel="shortcut icon" href="_static/favicon.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="6. Multiplicative linear models" href="06-multiplicative-linear-models.html" />
     <link rel="prev" title="4. Fitting curves with the linear model" href="04-fit-curves-with-linear-model.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="zh-Hans"/>
@@ -202,6 +205,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="03-null-model.html">3. The null model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="04-fit-curves-with-linear-model.html">4. Fitting curves with the linear model</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">5. Linear models with a categorical (factor) explanatory variable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06-multiplicative-linear-models.html">6. Multiplicative linear models</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">About Project</span></p>
 <ul class="nav bd-sidenav">
@@ -416,7 +420,7 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-categorical-variables-as-explanatory-variables-by-using-indicator-variables">5.1. Using categorical variables as explanatory variables by using indicator variables 使用指标变量将分类变量用作解释变量</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-categorical-variables-as-explanatory-variables-by-using-indicator-variables">5.1. Using categorical variables as explanatory variables by using indicator variables</a></li>
 </ul>
             </nav>
         </div>
@@ -450,7 +454,221 @@ document.write(`
 </details>
 </div>
 <section id="using-categorical-variables-as-explanatory-variables-by-using-indicator-variables">
-<h2><span class="section-number">5.1. </span>Using categorical variables as explanatory variables by using indicator variables 使用指标变量将分类变量用作解释变量<a class="headerlink" href="#using-categorical-variables-as-explanatory-variables-by-using-indicator-variables" title="Permalink to this heading">#</a></h2>
+<h2><span class="section-number">5.1. </span>Using categorical variables as explanatory variables by using indicator variables<a class="headerlink" href="#using-categorical-variables-as-explanatory-variables-by-using-indicator-variables" title="Permalink to this heading">#</a></h2>
+<p>使用指标变量将分类变量用作解释变量</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">s20x</span><span class="p">)</span>
+<span class="c1">## Importing data into R</span>
+<span class="n">Stats20x.df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">read.table</span><span class="p">(</span><span class="s">&quot;../data/STATS20x.txt&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">header</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">T</span><span class="p">)</span>
+<span class="c1">## Change Attend from a character variable to a factor variable</span>
+<span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Attend</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as.factor</span><span class="p">(</span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Attend</span><span class="p">)</span>
+<span class="c1">## Examine the data</span>
+<span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Attend</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">20</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>Yes</li><li>Yes</li><li>Yes</li><li>Yes</li><li>No</li><li>Yes</li><li>Yes</li><li>No</li><li>Yes</li><li>Yes</li><li>No</li><li>Yes</li><li>No</li><li>No</li><li>No</li><li>Yes</li><li>Yes</li><li>No</li><li>Yes</li><li>Yes</li></ol>
+
+<details>
+	<summary style=display:list-item;cursor:pointer>
+		<strong>Levels</strong>:
+	</summary>
+	<style>
+	.list-inline {list-style: none; margin:0; padding: 0}
+	.list-inline>li {display: inline-block}
+	.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+	</style>
+	<ol class=list-inline><li>'No'</li><li>'Yes'</li></ol>
+</details></div></div>
+</div>
+<p>简要分析数据集，确保有你需要的可能的关系：</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">summaryStats</span><span class="p">(</span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Exam</span><span class="p">,</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Attend</span><span class="p">)</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Attend</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Sample Size     Mean Median  Std Dev Midspread
+No           46 42.21739   40.5 16.34206     20.50
+Yes         100 57.78000   58.0 17.67757     28.25
+</pre></div>
+</div>
+<img alt="_images/3f20304a48fe187577a6ddd5cf8d6f63e52cd61170f423440489977f06adb4b9.png" src="_images/3f20304a48fe187577a6ddd5cf8d6f63e52cd61170f423440489977f06adb4b9.png" />
+</div>
+</div>
+<p>缺勤的确会让学生成绩变低，在数据分布上的确有一定的关系。</p>
+<p>为了在后面进行更好的分析，我们将缺勤的 Yes 和 No 转换为 1 和 0：</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># Make a new variable Attend2 which is 1 if Attend = &quot;Yes&quot; and 0 otherwise</span>
+
+<span class="c1"># Note how we use two equal signs, ==, to test equality</span>
+<span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Attend2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as.numeric</span><span class="p">(</span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Attend</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Yes&quot;</span><span class="p">)</span>
+<span class="nf">with</span><span class="p">(</span><span class="n">Stats20x.df</span><span class="p">,</span><span class="w"> </span><span class="nf">table</span><span class="p">(</span><span class="n">Attend</span><span class="p">,</span><span class="w"> </span><span class="n">Attend2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>      Attend2
+Attend   0   1
+   No   46   0
+   Yes   0 100
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">trendscatter</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Attend2</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/7f950a308c40534da735c02ebe7b2410a7c2edb55fdc06b4ddc0956b04c6abbf.png" src="_images/7f950a308c40534da735c02ebe7b2410a7c2edb55fdc06b4ddc0956b04c6abbf.png" />
+</div>
+</div>
+<p>The linear model for the expected value of is</p>
+<div class="math notranslate nohighlight">
+\[
+E[Exam|Attend2] = \beta_0 + \beta_1 Attend2
+\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(\beta_0\)</span> 是截距，即所有缺勤的均值；<span class="math notranslate nohighlight">\(\beta_1\)</span> 是考试成绩和缺勤的关系，由缺勤和出勤的成绩关系共同决定。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">examattend2.fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Attend2</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="p">)</span>
+<span class="nf">summary</span><span class="p">(</span><span class="n">examattend2.fit</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
+lm(formula = Exam ~ Attend2, data = Stats20x.df)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-46.780 -13.108  -0.217  12.642  46.783 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   42.217      2.547  16.578  &lt; 2e-16 ***
+Attend2       15.563      3.077   5.058 1.27e-06 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 17.27 on 144 degrees of freedom
+Multiple R-squared:  0.1508,	Adjusted R-squared:  0.145 
+F-statistic: 25.58 on 1 and 144 DF,  p-value: 1.271e-06
+</pre></div>
+</div>
+</div>
+</div>
+<p>上述拟合代表 x 为 Attend2（0 和 1） 时，y 的期望值，即考试成绩的期望值。</p>
+<p>但注意事实上，直接使用 lm() 函数进行拟合，也能得出正确的结果，因为 lm() 函数会自动将分类变量转换为指标变量（AttendYes）：</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">examattend.fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Attend</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="p">)</span>
+<span class="nf">summary</span><span class="p">(</span><span class="n">examattend.fit</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
+lm(formula = Exam ~ Attend, data = Stats20x.df)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-46.780 -13.108  -0.217  12.642  46.783 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   42.217      2.547  16.578  &lt; 2e-16 ***
+AttendYes     15.563      3.077   5.058 1.27e-06 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 17.27 on 144 degrees of freedom
+Multiple R-squared:  0.1508,	Adjusted R-squared:  0.145 
+F-statistic: 25.58 on 1 and 144 DF,  p-value: 1.271e-06
+</pre></div>
+</div>
+</div>
+</div>
+<p>让我们将拟合模型可视化。在这里，我们将使用虚拟变量拟合我们的模型得到的&quot;最佳&quot;估计直线绘制出来。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Attend2</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="p">)</span>
+<span class="c1">## Add the lm estimated line to this plot where a=intercept, b=slope</span>
+<span class="nf">abline</span><span class="p">(</span><span class="nf">coef</span><span class="p">(</span><span class="n">examattend.fit</span><span class="p">),</span><span class="w"> </span><span class="n">lty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;blue&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/acdb2f014751d0cbf2dd87a740c8fe7284fb66fab5386642c2f840f2f2c53fc5.png" src="_images/acdb2f014751d0cbf2dd87a740c8fe7284fb66fab5386642c2f840f2f2c53fc5.png" />
+</div>
+</div>
+<p>模型建立好了，接下来就是我们经典的模型检验三步走了：</p>
+<ol class="arabic simple">
+<li><p>残差均值接近于 0</p></li>
+<li><p>残差满足正态分布</p></li>
+<li><p>没有或排除了异常点</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">examattend.fit</span><span class="p">,</span><span class="w"> </span><span class="n">which</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
+<span class="nf">normcheck</span><span class="p">(</span><span class="n">examattend.fit</span><span class="p">)</span>
+<span class="nf">cooks20x</span><span class="p">(</span><span class="n">examattend.fit</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/e11b6271d2a93e19e475e10b88817344a34149f198715f90ea8918485644a7ad.png" src="_images/e11b6271d2a93e19e475e10b88817344a34149f198715f90ea8918485644a7ad.png" />
+<img alt="_images/05262ecbd39f48d6715ddbcadfcdb51b4b40460427cb990f04898ef5fc82c1ce.png" src="_images/05262ecbd39f48d6715ddbcadfcdb51b4b40460427cb990f04898ef5fc82c1ce.png" />
+<img alt="_images/c416250daecfa871c48b1af50e9ca091ab80f8a43c968e75bdac5ce9748573c9.png" src="_images/c416250daecfa871c48b1af50e9ca091ab80f8a43c968e75bdac5ce9748573c9.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">## Create data frame of values of interest: Attend==&quot;Yes&quot; and &quot;No&quot;</span>
+<span class="c1">## Make sure that the names of vars are exactly the same as in the data frame</span>
+<span class="n">preds.df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span><span class="n">Attend</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;No&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Yes&quot;</span><span class="p">))</span>
+<span class="nf">predict</span><span class="p">(</span><span class="n">examattend.fit</span><span class="p">,</span><span class="w"> </span><span class="n">preds.df</span><span class="p">,</span><span class="w"> </span><span class="n">interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;confidence&quot;</span><span class="p">)</span>
+<span class="nf">predict</span><span class="p">(</span><span class="n">examattend.fit</span><span class="p">,</span><span class="w"> </span><span class="n">preds.df</span><span class="p">,</span><span class="w"> </span><span class="n">interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;prediction&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A matrix: 2 × 3 of type dbl</caption>
+<thead>
+	<tr><th></th><th scope=col>fit</th><th scope=col>lwr</th><th scope=col>upr</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>1</th><td>42.21739</td><td>37.18401</td><td>47.25077</td></tr>
+	<tr><th scope=row>2</th><td>57.78000</td><td>54.36619</td><td>61.19381</td></tr>
+</tbody>
+</table>
+</div><div class="output text_html"><table class="dataframe">
+<caption>A matrix: 2 × 3 of type dbl</caption>
+<thead>
+	<tr><th></th><th scope=col>fit</th><th scope=col>lwr</th><th scope=col>upr</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>1</th><td>42.21739</td><td> 7.710259</td><td>76.72452</td></tr>
+	<tr><th scope=row>2</th><td>57.78000</td><td>23.471673</td><td>92.08833</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>再次强调：“confidence”是代表均值预测范围，而“prediction”是代表个体预测范围。</p>
 </section>
 </section>
 
@@ -480,7 +698,10 @@ document.write(`
               
               
                 <footer class="bd-footer-article">
-                  <!-- Previous / next buttons -->
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
        href="04-fit-curves-with-linear-model.html"
@@ -491,7 +712,19 @@ document.write(`
         <p class="prev-next-title"><span class="section-number">4. </span>Fitting curves with the linear model</p>
       </div>
     </a>
+    <a class="right-next"
+       href="06-multiplicative-linear-models.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">6. </span>Multiplicative linear models</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div></div>
+  
 </div>
+
                 </footer>
               
             </div>
@@ -506,7 +739,7 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-categorical-variables-as-explanatory-variables-by-using-indicator-variables">5.1. Using categorical variables as explanatory variables by using indicator variables 使用指标变量将分类变量用作解释变量</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-categorical-variables-as-explanatory-variables-by-using-indicator-variables">5.1. Using categorical variables as explanatory variables by using indicator variables</a></li>
 </ul>
   </nav></div>
 
@@ -515,7 +748,7 @@ document.write(`
             
           </div>
           <footer class="bd-footer-content">
-            <div class="bd-footer-content__inner">
+            
 <div class="bd-footer-content__inner container">
   
   <div class="footer-item">
@@ -545,7 +778,7 @@ By CWorld
     
   </div>
   
-</div></div>
+</div>
           </footer>
         
 
@@ -554,8 +787,8 @@ By CWorld
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=12da95d707ffb74b382d"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=12da95d707ffb74b382d"></script>
+  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
 
   <footer class="bd-footer">
   </footer>

@@ -19,12 +19,12 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
 
   
-  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
@@ -38,8 +38,8 @@
     <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=12da95d707ffb74b382d" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=12da95d707ffb74b382d" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
@@ -205,6 +205,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="03-null-model.html">3. The null model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="04-fit-curves-with-linear-model.html">4. Fitting curves with the linear model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="05-linear-model-with-a-categ-explan-var.html">5. Linear models with a categorical (factor) explanatory variable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06-multiplicative-linear-models.html">6. Multiplicative linear models</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">About Project</span></p>
 <ul class="nav bd-sidenav">
@@ -467,7 +468,7 @@ document.write(`
 <span class="expanded">Hide code cell output</span>
 </summary>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading required package: s20x
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>载入需要的程辑包：s20x
 </pre></div>
 </div>
 </div>
@@ -530,7 +531,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/34d76a83bf787f231ce5f8f13d178aed8e9b8aff4bbd080df35b642e7ade2adf.png" src="_images/34d76a83bf787f231ce5f8f13d178aed8e9b8aff4bbd080df35b642e7ade2adf.png" />
+<img alt="_images/61f89ba75d6d0d43a168d73032fd73bb90455fb998980e8cf07e230f78fc84b3.png" src="_images/61f89ba75d6d0d43a168d73032fd73bb90455fb998980e8cf07e230f78fc84b3.png" />
 </div>
 </div>
 </section>
@@ -557,7 +558,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/26500326400ce837a91c07379c031dc6912117dd46acad61965409ea9fc887b5.png" src="_images/26500326400ce837a91c07379c031dc6912117dd46acad61965409ea9fc887b5.png" />
+<img alt="_images/e3ccb80a440948b355ad36c3be092c7b4949fb2968c1357aa9def8ec9b772c8b.png" src="_images/e3ccb80a440948b355ad36c3be092c7b4949fb2968c1357aa9def8ec9b772c8b.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -579,7 +580,7 @@ Coefficients:
 (Intercept)   9.0845     3.2204   2.821  0.00547 ** 
 Test          3.7859     0.2647  14.301  &lt; 2e-16 ***
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 
 Residual standard error: 12.05 on 144 degrees of freedom
 Multiple R-squared:  0.5868,	Adjusted R-squared:  0.5839 
@@ -626,7 +627,7 @@ F-statistic: 204.5 on 1 and 144 DF,  p-value: &lt; 2.2e-16
 	<tr><td>9.1</td><td>42</td></tr>
 </tbody>
 </table>
-</div><div class="output text_html"><strong>1:</strong> 43.5363712056029</div><div class="output text_html"><strong>1:</strong> -1.53637120560293</div></div>
+</div><div class="output text_html"><strong>1:</strong> 43.5363712056028</div><div class="output text_html"><strong>1:</strong> -1.53637120560281</div></div>
 </div>
 <p>检验上，一个成功的拟合模型的残差应当有：</p>
 <ol class="arabic simple">
@@ -647,7 +648,7 @@ F-statistic: 204.5 on 1 and 144 DF,  p-value: &lt; 2.2e-16
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/35b823fba3ff7f30750d0a34b2f71cce609a26453fb2de6eb74ee2892c173ced.png" src="_images/35b823fba3ff7f30750d0a34b2f71cce609a26453fb2de6eb74ee2892c173ced.png" />
+<img alt="_images/af4fce1b72efdb6c2fb0aafdf3c3b72e463d90f7292374304efda7d8bd556d8d.png" src="_images/af4fce1b72efdb6c2fb0aafdf3c3b72e463d90f7292374304efda7d8bd556d8d.png" />
 </div>
 </div>
 </section>
@@ -662,7 +663,7 @@ F-statistic: 204.5 on 1 and 144 DF,  p-value: &lt; 2.2e-16
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/6bb11d1306b3725cf8f06bdd65fffe66f8b03070d6091ad9954ad10dc6ca2135.png" src="_images/6bb11d1306b3725cf8f06bdd65fffe66f8b03070d6091ad9954ad10dc6ca2135.png" />
+<img alt="_images/eb97b73923cf13222cf8a63930eb566ddc9467417fbdea87bced81586b5a12ab.png" src="_images/eb97b73923cf13222cf8a63930eb566ddc9467417fbdea87bced81586b5a12ab.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -701,14 +702,14 @@ Coefficients:
 (Intercept)  15.2374     3.7172   4.099 6.88e-05 ***
 Test          3.2006     0.3023  10.588  &lt; 2e-16 ***
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 
 Residual standard error: 14.34 on 145 degrees of freedom
 Multiple R-squared:  0.436,	Adjusted R-squared:  0.4322 
 F-statistic: 112.1 on 1 and 145 DF,  p-value: &lt; 2.2e-16
 </pre></div>
 </div>
-<img alt="_images/82d6aab155747efdc5bac4cb79629862729d50606337f73129b42121b70fa956.png" src="_images/82d6aab155747efdc5bac4cb79629862729d50606337f73129b42121b70fa956.png" />
+<img alt="_images/a74330dd8a3aa7d80a6567b9d3afaa20ca7bafbf76d7da871a2854eeadf73dfc.png" src="_images/a74330dd8a3aa7d80a6567b9d3afaa20ca7bafbf76d7da871a2854eeadf73dfc.png" />
 </div>
 </div>
 <p>对其进行观测值差异分析：</p>
@@ -722,8 +723,8 @@ F-statistic: 112.1 on 1 and 145 DF,  p-value: &lt; 2.2e-16
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/ceedb9466e85863351e21d28c8d36e5c808714e5bd54868e94eab2bb4fb73243.png" src="_images/ceedb9466e85863351e21d28c8d36e5c808714e5bd54868e94eab2bb4fb73243.png" />
-<img alt="_images/72fd3b7a07256369ba4cd0417cff708c48608f03541b3678a1d4435cb28d8bfe.png" src="_images/72fd3b7a07256369ba4cd0417cff708c48608f03541b3678a1d4435cb28d8bfe.png" />
+<img alt="_images/12142699b0f9ddae68eff1b16bce48473b9fb57d0ca4b358364bfc9925679087.png" src="_images/12142699b0f9ddae68eff1b16bce48473b9fb57d0ca4b358364bfc9925679087.png" />
+<img alt="_images/af36bb315ae94afea2dc06ad4852aaeeea40731222311ea54854543f669f5a5e.png" src="_images/af36bb315ae94afea2dc06ad4852aaeeea40731222311ea54854543f669f5a5e.png" />
 </div>
 </div>
 </section>
@@ -754,7 +755,7 @@ Coefficients:
             Estimate Std. Error t value Pr(&gt;|t|)    
 (Intercept)   52.877      1.546   34.21   &lt;2e-16 ***
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 
 Residual standard error: 18.68 on 145 degrees of freedom
 </pre></div>
@@ -771,7 +772,7 @@ Coefficients:
 (Intercept)   9.0845     3.2204   2.821  0.00547 ** 
 Test          3.7859     0.2647  14.301  &lt; 2e-16 ***
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 
 Residual standard error: 12.05 on 144 degrees of freedom
 Multiple R-squared:  0.5868,	Adjusted R-squared:  0.5839 
@@ -808,7 +809,7 @@ Coefficients:
 (Intercept)   9.0845     3.2204   2.821  0.00547 ** 
 Test          3.7859     0.2647  14.301  &lt; 2e-16 ***
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 
 Residual standard error: 12.05 on 144 degrees of freedom
 Multiple R-squared:  0.5868,	Adjusted R-squared:  0.5839 
@@ -974,7 +975,10 @@ F-statistic: 204.5 on 1 and 144 DF,  p-value: &lt; 2.2e-16
               
               
                 <footer class="bd-footer-article">
-                  <!-- Previous / next buttons -->
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
        href="01-get-start-with-regres.html"
@@ -994,7 +998,10 @@ F-statistic: 204.5 on 1 and 144 DF,  p-value: &lt; 2.2e-16
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
+</div></div>
+  
 </div>
+
                 </footer>
               
             </div>
@@ -1039,7 +1046,7 @@ F-statistic: 204.5 on 1 and 144 DF,  p-value: &lt; 2.2e-16
             
           </div>
           <footer class="bd-footer-content">
-            <div class="bd-footer-content__inner">
+            
 <div class="bd-footer-content__inner container">
   
   <div class="footer-item">
@@ -1069,7 +1076,7 @@ By CWorld
     
   </div>
   
-</div></div>
+</div>
           </footer>
         
 
@@ -1078,8 +1085,8 @@ By CWorld
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=12da95d707ffb74b382d"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=12da95d707ffb74b382d"></script>
+  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
 
   <footer class="bd-footer">
   </footer>
