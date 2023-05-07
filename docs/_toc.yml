@@ -17,6 +17,8 @@ parts:
       - file: 04-fit-curves-with-linear-model
       - file: 05-linear-model-with-a-categ-explan-var
       - file: 06-multiplicative-linear-models
+      - file: 07-power-law-linear-models
+
 
   - caption: About Project
     chapters:
