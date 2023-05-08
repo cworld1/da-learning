@@ -1,0 +1,959 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="zh-Hans" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>10. Multiple linear regression models &#8212; Data Analysis Learning</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script kind="utterances">
+
+    var commentsRunWhenDOMLoaded = cb => {
+    if (document.readyState != 'loading') {
+        cb()
+    } else if (document.addEventListener) {
+        document.addEventListener('DOMContentLoaded', cb)
+    } else {
+        document.attachEvent('onreadystatechange', function() {
+        if (document.readyState == 'complete') cb()
+        })
+    }
+}
+
+var addUtterances = () => {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = "https://utteranc.es/client.js";
+    script.async = "async";
+
+    script.setAttribute("repo", "cworld1/da-learning");
+    script.setAttribute("issue-term", "pathname");
+    script.setAttribute("theme", "github-light");
+    script.setAttribute("label", "💬 comment");
+    script.setAttribute("crossorigin", "anonymous");
+
+    sections = document.querySelectorAll("div.section");
+    if (sections !== null) {
+        section = sections[sections.length-1];
+        section.appendChild(script);
+    }
+}
+commentsRunWhenDOMLoaded(addUtterances);
+</script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '10-multi-linear-regress-model';</script>
+    <link rel="canonical" href="https://da.cworld.top/10-multi-linear-regress-model.html" />
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="9. Linear models with both numeric and factor explanatory variables without interaction" href="09-linear-model-with-both-var-without-interact.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="zh-Hans"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="index.html">
+                    Data Analysis Learning
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="00-at-the-beginning.html">At the beginning</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Main Chapters</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="01-get-start-with-regres.html">1. Getting Started with Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02-basics-of-simp-linear-regres.html">2. Basics of Simple Linear Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03-null-model.html">3. The null model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04-fit-curves-with-linear-model.html">4. Fitting curves with the linear model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05-linear-model-with-a-categ-explan-var.html">5. Linear models with a categorical (factor) explanatory variable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06-multiplicative-linear-models.html">6. Multiplicative linear models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07-power-law-linear-models.html">7. Power law linear models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08-linear-model-with-both-var.html">8. Linear models with both numeric and factor explanatory variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09-linear-model-with-both-var-without-interact.html">9. Linear models with both numeric and factor explanatory variables without interaction</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">10. Multiple linear regression models</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">About Project</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference external" href="https://blog.cworld.top">CWorld's Blog</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/cworld1/da-learning" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/cworld1/da-learning/edit/main/docs/10-multi-linear-regress-model.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/cworld1/da-learning/issues/new?title=Issue%20on%20page%20%2F10-multi-linear-regress-model.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/10-multi-linear-regress-model.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Multiple linear regression models</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-modelling-birth-weights-using-several-explanatory-variables">10.1. Example: Modelling birth weights using several explanatory variables</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exploring-relationships-between-the-variables">10.2. Exploring relationships between the variables</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fitting-the-initial-model">10.3. Fitting the initial model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multiple-linear-regression-model-adding-more-terms-to-the-model-and-the-peril-of-multi-collinearity">10.4. Multiple linear regression model: Adding more terms to the model and the peril of multi-collinearity</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="multiple-linear-regression-models">
+<h1><span class="section-number">10. </span>Multiple linear regression models<a class="headerlink" href="#multiple-linear-regression-models" title="Permalink to this heading">#</a></h1>
+<p>本节需要的包：</p>
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input above-output-prompt docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">require</span><span class="p">(</span><span class="n">s20x</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<details class="hide below-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell output</span>
+<span class="expanded">Hide code cell output</span>
+</summary>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading required package: s20x
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<section id="example-modelling-birth-weights-using-several-explanatory-variables">
+<h2><span class="section-number">10.1. </span>Example: Modelling birth weights using several explanatory variables<a class="headerlink" href="#example-modelling-birth-weights-using-several-explanatory-variables" title="Permalink to this heading">#</a></h2>
+<p>我们学习了如何使用线性模型来建模数值和/或因子解释变量的影响。更一般地，原则上我们可以拟合任意数量的解释变量。然而，我们将看到这并不总是一个好主意。需要谨慎处理。举例来说，让我们研究可能解释婴儿出生体重的变量是什么。</p>
+</section>
+<section id="exploring-relationships-between-the-variables">
+<h2><span class="section-number">10.2. </span>Exploring relationships between the variables<a class="headerlink" href="#exploring-relationships-between-the-variables" title="Permalink to this heading">#</a></h2>
+<p>Let us first inspect the relationships between the numerical explanatory variables and the response variable.</p>
+<p>The five variables are in columns 1,2,4,5 and 6 in the data frame Babies.df.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">## Invoke the s20x library</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">s20x</span><span class="p">)</span>
+<span class="c1">## Importing data into R</span>
+<span class="n">Babies.df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">read.table</span><span class="p">(</span><span class="s">&quot;../data/babies_data.txt&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">header</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">T</span><span class="p">)</span>
+<span class="c1">## Create the pairs plot of the five numeric variables</span>
+<span class="nf">pairs20x</span><span class="p">(</span><span class="n">Babies.df</span><span class="p">[,</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="m">4</span><span class="p">,</span><span class="w"> </span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="m">6</span><span class="p">)])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/dfa599f5f3972935789bd7d8c3894749faa31d288c3b25ccd268abf9d594f505.png" src="_images/dfa599f5f3972935789bd7d8c3894749faa31d288c3b25ccd268abf9d594f505.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">bwt</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">height</span><span class="p">,</span>
+<span class="w">    </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Babies.df</span><span class="p">,</span>
+<span class="w">    </span><span class="n">xlab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Mother’s height (inch)&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Birth weight (oz)&quot;</span>
+<span class="p">)</span>
+<span class="nf">lines</span><span class="p">(</span><span class="nf">lowess</span><span class="p">(</span><span class="n">Babies.df</span><span class="o">$</span><span class="n">height</span><span class="p">,</span><span class="w"> </span><span class="n">Babies.df</span><span class="o">$</span><span class="n">bwt</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/5d5cd6c8128a3f42953a63b64ef39fe7eefe14293a490a1425b1e30ad839402e.png" src="_images/5d5cd6c8128a3f42953a63b64ef39fe7eefe14293a490a1425b1e30ad839402e.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">summary</span><span class="p">(</span><span class="nf">lm</span><span class="p">(</span><span class="n">bwt</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">height</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Babies.df</span><span class="p">))</span><span class="o">$</span><span class="n">r.squared</span>
+<span class="nf">cor</span><span class="p">(</span><span class="n">Babies.df</span><span class="o">$</span><span class="n">bwt</span><span class="p">,</span><span class="w"> </span><span class="n">Babies.df</span><span class="o">$</span><span class="n">height</span><span class="p">)</span><span class="o">^</span><span class="m">2</span><span class="w"> </span><span class="c1"># R 方是差异的平方，所以跟上边那个是一样的</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">0.0414953918045247</div><div class="output text_html">0.0414953918045247</div></div>
+</div>
+<p>Looking at the pairs plot again, we also see a somewhat weak relationship between <code class="docutils literal notranslate"><span class="pre">bwt</span></code> and mother’s <code class="docutils literal notranslate"><span class="pre">weight</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">bwt</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">weight</span><span class="p">,</span>
+<span class="w">    </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Babies.df</span><span class="p">,</span>
+<span class="w">    </span><span class="n">xlab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Mother’s weight (lb)&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ylab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Birth weight (oz)&quot;</span>
+<span class="p">)</span>
+<span class="nf">lines</span><span class="p">(</span><span class="nf">lowess</span><span class="p">(</span><span class="n">Babies.df</span><span class="o">$</span><span class="n">weight</span><span class="p">,</span><span class="w"> </span><span class="n">Babies.df</span><span class="o">$</span><span class="n">bwt</span><span class="p">),</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;red&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/9cf8f6c21aa0c2287d82c288edcb2959ad6bdd32063c4072912c4187e95d581d.png" src="_images/9cf8f6c21aa0c2287d82c288edcb2959ad6bdd32063c4072912c4187e95d581d.png" />
+</div>
+</div>
+<p>胎儿孕育时间与其出生体重之间存在更强的关系，这并不令人意外，因为孩子在母亲子宫内的时间越长，孩子就有更多的时间来获得营养和生长。但是，在某个特定的胎龄后，这种关系显然会变得平缓起来 - 有些人称其为“曲棍球杆形状的曲线”。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">bwt</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">gestation</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Babies.df</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Birth weight (oz)&quot;</span><span class="p">)</span>
+<span class="nf">lines</span><span class="p">(</span><span class="nf">lowess</span><span class="p">(</span><span class="n">Babies.df</span><span class="o">$</span><span class="n">gestation</span><span class="p">,</span><span class="w"> </span><span class="n">Babies.df</span><span class="o">$</span><span class="n">bwt</span><span class="p">),</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;red&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/84b2ba099a15de516edda9d6883ffc9e8a139ce7b5ccd75b90c1fcf2335c1dc8.png" src="_images/84b2ba099a15de516edda9d6883ffc9e8a139ce7b5ccd75b90c1fcf2335c1dc8.png" />
+</div>
+</div>
+<p>There does not seem to be any relationship between a mother’s age and her child’s <code class="docutils literal notranslate"><span class="pre">bwt</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">bwt</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">age</span><span class="p">,</span>
+<span class="w">    </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Babies.df</span><span class="p">,</span>
+<span class="w">    </span><span class="n">xlab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Mother’s age&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ylab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Birth weight (oz)&quot;</span>
+<span class="p">)</span>
+<span class="nf">lines</span><span class="p">(</span><span class="nf">lowess</span><span class="p">(</span><span class="n">Babies.df</span><span class="o">$</span><span class="n">age</span><span class="p">,</span><span class="w"> </span><span class="n">Babies.df</span><span class="o">$</span><span class="n">bwt</span><span class="p">),</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;red&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/25c365bb59b4db8858e87d38685ad992d6bd2a33f9af22b3cd59de7ad4de942d.png" src="_images/25c365bb59b4db8858e87d38685ad992d6bd2a33f9af22b3cd59de7ad4de942d.png" />
+</div>
+</div>
+<p>Note: There seem to be some outlying data points(一些偏远的数据点) in these plots. There does not appear to be much of a relationship between the x variables, except between <code class="docutils literal notranslate"><span class="pre">height</span></code> and <code class="docutils literal notranslate"><span class="pre">weight</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">pairs20x</span><span class="p">(</span><span class="n">Babies.df</span><span class="p">[,</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="m">7</span><span class="p">)])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/e8e3ed07d30d8b1443e20cb24b5f9be184304844ad4550fd7748ff51699e45b9.png" src="_images/e8e3ed07d30d8b1443e20cb24b5f9be184304844ad4550fd7748ff51699e45b9.png" />
+</div>
+</div>
+<p>让我们从理解“解释”的角度开始，因为它是最强大的关系之一。那些不典型的数据点已经用问号标记了。我们稍后会添加其他的解释变量。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">bwt</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">gestation</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Babies.df</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Birth weight (oz)&quot;</span><span class="p">)</span>
+<span class="nf">lines</span><span class="p">(</span><span class="nf">lowess</span><span class="p">(</span><span class="n">Babies.df</span><span class="o">$</span><span class="n">gestation</span><span class="p">,</span><span class="w"> </span><span class="n">Babies.df</span><span class="o">$</span><span class="n">bwt</span><span class="p">),</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;red&quot;</span><span class="p">)</span>
+<span class="nf">text</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">152</span><span class="p">,</span><span class="w"> </span><span class="m">185</span><span class="p">),</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">120</span><span class="p">,</span><span class="w"> </span><span class="m">115</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;?&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;red&quot;</span><span class="p">)</span>
+<span class="nf">abline</span><span class="p">(</span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">294</span><span class="p">,</span><span class="w"> </span><span class="n">lty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/7c04e5161e4511202bb9b9f0ec31c7bd6395443ada133dde8d38e6d31e1e860d.png" src="_images/7c04e5161e4511202bb9b9f0ec31c7bd6395443ada133dde8d38e6d31e1e860d.png" />
+</div>
+</div>
+<p>They look extremely implausible as they have typical birth-weight but have a gestational age that is extremely low for these data. 他们看起来非常难以置信,因为他们典型的出生体重但有孕龄,对这些数据是极低的。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">id</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="p">(</span><span class="n">Babies.df</span><span class="o">$</span><span class="n">gestation</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">200</span><span class="p">)</span>
+<span class="n">Babies.df</span><span class="p">[</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 2 × 7</caption>
+<thead>
+	<tr><th></th><th scope=col>bwt</th><th scope=col>gestation</th><th scope=col>not.first.born</th><th scope=col>age</th><th scope=col>height</th><th scope=col>weight</th><th scope=col>smokes</th></tr>
+	<tr><th></th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>239</th><td>116</td><td>148</td><td>0</td><td>28</td><td>66</td><td>135</td><td>0</td></tr>
+	<tr><th scope=row>820</th><td>110</td><td>181</td><td>0</td><td>27</td><td>64</td><td>133</td><td>0</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Relationship between birth weight and gestational age...</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">gestation</span></code> <span class="math notranslate nohighlight">\(\leq 294\)</span> days we’ll use the familiar simple linear regression model</p>
+<div class="math notranslate nohighlight">
+\[
+\text{E[bwt]}=\beta_0+\text{gestation}\times\beta_1
+\]</div>
+<p>We’d like to extend this model by adding an extra term so that the slope changes when <code class="docutils literal notranslate"><span class="pre">gestation</span></code> <span class="math notranslate nohighlight">\(&gt; 294\)</span>. That is,</p>
+<div class="math notranslate nohighlight">
+\[
+\text{E[bwt]}=\beta_0+\text{gestation}\times\beta_1+\text{v}\times\beta_2
+\]</div>
+<p>where v is some suitable explanatory variable. What should v be?</p>
+<ul class="simple">
+<li><p>For <code class="docutils literal notranslate"><span class="pre">gestation</span></code> <span class="math notranslate nohighlight">\(\leq 294\)</span> the extended model is just the simple linear regression model, so that means v = 0 when gestation ≤ 294.</p></li>
+<li><p>For <code class="docutils literal notranslate"><span class="pre">gestation</span></code> <span class="math notranslate nohighlight">\(&gt; 294\)</span> we need another slope effect for gestational age. In fact, we need <span class="math notranslate nohighlight">\(v =\)</span> <code class="docutils literal notranslate"><span class="pre">gestation</span></code> <span class="math notranslate nohighlight">\(- 294\)</span>.</p></li>
+</ul>
+<p>Let’s create the new explanatory v = 294 that is described gestation above. We’ll give it the name because it is the number of days ODdays that the baby is overdue.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">Babies.df</span><span class="o">$</span><span class="n">ODdays</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Babies.df</span><span class="o">$</span><span class="n">gestation</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">294</span><span class="p">,</span>
+<span class="w">    </span><span class="m">0</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Babies.df</span><span class="o">$</span><span class="n">gestation</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">294</span>
+<span class="p">)</span>
+<span class="nf">head</span><span class="p">(</span><span class="n">Babies.df</span><span class="p">,</span><span class="w"> </span><span class="m">12</span><span class="p">)</span><span class="w"> </span><span class="c1"># Print first 12 lines of dataframe</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 12 × 8</caption>
+<thead>
+	<tr><th></th><th scope=col>bwt</th><th scope=col>gestation</th><th scope=col>not.first.born</th><th scope=col>age</th><th scope=col>height</th><th scope=col>weight</th><th scope=col>smokes</th><th scope=col>ODdays</th></tr>
+	<tr><th></th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>1</th><td>120</td><td>284</td><td>0</td><td>27</td><td>62</td><td>100</td><td>0</td><td> 0</td></tr>
+	<tr><th scope=row>2</th><td>113</td><td>282</td><td>0</td><td>33</td><td>64</td><td>135</td><td>0</td><td> 0</td></tr>
+	<tr><th scope=row>3</th><td>128</td><td>279</td><td>0</td><td>28</td><td>64</td><td>115</td><td>1</td><td> 0</td></tr>
+	<tr><th scope=row>4</th><td>108</td><td>282</td><td>0</td><td>23</td><td>67</td><td>125</td><td>1</td><td> 0</td></tr>
+	<tr><th scope=row>5</th><td>136</td><td>286</td><td>0</td><td>25</td><td>62</td><td> 93</td><td>0</td><td> 0</td></tr>
+	<tr><th scope=row>6</th><td>138</td><td>244</td><td>0</td><td>33</td><td>62</td><td>178</td><td>0</td><td> 0</td></tr>
+	<tr><th scope=row>7</th><td>132</td><td>245</td><td>0</td><td>23</td><td>65</td><td>140</td><td>0</td><td> 0</td></tr>
+	<tr><th scope=row>8</th><td>120</td><td>289</td><td>0</td><td>25</td><td>62</td><td>125</td><td>0</td><td> 0</td></tr>
+	<tr><th scope=row>9</th><td>143</td><td>299</td><td>0</td><td>30</td><td>66</td><td>136</td><td>1</td><td> 5</td></tr>
+	<tr><th scope=row>10</th><td>140</td><td>351</td><td>0</td><td>27</td><td>68</td><td>120</td><td>0</td><td>57</td></tr>
+	<tr><th scope=row>11</th><td>144</td><td>282</td><td>0</td><td>32</td><td>64</td><td>124</td><td>1</td><td> 0</td></tr>
+	<tr><th scope=row>12</th><td>141</td><td>279</td><td>0</td><td>23</td><td>63</td><td>128</td><td>1</td><td> 0</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</section>
+<section id="fitting-the-initial-model">
+<h2><span class="section-number">10.3. </span>Fitting the initial model<a class="headerlink" href="#fitting-the-initial-model" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">bwt.fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">bwt</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">gestation</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ODdays</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Babies.df</span><span class="p">)</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">bwt.fit</span><span class="p">,</span><span class="w"> </span><span class="n">which</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">add.smooth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">)</span>
+<span class="nf">normcheck</span><span class="p">(</span><span class="n">bwt.fit</span><span class="p">)</span>
+<span class="nf">cooks20x</span><span class="p">(</span><span class="n">bwt.fit</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/6790b2198eeaf58a09e7cf99a37f166c0be4f603fd48cf8ed4063d94830d0a55.png" src="_images/6790b2198eeaf58a09e7cf99a37f166c0be4f603fd48cf8ed4063d94830d0a55.png" />
+<img alt="_images/988b56f423edf4507ccb567740e18a64442add6075d489741eb1a3093c7e7d12.png" src="_images/988b56f423edf4507ccb567740e18a64442add6075d489741eb1a3093c7e7d12.png" />
+<img alt="_images/2c8dca382555137014bd31383a6b0cabdccaf4044f42efa301ed025ab7ec8fd8.png" src="_images/2c8dca382555137014bd31383a6b0cabdccaf4044f42efa301ed025ab7ec8fd8.png" />
+</div>
+</div>
+<p>Let us refit with observation 239 removed.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">bwt.fit2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">bwt</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">gestation</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ODdays</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Babies.df</span><span class="p">[</span><span class="m">-239</span><span class="p">,</span><span class="w"> </span><span class="p">])</span>
+<span class="nf">cooks20x</span><span class="p">(</span><span class="n">bwt.fit2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/bf9ef019d4f783b0e36d59e4bc82e60f073b27c57eae1209af81aa5ec4601d9e.png" src="_images/bf9ef019d4f783b0e36d59e4bc82e60f073b27c57eae1209af81aa5ec4601d9e.png" />
+</div>
+</div>
+<p>We refit the model using the reduced data.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># This time we demonstrate using the subset argument to remove points</span>
+<span class="n">bwt.fit3</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">bwt</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">gestation</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ODdays</span><span class="p">,</span>
+<span class="w">    </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Babies.df</span><span class="p">,</span>
+<span class="w">    </span><span class="n">subset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="nf">c</span><span class="p">(</span><span class="m">239</span><span class="p">,</span><span class="w"> </span><span class="m">820</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="nf">cooks20x</span><span class="p">(</span><span class="n">bwt.fit3</span><span class="p">)</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">bwt.fit3</span><span class="p">,</span><span class="w"> </span><span class="n">which</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/8b0b640a772f6df24cc7128502f029badf4da20cef4a170361670cd6e7d89c81.png" src="_images/8b0b640a772f6df24cc7128502f029badf4da20cef4a170361670cd6e7d89c81.png" />
+<img alt="_images/b23b7a9d96f382f6d896d4d911e25d87590678bad5796195385659c4f8431058.png" src="_images/b23b7a9d96f382f6d896d4d911e25d87590678bad5796195385659c4f8431058.png" />
+</div>
+</div>
+<p>Let’s take a look at our fitted hockey stick model.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">gestation.seq</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">201</span><span class="o">:</span><span class="m">360</span><span class="w"> </span><span class="c1"># Explanatory values at which to get predictions</span>
+<span class="n">ODdays.seq</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="n">gestation.seq</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="m">294</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">gestation.seq</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">294</span><span class="p">)</span>
+<span class="n">fit.seq</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="n">bwt.fit3</span><span class="p">,</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span>
+<span class="w">    </span><span class="n">gestation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gestation.seq</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ODdays</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ODdays.seq</span>
+<span class="p">))</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">bwt</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">gestation</span><span class="p">,</span>
+<span class="w">    </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Babies.df</span><span class="p">[</span><span class="o">-</span><span class="nf">c</span><span class="p">(</span><span class="m">239</span><span class="p">,</span><span class="w"> </span><span class="m">820</span><span class="p">),</span><span class="w"> </span><span class="p">],</span>
+<span class="w">    </span><span class="n">ylab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Birth weight (oz)&quot;</span>
+<span class="p">)</span>
+<span class="nf">lines</span><span class="p">(</span><span class="n">gestation.seq</span><span class="p">,</span><span class="w"> </span><span class="n">fit.seq</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;red&quot;</span><span class="p">)</span>
+<span class="nf">abline</span><span class="p">(</span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">294</span><span class="p">,</span><span class="w"> </span><span class="n">lty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;blue&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/6bd768c11d50e17fb0ee1fa64ce106ce24e92ced9fa8d94b8de3306fa8f0c35d.png" src="_images/6bd768c11d50e17fb0ee1fa64ce106ce24e92ced9fa8d94b8de3306fa8f0c35d.png" />
+</div>
+</div>
+<p>模型检查是好的，没有影响力的点依然存在，所以我们可以相信这个。让我们解释输出。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">summary</span><span class="p">(</span><span class="n">bwt.fit3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
+lm(formula = bwt ~ gestation + ODdays, data = Babies.df, subset = -c(239, 
+    820))
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-50.664 -10.993  -0.308   9.795  52.336 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -66.95336   10.42810   -6.42 1.97e-10 ***
+gestation     0.67124    0.03757   17.87  &lt; 2e-16 ***
+ODdays       -0.90783    0.11745   -7.73 2.31e-14 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 16.23 on 1169 degrees of freedom
+Multiple R-squared:  0.2188,	Adjusted R-squared:  0.2174 
+F-statistic: 163.7 on 2 and 1169 DF,  p-value: &lt; 2.2e-16
+</pre></div>
+</div>
+</div>
+</div>
+<p>The fitted model is:</p>
+<div class="math notranslate nohighlight">
+\[
+\text{E[bwt]}=-66.95+0.67\times\text{gestation}-0.91\times\text{ODdays}
+\]</div>
+</section>
+<section id="multiple-linear-regression-model-adding-more-terms-to-the-model-and-the-peril-of-multi-collinearity">
+<h2><span class="section-number">10.4. </span>Multiple linear regression model: Adding more terms to the model and the peril of multi-collinearity<a class="headerlink" href="#multiple-linear-regression-model-adding-more-terms-to-the-model-and-the-peril-of-multi-collinearity" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">bwt.fit4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">bwt</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">gestation</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ODdays</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">height</span><span class="p">,</span>
+<span class="w">    </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Babies.df</span><span class="p">,</span>
+<span class="w">    </span><span class="n">subset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="nf">c</span><span class="p">(</span><span class="m">239</span><span class="p">,</span><span class="w"> </span><span class="m">820</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">bwt.fit4</span><span class="p">,</span><span class="w"> </span><span class="n">which</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/d2e539d5668b540ac4be0df654d5715f75cb48563ffc291bd199fd04c85cbce9.png" src="_images/d2e539d5668b540ac4be0df654d5715f75cb48563ffc291bd199fd04c85cbce9.png" />
+</div>
+</div>
+<p>All seems okay. Let us make sure that this makes sense in terms of output.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">summary</span><span class="p">(</span><span class="n">bwt.fit4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
+lm(formula = bwt ~ gestation + ODdays + height, data = Babies.df, 
+    subset = -c(239, 820))
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-53.999 -10.393  -0.050   9.772  51.514 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -139.20571   15.05961  -9.244  &lt; 2e-16 ***
+gestation      0.65219    0.03703  17.613  &lt; 2e-16 ***
+ODdays        -0.89039    0.11543  -7.714 2.61e-14 ***
+height         1.21083    0.18495   6.547 8.79e-11 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 15.94 on 1168 degrees of freedom
+Multiple R-squared:  0.2464,	Adjusted R-squared:  0.2445 
+F-statistic: 127.3 on 3 and 1168 DF,  p-value: &lt; 2.2e-16
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let us add <code class="docutils literal notranslate"><span class="pre">weight</span></code> to the model. We’re going to save some typing and use the `update`` function to update our model.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">bwt.fit5</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="n">bwt.fit4</span><span class="p">,</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">.</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">weight</span><span class="p">)</span>
+<span class="nf">summary</span><span class="p">(</span><span class="n">bwt.fit5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
+lm(formula = bwt ~ gestation + ODdays + height + weight, data = Babies.df, 
+    subset = -c(239, 820))
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-53.053 -10.540   0.121  10.076  47.746 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -131.68169   15.14974  -8.692  &lt; 2e-16 ***
+gestation      0.65624    0.03688  17.795  &lt; 2e-16 ***
+ODdays        -0.90868    0.11502  -7.900 6.41e-15 ***
+height         0.90486    0.20453   4.424 1.06e-05 ***
+weight         0.08535    0.02485   3.434 0.000615 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 15.87 on 1167 degrees of freedom
+Multiple R-squared:  0.254,	Adjusted R-squared:  0.2514 
+F-statistic: 99.32 on 4 and 1167 DF,  p-value: &lt; 2.2e-16
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "r"
+        },
+        kernelOptions: {
+            name: "ir",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'ir'</script>
+
+                </article>
+              
+
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="09-linear-model-with-both-var-without-interact.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">9. </span>Linear models with both numeric and factor explanatory variables without interaction</p>
+      </div>
+    </a>
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-modelling-birth-weights-using-several-explanatory-variables">10.1. Example: Modelling birth weights using several explanatory variables</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exploring-relationships-between-the-variables">10.2. Exploring relationships between the variables</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fitting-the-initial-model">10.3. Fitting the initial model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multiple-linear-regression-model-adding-more-terms-to-the-model-and-the-peril-of-multi-collinearity">10.4. Multiple linear regression model: Adding more terms to the model and the peril of multi-collinearity</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By CWorld
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
