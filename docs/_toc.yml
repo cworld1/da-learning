@@ -19,6 +19,7 @@ parts:
       - file: 06-multiplicative-linear-models
       - file: 07-power-law-linear-models
       - file: 08-linear-model-with-both-var
+      - file: 09-linear-model-with-both-var-without-interact
 
 
   - caption: About Project
