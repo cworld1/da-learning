@@ -1,3 +1,6 @@
-linters: linters_with_defaults() # see vignette("lintr")
+linters: linters_with_defaults(
+    commented_code_linter = NULL,
+    object_name_linter = NULL
+  )
 encoding: "UTF-8"
 exclusions: list("*.Rmd", "docs", "*.ipynb")
