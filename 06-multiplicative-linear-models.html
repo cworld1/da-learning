@@ -102,6 +102,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="shortcut icon" href="_static/favicon.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="7. Power law linear models" href="07-power-law-linear-models.html" />
     <link rel="prev" title="5. Linear models with a categorical (factor) explanatory variable" href="05-linear-model-with-a-categ-explan-var.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="zh-Hans"/>
@@ -205,6 +206,8 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="04-fit-curves-with-linear-model.html">4. Fitting curves with the linear model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="05-linear-model-with-a-categ-explan-var.html">5. Linear models with a categorical (factor) explanatory variable</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">6. Multiplicative linear models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07-power-law-linear-models.html">7. Power law linear models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08-linear-model-with-both-var.html">8. Linear models with both numeric and factor explanatory variables</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">About Project</span></p>
 <ul class="nav bd-sidenav">
@@ -450,7 +453,7 @@ document.write(`
 <span class="expanded">Hide code cell output</span>
 </summary>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>载入需要的程辑包：s20x
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading required package: s20x
 </pre></div>
 </div>
 </div>
@@ -474,7 +477,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/6f0e2f475ed7e1f214509a02a2069ecee30f276eddf22d2dd3a7b11c1a069a3d.png" src="_images/6f0e2f475ed7e1f214509a02a2069ecee30f276eddf22d2dd3a7b11c1a069a3d.png" />
+<img alt="_images/a219823d1501b118fd684a4842f391fc5ec2e648d2fd46b2640b55266b79e13d.png" src="_images/a219823d1501b118fd684a4842f391fc5ec2e648d2fd46b2640b55266b79e13d.png" />
 </div>
 </div>
 <p>这个数据就是典型的右偏：中位值比均值更小，因为右偏的分布有更多的更“离谱”的大值，整体却更偏向于小值</p>
@@ -503,7 +506,7 @@ document.write(`
 <span class="c1"># 95% 置信区间</span>
 <span class="nf">quantile</span><span class="p">(</span><span class="n">bootstrappedMeanPrices</span><span class="p">,</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">.</span><span class="m">025</span><span class="p">,</span><span class="w"> </span><span class="n">.</span><span class="m">975</span><span class="p">))</span>
 
-<span class="n">HousesNull.fit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">price</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Houses.df</span><span class="p">)</span>
+<span class="n">HousesNull.fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">price</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Houses.df</span><span class="p">)</span>
 <span class="nf">summary</span><span class="p">(</span><span class="n">HousesNull.fit</span><span class="p">)</span>
 <span class="nf">confint</span><span class="p">(</span><span class="n">HousesNull.fit</span><span class="p">)</span>
 </pre></div>
@@ -515,7 +518,7 @@ document.write(`
 .dl-inline>dt, .dl-inline>dd {float: none; width: auto; display: inline-block}
 .dl-inline>dt::after {content: ":\0020"; padding-right: .5ex}
 .dl-inline>dt:not(:first-of-type) {padding-left: .5ex}
-</style><dl class=dl-inline><dt>2.5%</dt><dd>1163.50265957447</dd><dt>97.5%</dt><dd>1450.40691489362</dd></dl>
+</style><dl class=dl-inline><dt>2.5%</dt><dd>1183.17287234043</dd><dt>97.5%</dt><dd>1451.20212765957</dd></dl>
 </div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
 lm(formula = price ~ 1, data = Houses.df)
 
@@ -527,7 +530,7 @@ Coefficients:
             Estimate Std. Error t value Pr(&gt;|t|)    
 (Intercept)   1310.1       70.1   18.69   &lt;2e-16 ***
 ---
-Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 679.7 on 93 degrees of freedom
 </pre></div>
@@ -570,7 +573,7 @@ Residual standard error: 679.7 on 93 degrees of freedom
 .dl-inline>dt, .dl-inline>dd {float: none; width: auto; display: inline-block}
 .dl-inline>dt::after {content: ":\0020"; padding-right: .5ex}
 .dl-inline>dt:not(:first-of-type) {padding-left: .5ex}
-</style><dl class=dl-inline><dt>2.5%</dt><dd>1035</dd><dt>97.5%</dt><dd>1320.25</dd></dl>
+</style><dl class=dl-inline><dt>2.5%</dt><dd>1040</dd><dt>97.5%</dt><dd>1340.125</dd></dl>
 </div></div>
 </div>
 <p>房价在上面的例子中,我们正在与 iid（Independent and Identically Distributed Data，独立和同分布数据）数据,所以很自然的使用示例值来估计人口值。在下一节中我们将看到，线性模型框架还可以用来进行推理所提供的值，记录反应变量为正态分布。这种方法的优点是它也适用于更一般的情况下我们有解释变量可能与响应变量联系在一起。我们也会看到登录响应数据结果拟合线性模型解释变量的影响作用在中位数用乘法。</p>
@@ -585,13 +588,13 @@ Residual standard error: 679.7 on 93 degrees of freedom
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/38df71acdb797d8599a5d419bb4be58234659948a56799d0c17f9557bfa49204.png" src="_images/38df71acdb797d8599a5d419bb4be58234659948a56799d0c17f9557bfa49204.png" />
+<img alt="_images/acc07a17c920a40d0e531d2642acfbd7afc080047265ded49e758f67d1cbf72f.png" src="_images/acc07a17c920a40d0e531d2642acfbd7afc080047265ded49e758f67d1cbf72f.png" />
 </div>
 </div>
 <p>This looks reasonably(合理的，相当的) close to normal, so if we fit a linear model to these data then all inferences(推论) will be valid(有效的).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">LoggedPriceNull.fit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="nf">log</span><span class="p">(</span><span class="n">price</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Houses.df</span><span class="p">)</span><span class="w"> </span><span class="c1"># 取对数</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">LoggedPriceNull.fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="nf">log</span><span class="p">(</span><span class="n">price</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Houses.df</span><span class="p">)</span><span class="w"> </span><span class="c1"># 取对数</span>
 <span class="c1"># log函数可以带底数参数 base；默认底数为 e（这里就是默认底数）</span>
 <span class="nf">coef</span><span class="p">(</span><span class="nf">summary</span><span class="p">(</span><span class="n">LoggedPriceNull.fit</span><span class="p">))</span><span class="w"> </span><span class="c1"># 估计系数</span>
 <span class="nf">confint</span><span class="p">(</span><span class="n">LoggedPriceNull.fit</span><span class="p">)</span><span class="w"> </span><span class="c1"># 置信区间</span>
@@ -708,8 +711,8 @@ Residual standard error: 679.7 on 93 degrees of freedom
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/81f0dce47746d857774c729497ed9c3de9c13c62865f42f89fb9c2aaeda3cae0.png" src="_images/81f0dce47746d857774c729497ed9c3de9c13c62865f42f89fb9c2aaeda3cae0.png" />
-<img alt="_images/bb72c670c1ce3959ac6cebd0ab73a4b86bf1c7b4555299767ea88ee373e767d5.png" src="_images/bb72c670c1ce3959ac6cebd0ab73a4b86bf1c7b4555299767ea88ee373e767d5.png" />
+<img alt="_images/c7e6270c1e82d0ec83a9b7b7f5dde3d76a3a33086d32ea62b838524f8c1f78fc.png" src="_images/c7e6270c1e82d0ec83a9b7b7f5dde3d76a3a33086d32ea62b838524f8c1f78fc.png" />
+<img alt="_images/05a9d58c86f42479b5d5b8a05750dade8a64e9e310bbb6683cf0fb427d109f88.png" src="_images/05a9d58c86f42479b5d5b8a05750dade8a64e9e310bbb6683cf0fb427d109f88.png" />
 </div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">trendscatter()</span></code> 函数给出的蓝线代表均值，红色线代表均值区间。</p>
@@ -722,7 +725,7 @@ Residual standard error: 679.7 on 93 degrees of freedom
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/df6f725686478731c9f052a6c83e00c66bbed96d6f236dac9c6d40fb6d30e08f.png" src="_images/df6f725686478731c9f052a6c83e00c66bbed96d6f236dac9c6d40fb6d30e08f.png" />
+<img alt="_images/d8d1bf0cf95790e38aaf9766cd5d9612db47e1e42f0bfeee455e26fcf7ccfd2e.png" src="_images/d8d1bf0cf95790e38aaf9766cd5d9612db47e1e42f0bfeee455e26fcf7ccfd2e.png" />
 </div>
 </div>
 <p>非线性下降趋势和不恒定散射已经变得更加明显。</p>
@@ -735,7 +738,7 @@ Residual standard error: 679.7 on 93 degrees of freedom
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/30c9dce771b55369ce92a04c2c3a75b3677091f33e39e2a693e70c041bd3898b.png" src="_images/30c9dce771b55369ce92a04c2c3a75b3677091f33e39e2a693e70c041bd3898b.png" />
+<img alt="_images/cdbdd53b2217b96b255bb02d5cf040d1c37157320696a5d85a72832b5a27366f.png" src="_images/cdbdd53b2217b96b255bb02d5cf040d1c37157320696a5d85a72832b5a27366f.png" />
 </div>
 </div>
 <p>We have eliminated trend from these residuals but the assumption is still violated. 我们从这些残差但假设消除趋势仍然是违反了。Let us ‘tear up’ this approach and take logs of price.</p>
@@ -750,7 +753,7 @@ Residual standard error: 679.7 on 93 degrees of freedom
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/f3457d877d237586c11430cefa8398765e9f3ef0908fc562b64c86f317118f20.png" src="_images/f3457d877d237586c11430cefa8398765e9f3ef0908fc562b64c86f317118f20.png" />
+<img alt="_images/efdc34c914d992140abeb1f33c9a14dcac56cdaa0b46e746a7f697caeaa86086.png" src="_images/efdc34c914d992140abeb1f33c9a14dcac56cdaa0b46e746a7f697caeaa86086.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -761,7 +764,7 @@ Residual standard error: 679.7 on 93 degrees of freedom
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/f1f903118cbe6df2e2a70f4804b1462a78a516bd58bc92ce2e2876c35097941a.png" src="_images/f1f903118cbe6df2e2a70f4804b1462a78a516bd58bc92ce2e2876c35097941a.png" />
+<img alt="_images/9e804a1c1725cec8fc5a9ecd1a259ae5df5aba9fcacddff5e9604f483aa9cf3c.png" src="_images/9e804a1c1725cec8fc5a9ecd1a259ae5df5aba9fcacddff5e9604f483aa9cf3c.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -774,8 +777,8 @@ Residual standard error: 679.7 on 93 degrees of freedom
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/444a603f1e405dd355e476cdf8c8a96697b719b94ee584888d9dad8dfc3ed917.png" src="_images/444a603f1e405dd355e476cdf8c8a96697b719b94ee584888d9dad8dfc3ed917.png" />
-<img alt="_images/ad1f89dad86471326115b4c10e2a81acebe73603c9b7f6e394cbfadf33f3264d.png" src="_images/ad1f89dad86471326115b4c10e2a81acebe73603c9b7f6e394cbfadf33f3264d.png" />
+<img alt="_images/f20090681aa00f144d0b85cda41533998f8cbfe4a75b73a795ac1d5f1e733961.png" src="_images/f20090681aa00f144d0b85cda41533998f8cbfe4a75b73a795ac1d5f1e733961.png" />
+<img alt="_images/ab8fe137d63025c0ff0468d34ef7a8f0a4232da71ea241a2e6ddda472d5c375e.png" src="_images/ab8fe137d63025c0ff0468d34ef7a8f0a4232da71ea241a2e6ddda472d5c375e.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -798,7 +801,7 @@ Coefficients:
 (Intercept) 10.195210   0.063602   160.3   &lt;2e-16 ***
 age         -0.163915   0.007034   -23.3   &lt;2e-16 ***
 ---
-Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.3615 on 121 degrees of freedom
 Multiple R-squared:  0.8178,	Adjusted R-squared:  0.8163 
@@ -870,21 +873,21 @@ Standard          25 4.600    3.3 4.983138       3.8
 Tapered           25 1.924    1.4 1.643999       1.4
 </pre></div>
 </div>
-<img alt="_images/9bbffef032603f292ce38ccaf5c498108a09c393491524a8695fd33a97fa31be.png" src="_images/9bbffef032603f292ce38ccaf5c498108a09c393491524a8695fd33a97fa31be.png" />
+<img alt="_images/6083381b477547cebd1e5752f5179e2251a04ae80e11aa66950cc322b8893a8b.png" src="_images/6083381b477547cebd1e5752f5179e2251a04ae80e11aa66950cc322b8893a8b.png" />
 </div>
 </div>
 <p>这似乎证实了我们的直觉，这些数据应该仿照对数尺度。线性模型的拟合效果真的很差...</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">Trawl.lm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">Bycatch</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Trawl</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Bycatch.df</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">Trawl.lm</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">Bycatch</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Trawl</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Bycatch.df</span><span class="p">)</span>
 <span class="nf">plot</span><span class="p">(</span><span class="n">Trawl.lm</span><span class="p">,</span><span class="w"> </span><span class="n">which</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
 <span class="nf">normcheck</span><span class="p">(</span><span class="n">Trawl.lm</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/1d133f3a63f4ba8fb8a131e91d2ccfa1a934bcefb17b9cdd85bbec8a7c29d5e6.png" src="_images/1d133f3a63f4ba8fb8a131e91d2ccfa1a934bcefb17b9cdd85bbec8a7c29d5e6.png" />
-<img alt="_images/1d7407c4da63055b5a04d072e368fd2e262a5af6e629afc4f5b4e16c115934ea.png" src="_images/1d7407c4da63055b5a04d072e368fd2e262a5af6e629afc4f5b4e16c115934ea.png" />
+<img alt="_images/78bb73d2a360fdedb76eb957a67620ff5d7cc59382e156871d98da305ffcdd57.png" src="_images/78bb73d2a360fdedb76eb957a67620ff5d7cc59382e156871d98da305ffcdd57.png" />
+<img alt="_images/627c9c4267530b2b476ef54ab916e6dd793ca4e4ec4b32e9823405286897b3a0.png" src="_images/627c9c4267530b2b476ef54ab916e6dd793ca4e4ec4b32e9823405286897b3a0.png" />
 </div>
 </div>
 <p>Multiplicative model with categorical explanatory variable 乘法模型分类解释变量</p>
@@ -895,14 +898,14 @@ Tapered           25 1.924    1.4 1.643999       1.4
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/65730ddf467a4f82c5003c18c03b0844a53472404144310d14096e95906b0cc2.png" src="_images/65730ddf467a4f82c5003c18c03b0844a53472404144310d14096e95906b0cc2.png" />
+<img alt="_images/2d72d8320096f209e8d490c0385ab9bda77478ee94635bcda65f0be950370d16.png" src="_images/2d72d8320096f209e8d490c0385ab9bda77478ee94635bcda65f0be950370d16.png" />
 </div>
 </div>
 <p>Looking much better.</p>
 <p>接下来我们将进行建模 + 验证三部曲。</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">Trawl.lmlog</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="nf">log</span><span class="p">(</span><span class="n">Bycatch</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Trawl</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Bycatch.df</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">Trawl.lmlog</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="nf">log</span><span class="p">(</span><span class="n">Bycatch</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Trawl</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Bycatch.df</span><span class="p">)</span>
 <span class="nf">plot</span><span class="p">(</span><span class="n">Trawl.lmlog</span><span class="p">,</span><span class="w"> </span><span class="n">which</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
 <span class="nf">normcheck</span><span class="p">(</span><span class="n">Trawl.lmlog</span><span class="p">)</span>
 <span class="nf">cooks20x</span><span class="p">(</span><span class="n">Trawl.lmlog</span><span class="p">)</span>
@@ -910,9 +913,9 @@ Tapered           25 1.924    1.4 1.643999       1.4
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/e389a26926fbcc98ebcbb4e2333d9a1586f6805de396965989c8c948417e293b.png" src="_images/e389a26926fbcc98ebcbb4e2333d9a1586f6805de396965989c8c948417e293b.png" />
-<img alt="_images/9eed266d47dc05a95067d439c8ebf9c9e852153c55dd5ed584cab4617805e3bc.png" src="_images/9eed266d47dc05a95067d439c8ebf9c9e852153c55dd5ed584cab4617805e3bc.png" />
-<img alt="_images/c4d93f552bce41c18e5ddd990c1ced185f088dcbf42b3c613e8b76dc37b3bd7f.png" src="_images/c4d93f552bce41c18e5ddd990c1ced185f088dcbf42b3c613e8b76dc37b3bd7f.png" />
+<img alt="_images/20df9b0fd2e5c105d3a49bce1d92619a0b86dfa7ffbd2c208595b43bb401de11.png" src="_images/20df9b0fd2e5c105d3a49bce1d92619a0b86dfa7ffbd2c208595b43bb401de11.png" />
+<img alt="_images/372ad5ca80b61cae10562847c9e9b544f896433b8aabd4c1a136b2f997fef99e.png" src="_images/372ad5ca80b61cae10562847c9e9b544f896433b8aabd4c1a136b2f997fef99e.png" />
+<img alt="_images/548aa5589e803ebdc5ad02f4557656a6081a7352bca6084058ed2d0aa7e1868d.png" src="_images/548aa5589e803ebdc5ad02f4557656a6081a7352bca6084058ed2d0aa7e1868d.png" />
 </div>
 </div>
 <p>Assumptions are satisfied. We can trust the fitted model.</p>
@@ -935,7 +938,7 @@ Coefficients:
 (Intercept)    1.0996     0.1700   6.469 4.79e-08 ***
 TrawlTapered  -0.7122     0.2404  -2.963  0.00473 ** 
 ---
-Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.8498 on 48 degrees of freedom
 Multiple R-squared:  0.1546,	Adjusted R-squared:  0.137 
@@ -964,6 +967,11 @@ F-statistic:  8.78 on 1 and 48 DF,  p-value: 0.004728
 </table>
 </div></div>
 </div>
+<p>附模型方程：</p>
+<div class="math notranslate nohighlight">
+\[
+\log(y) = \beta_0 + \beta_1 \times \text{x} + \epsilon
+\]</div>
 <p>什么时候直接用线性模型，什么时候要取对数？</p>
 <p>有明显的正态分布或者线性关系就可以用线性模型，否则就要取对数。当然我们也可以通过“右偏”效果来看取对数的必要性（其中之一：中位值比均值要小一点）。事实上取对数也只是为了更好的拟合模型，是手段而非万能方法。</p>
 </section>
@@ -1008,6 +1016,15 @@ F-statistic:  8.78 on 1 and 48 DF,  p-value: 0.004728
         <p class="prev-next-subtitle">previous</p>
         <p class="prev-next-title"><span class="section-number">5. </span>Linear models with a categorical (factor) explanatory variable</p>
       </div>
+    </a>
+    <a class="right-next"
+       href="07-power-law-linear-models.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">7. </span>Power law linear models</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div></div>
   

@@ -1,0 +1,1028 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="zh-Hans" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>8. Linear models with both numeric and factor explanatory variables &#8212; Data Analysis Learning</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script kind="utterances">
+
+    var commentsRunWhenDOMLoaded = cb => {
+    if (document.readyState != 'loading') {
+        cb()
+    } else if (document.addEventListener) {
+        document.addEventListener('DOMContentLoaded', cb)
+    } else {
+        document.attachEvent('onreadystatechange', function() {
+        if (document.readyState == 'complete') cb()
+        })
+    }
+}
+
+var addUtterances = () => {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = "https://utteranc.es/client.js";
+    script.async = "async";
+
+    script.setAttribute("repo", "cworld1/da-learning");
+    script.setAttribute("issue-term", "pathname");
+    script.setAttribute("theme", "github-light");
+    script.setAttribute("label", "💬 comment");
+    script.setAttribute("crossorigin", "anonymous");
+
+    sections = document.querySelectorAll("div.section");
+    if (sections !== null) {
+        section = sections[sections.length-1];
+        section.appendChild(script);
+    }
+}
+commentsRunWhenDOMLoaded(addUtterances);
+</script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '08-linear-model-with-both-var';</script>
+    <link rel="canonical" href="https://da.cworld.top/08-linear-model-with-both-var.html" />
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="7. Power law linear models" href="07-power-law-linear-models.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="zh-Hans"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="index.html">
+                    Data Analysis Learning
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="00-at-the-beginning.html">At the beginning</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Main Chapters</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="01-get-start-with-regres.html">1. Getting Started with Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02-basics-of-simp-linear-regres.html">2. Basics of Simple Linear Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03-null-model.html">3. The null model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04-fit-curves-with-linear-model.html">4. Fitting curves with the linear model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05-linear-model-with-a-categ-explan-var.html">5. Linear models with a categorical (factor) explanatory variable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06-multiplicative-linear-models.html">6. Multiplicative linear models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07-power-law-linear-models.html">7. Power law linear models</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">8. Linear models with both numeric and factor explanatory variables</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">About Project</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference external" href="https://blog.cworld.top">CWorld's Blog</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/cworld1/da-learning" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/cworld1/da-learning/edit/main/docs/08-linear-model-with-both-var.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/cworld1/da-learning/issues/new?title=Issue%20on%20page%20%2F08-linear-model-with-both-var.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/08-linear-model-with-both-var.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Linear models with both numeric and factor explanatory variables</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-using-both-test-score-and-attendance-to-explain-exam-score">8.1. Example: Using both test score and attendance to explain exam score</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fitting-the-linear-model">8.2. Fitting the linear model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interpretting-the-fitted-model">8.3. Interpretting the fitted model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#assessing-influence-of-the-atypical-students">8.4. Assessing influence of the atypical students</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="linear-models-with-both-numeric-and-factor-explanatory-variables">
+<h1><span class="section-number">8. </span>Linear models with both numeric and factor explanatory variables<a class="headerlink" href="#linear-models-with-both-numeric-and-factor-explanatory-variables" title="Permalink to this heading">#</a></h1>
+<p>本节需要的包：</p>
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input above-output-prompt docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">require</span><span class="p">(</span><span class="n">s20x</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<details class="hide below-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell output</span>
+<span class="expanded">Hide code cell output</span>
+</summary>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading required package: s20x
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<section id="example-using-both-test-score-and-attendance-to-explain-exam-score">
+<h2><span class="section-number">8.1. </span>Example: Using both test score and attendance to explain exam score<a class="headerlink" href="#example-using-both-test-score-and-attendance-to-explain-exam-score" title="Permalink to this heading">#</a></h2>
+<p>示例：使用测试成绩和出勤率解释考试分数</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">## Invoke the s20x library</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">s20x</span><span class="p">)</span>
+<span class="c1">## Importing data into R</span>
+<span class="n">Stats20x.df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">read.table</span><span class="p">(</span><span class="s">&quot;../data/STATS20x.txt&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">header</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span>
+<span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Attend</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as.factor</span><span class="p">(</span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Attend</span><span class="p">)</span>
+<span class="c1">## Plot blue &quot;Y&quot; for &quot;Yes&quot; (regular attenders), and red &quot;N&quot; for &quot;No&quot;</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Test</span><span class="p">,</span>
+<span class="w">    </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="p">,</span>
+<span class="w">    </span><span class="n">pch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">substr</span><span class="p">(</span><span class="n">Attend</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="c1"># &quot;Y&quot; or &quot;N&quot;</span>
+<span class="w">    </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="n">Attend</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Yes&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;blue&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;red&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/2b34c0e0745770014f4ba528fe3abefd276830a22f0c33ab000d2dae32fd7b9d.png" src="_images/2b34c0e0745770014f4ba528fe3abefd276830a22f0c33ab000d2dae32fd7b9d.png" />
+</div>
+</div>
+<p>Here is the plot for the regular attenders and the non-attenders.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">Attendees.df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">subset</span><span class="p">(</span><span class="n">Stats20x.df</span><span class="p">,</span><span class="w"> </span><span class="n">Attend</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Yes&quot;</span><span class="p">)</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Test</span><span class="p">,</span>
+<span class="w">    </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Attendees.df</span><span class="p">,</span>
+<span class="w">    </span><span class="n">xlim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">20</span><span class="p">),</span>
+<span class="w">    </span><span class="n">ylim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">100</span><span class="p">),</span>
+<span class="w">    </span><span class="n">pch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Y&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">cex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.7</span>
+<span class="p">)</span>
+<span class="n">Absentees.df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">subset</span><span class="p">(</span><span class="n">Stats20x.df</span><span class="p">,</span><span class="w"> </span><span class="n">Attend</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;No&quot;</span><span class="p">)</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Test</span><span class="p">,</span>
+<span class="w">    </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Absentees.df</span><span class="p">,</span>
+<span class="w">    </span><span class="n">xlim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">20</span><span class="p">),</span>
+<span class="w">    </span><span class="n">ylim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">100</span><span class="p">),</span>
+<span class="w">    </span><span class="n">pch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;N&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="n">cex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.7</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/e0e13788f25b4bc7a3ad9e975300e64583f5764b577a285def34ae80d2a0069c.png" src="_images/e0e13788f25b4bc7a3ad9e975300e64583f5764b577a285def34ae80d2a0069c.png" />
+<img alt="_images/36cce64692f42711b43132500f34252c8cf4c67a18c5bd36538a6ccfc7b1d6ed.png" src="_images/36cce64692f42711b43132500f34252c8cf4c67a18c5bd36538a6ccfc7b1d6ed.png" />
+</div>
+</div>
+<p>Also, there seems to be some non-attenders who do well in the test and exam so we could (and will) see whether we should include these people. They are identified in red (stars) with the code below. 此外，似乎有一些没有参加考试的人在考试和考试中表现很好，所以我们可以(也将)看看是否应该包括这些人。它们用红色(星号)标识，代码如下。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">Absentees.df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">subset</span><span class="p">(</span><span class="n">Stats20x.df</span><span class="p">,</span><span class="w"> </span><span class="n">Attend</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;No&quot;</span><span class="p">)</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Test</span><span class="p">,</span>
+<span class="w">    </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Absentees.df</span><span class="p">,</span><span class="w"> </span><span class="n">xlim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">20</span><span class="p">),</span><span class="w"> </span><span class="n">ylim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">100</span><span class="p">),</span>
+<span class="w">    </span><span class="n">cex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.7</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="n">Absentees.df</span><span class="o">$</span><span class="n">Test</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="m">16</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;black&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;red&quot;</span><span class="p">),</span>
+<span class="w">    </span><span class="n">pch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="n">Absentees.df</span><span class="o">$</span><span class="n">Test</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="m">16</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">8</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/3203470d572f5102250b97819bdb6fc3b92dd441986a2d50d2a8d911b97ae77d.png" src="_images/3203470d572f5102250b97819bdb6fc3b92dd441986a2d50d2a8d911b97ae77d.png" />
+</div>
+</div>
+</section>
+<section id="fitting-the-linear-model">
+<h2><span class="section-number">8.2. </span>Fitting the linear model<a class="headerlink" href="#fitting-the-linear-model" title="Permalink to this heading">#</a></h2>
+<p>看起来我们需要符合两个不同取决于学生是否经常出席者。</p>
+<p>We will call our indicator variable for greater convenience of notation: 我们将为了方便表示法而称之为指示变量：</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">## Boolean statement if Attend =&quot;Yes&quot; (TRUE) D=1, othwerwise 0 (FALSE);</span>
+<span class="n">Stats20x.df</span><span class="o">$</span><span class="n">D</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as.numeric</span><span class="p">(</span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Attend</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Yes&quot;</span><span class="p">)</span>
+<span class="nf">table</span><span class="p">(</span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Attend</span><span class="p">,</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">D</span><span class="p">)</span><span class="w"> </span><span class="c1">## Check it is okay</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>     
+        0   1
+  No   46   0
+  Yes   0 100
+</pre></div>
+</div>
+</div>
+</div>
+<p>相当于说，No 为 0，Yes 为 1。</p>
+<p>Our straight line model for the non-attenders (i.e., D = 0) students will be:</p>
+<div class="math notranslate nohighlight">
+\[
+Exam = β_0 + β_1 \times Test + ε\ where\ ε \sim N(0,σ^2)
+\]</div>
+<p>For the non-attenders (D = 0) the slope(斜率) is:</p>
+<div class="math notranslate nohighlight">
+\[
+β_1 + D \times β_2 = β_1
+\]</div>
+<p>For the attenders (D = 1) the slope is:</p>
+<div class="math notranslate nohighlight">
+\[
+β_1 + D \times β_3 = β_1 + β_3
+\]</div>
+<p>So, our model is:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}\text{Exam}&amp;=\beta_0+\beta_2\times D+(\beta_1+\beta_3\times D)\text{Test}+\varepsilon\\
+&amp;=(\beta_0+\beta_2\times D)+(\beta_1+\beta_3\times D)\text{Test}+\varepsilon\\
+&amp;=\beta_0+\beta_1\times\text{Test}+\beta_2\times D+\beta_3\times D\times\text{Test}+\varepsilon\end{aligned}
+\end{split}\]</div>
+<p>建模：</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">TestD</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">with</span><span class="p">(</span><span class="n">Stats20x.df</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">TestD</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">D</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Test</span>
+<span class="p">})</span>
+<span class="n">TestAttend.fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Test</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">D</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">TestD</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Assumption checks 三步走:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">TestAttend.fit</span><span class="p">,</span><span class="w"> </span><span class="n">which</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
+<span class="nf">normcheck</span><span class="p">(</span><span class="n">TestAttend.fit</span><span class="p">)</span>
+<span class="nf">cooks20x</span><span class="p">(</span><span class="n">TestAttend.fit</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/64edc707f85613d8d088436d5b31a973e9b028f15d4f360a6211439d1020ddf2.png" src="_images/64edc707f85613d8d088436d5b31a973e9b028f15d4f360a6211439d1020ddf2.png" />
+<img alt="_images/d99112ec7091d24e2ed370f241a32a00f2193774fc0555509990cd2a102604e6.png" src="_images/d99112ec7091d24e2ed370f241a32a00f2193774fc0555509990cd2a102604e6.png" />
+<img alt="_images/03efd117fc5dd482db733e26d85a75964b105795b2972b463b32c8170aa10b79.png" src="_images/03efd117fc5dd482db733e26d85a75964b105795b2972b463b32c8170aa10b79.png" />
+</div>
+</div>
+<p>We can now trust the fitted . The summary output is:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">summary</span><span class="p">(</span><span class="n">TestAttend.fit</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
+lm(formula = Exam ~ Test + D + TestD, data = Stats20x.df)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-30.3155  -6.5139   0.4383   7.3166  30.9383 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  14.4467     4.9443   2.922  0.00405 ** 
+Test          2.7496     0.4603   5.973 1.78e-08 ***
+D            -4.2582     6.3723  -0.668  0.50506    
+TestD         1.1380     0.5577   2.040  0.04316 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 11.41 on 142 degrees of freedom
+Multiple R-squared:  0.6347,	Adjusted R-squared:  0.627 
+F-statistic: 82.25 on 3 and 142 DF,  p-value: &lt; 2.2e-16
+</pre></div>
+</div>
+</div>
+</div>
+<p>Note that the above Executive Summary is missing the confidence interval for the effect of test mark on attenders. To obtain this CI we need to change attenders to the baseline level of . 改变了基准线</p>
+<p>让我们仔细看看我们刚刚安装模式。我们将会产生一个单独的情节为每个出席者。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">coef</span><span class="p">(</span><span class="n">TestAttend.fit</span><span class="p">)[</span><span class="m">1</span><span class="o">:</span><span class="m">2</span><span class="p">]</span>
+<span class="c1"># 分别为截距 和 Test 的系数</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style>
+.dl-inline {width: auto; margin:0; padding: 0}
+.dl-inline>dt, .dl-inline>dd {float: none; width: auto; display: inline-block}
+.dl-inline>dt::after {content: ":\0020"; padding-right: .5ex}
+.dl-inline>dt:not(:first-of-type) {padding-left: .5ex}
+</style><dl class=dl-inline><dt>(Intercept)</dt><dd>14.4467499989379</dd><dt>Test</dt><dd>2.74956844608019</dd></dl>
+</div></div>
+</div>
+<p>将我们的模型放到图上：</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">## Plot these data all together</span>
+<span class="n">b</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">coef</span><span class="p">(</span><span class="n">TestAttend.fit</span><span class="p">)</span><span class="w"> </span><span class="c1"># easier to work with these terms</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Test</span><span class="p">,</span>
+<span class="w">    </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="p">,</span>
+<span class="w">    </span><span class="n">pch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">substr</span><span class="p">(</span><span class="n">Attend</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="c1"># &quot;Y&quot; or &quot;N&quot;</span>
+<span class="w">    </span><span class="n">cex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.7</span><span class="p">,</span><span class="w"> </span><span class="c1"># 缩放，默认为 1</span>
+<span class="w">    </span><span class="n">xlim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">20</span><span class="p">)</span><span class="w"> </span><span class="c1"># x 轴范围</span>
+<span class="p">)</span>
+<span class="c1">## Red for &quot;No&quot; and blue for &quot;Yes&quot;.</span>
+<span class="nf">abline</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">2</span><span class="p">],</span><span class="w"> </span><span class="n">lty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;red&quot;</span><span class="p">)</span>
+<span class="c1"># No 群体：beta0 做截距，beta1 做斜率</span>
+<span class="nf">abline</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="m">3</span><span class="p">],</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="m">2</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="m">4</span><span class="p">],</span><span class="w"> </span><span class="n">lty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;blue&quot;</span><span class="p">)</span>
+<span class="c1"># Yes群体：beta0 + beta2 做截距，beta1 + beta3 做斜率</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/020def9b76a62f8e07068c426d8d7162e2af10b035bd468fc6458e424c694e22.png" src="_images/020def9b76a62f8e07068c426d8d7162e2af10b035bd468fc6458e424c694e22.png" />
+</div>
+</div>
+<p>All that hard work we did with constructing and can be avoided D TestD since will automatically do this for us.</p>
+<p>We were interested to see whether the effect of interacts with the Test students variable. Using we simply specify to Attend lm Test * Attend fit the model with interaction. That is,</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">TestAttend.fit2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Test</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Attend</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="p">)</span>
+<span class="nf">summary</span><span class="p">(</span><span class="n">TestAttend.fit2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
+lm(formula = Exam ~ Test * Attend, data = Stats20x.df)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-30.3155  -6.5139   0.4383   7.3166  30.9383 
+
+Coefficients:
+               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)     14.4467     4.9443   2.922  0.00405 ** 
+Test             2.7496     0.4603   5.973 1.78e-08 ***
+AttendYes       -4.2582     6.3723  -0.668  0.50506    
+Test:AttendYes   1.1380     0.5577   2.040  0.04316 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 11.41 on 142 degrees of freedom
+Multiple R-squared:  0.6347,	Adjusted R-squared:  0.627 
+F-statistic: 82.25 on 3 and 142 DF,  p-value: &lt; 2.2e-16
+</pre></div>
+</div>
+</div>
+</div>
+<p>We have the same outputs, but with slightly different names.</p>
+<p>注意: <code class="docutils literal notranslate"><span class="pre">Test</span> <span class="pre">*</span> <span class="pre">Attend</span></code> 是速记符号。你可以用下边的写法更明确关于模型中各个方面：</p>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">TestAttend.fit2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Test</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Attend</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Test</span><span class="o">:</span><span class="n">Attend</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="interpretting-the-fitted-model">
+<h2><span class="section-number">8.3. </span>Interpretting the fitted model<a class="headerlink" href="#interpretting-the-fitted-model" title="Permalink to this heading">#</a></h2>
+<p>We see that our intuition was correct. That is, the slope for of Test attenders is greater that for non-attenders. This is because the estimate of the difference in these slopes <code class="docutils literal notranslate"><span class="pre">TestD</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">coef</span><span class="p">(</span><span class="n">TestAttend.fit2</span><span class="p">)[</span><span class="m">4</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><strong>Test:AttendYes:</strong> 1.13799041829866</div></div>
+</div>
+<p>Confidence intervals may be needed for the coefficients:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">confint</span><span class="p">(</span><span class="n">TestAttend.fit2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A matrix: 4 × 2 of type dbl</caption>
+<thead>
+	<tr><th></th><th scope=col>2.5 %</th><th scope=col>97.5 %</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>(Intercept)</th><td>  4.67287511</td><td>24.220625</td></tr>
+	<tr><th scope=row>Test</th><td>  1.83956971</td><td> 3.659567</td></tr>
+	<tr><th scope=row>AttendYes</th><td>-16.85506294</td><td> 8.338572</td></tr>
+	<tr><th scope=row>Test:AttendYes</th><td>  0.03547053</td><td> 2.240510</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>注：Statistical significance (at the 5% level) of a coefficient is NOT equivalent to the (95%) confidence interval containing zero. 统计学意义(5%)的系数并不等同于(95%)置信区间包含零。</p>
+<p>Some predictions:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">predTestAttend.df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="m">20</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Attend</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">factor</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;No&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;No&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Yes&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Yes&quot;</span><span class="p">))</span>
+<span class="p">)</span>
+<span class="n">predTestAttend.df</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 4 × 2</caption>
+<thead>
+	<tr><th scope=col>Test</th><th scope=col>Attend</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;fct&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td> 0</td><td>No </td></tr>
+	<tr><td>10</td><td>No </td></tr>
+	<tr><td>10</td><td>Yes</td></tr>
+	<tr><td>20</td><td>Yes</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Let us estimate the expected exam scores for these values of test score and attendance 让我们这些值的估计预期的考试分数测试成绩和出勤:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">predict</span><span class="p">(</span><span class="n">TestAttend.fit2</span><span class="p">,</span><span class="w"> </span><span class="n">predTestAttend.df</span><span class="p">,</span><span class="w"> </span><span class="n">interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;confidence&quot;</span><span class="p">)</span><span class="w"> </span><span class="c1"># 区间估计</span>
+<span class="nf">predict</span><span class="p">(</span><span class="n">TestAttend.fit2</span><span class="p">,</span><span class="w"> </span><span class="n">predTestAttend.df</span><span class="p">,</span><span class="w"> </span><span class="n">interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;prediction&quot;</span><span class="p">)</span><span class="w"> </span><span class="c1"># 点估计</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A matrix: 4 × 3 of type dbl</caption>
+<thead>
+	<tr><th></th><th scope=col>fit</th><th scope=col>lwr</th><th scope=col>upr</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>1</th><td>14.44675</td><td> 4.672875</td><td>24.22062</td></tr>
+	<tr><th scope=row>2</th><td>41.94243</td><td>38.616376</td><td>45.26849</td></tr>
+	<tr><th scope=row>3</th><td>49.06409</td><td>46.412194</td><td>51.71599</td></tr>
+	<tr><th scope=row>4</th><td>87.93968</td><td>82.610100</td><td>93.26926</td></tr>
+</tbody>
+</table>
+</div><div class="output text_html"><table class="dataframe">
+<caption>A matrix: 4 × 3 of type dbl</caption>
+<thead>
+	<tr><th></th><th scope=col>fit</th><th scope=col>lwr</th><th scope=col>upr</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>1</th><td>14.44675</td><td>-10.13028</td><td> 39.02378</td></tr>
+	<tr><th scope=row>2</th><td>41.94243</td><td> 19.14848</td><td> 64.73639</td></tr>
+	<tr><th scope=row>3</th><td>49.06409</td><td> 26.35871</td><td> 71.76947</td></tr>
+	<tr><th scope=row>4</th><td>87.93968</td><td> 64.76845</td><td>111.11092</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>This is not the best model for predicting individual student exam scores as the intervals are too wide and in some case are meaningless (at the extremes of <code class="docutils literal notranslate"><span class="pre">Test</span></code>). 这不是最好的模型预测个体学生的考试成绩作为间隔太宽,在某些情况下是毫无意义的(在极端的 <code class="docutils literal notranslate"><span class="pre">Test</span></code> 成绩下)。</p>
+<p>请注意，上述的执行摘要缺少有关测试成绩对参与者影响的置信区间。要获得此置信区间，我们需要将参与者更改为基线水平，即 Atten。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Attend2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">relevel</span><span class="p">(</span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Attend</span><span class="p">,</span><span class="w"> </span><span class="n">ref</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Yes&quot;</span><span class="p">)</span>
+<span class="n">TestAttend.fit2b</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Test</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Attend2</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="p">)</span>
+<span class="nf">coef</span><span class="p">(</span><span class="nf">summary</span><span class="p">(</span><span class="n">TestAttend.fit2b</span><span class="p">))</span>
+<span class="nf">confint</span><span class="p">(</span><span class="n">TestAttend.fit2b</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A matrix: 4 × 4 of type dbl</caption>
+<thead>
+	<tr><th></th><th scope=col>Estimate</th><th scope=col>Std. Error</th><th scope=col>t value</th><th scope=col>Pr(&gt;|t|)</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>(Intercept)</th><td>10.188504</td><td>4.0199956</td><td> 2.5344566</td><td>1.234648e-02</td></tr>
+	<tr><th scope=row>Test</th><td> 3.887559</td><td>0.3148792</td><td>12.3461898</td><td>3.020895e-24</td></tr>
+	<tr><th scope=row>Attend2No</th><td> 4.258246</td><td>6.3722922</td><td> 0.6682439</td><td>5.050626e-01</td></tr>
+	<tr><th scope=row>Test:Attend2No</th><td>-1.137990</td><td>0.5577265</td><td>-2.0404094</td><td>4.316270e-02</td></tr>
+</tbody>
+</table>
+</div><div class="output text_html"><table class="dataframe">
+<caption>A matrix: 4 × 2 of type dbl</caption>
+<thead>
+	<tr><th></th><th scope=col>2.5 %</th><th scope=col>97.5 %</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>(Intercept)</th><td> 2.241733</td><td>18.13527583</td></tr>
+	<tr><th scope=row>Test</th><td> 3.265102</td><td> 4.51001561</td></tr>
+	<tr><th scope=row>Attend2No</th><td>-8.338572</td><td>16.85506294</td></tr>
+	<tr><th scope=row>Test:Attend2No</th><td>-2.240510</td><td>-0.03547053</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>We estimate that each additional test mark will increase the expected exam mark of an attender by 3.3 to 4.5. 我们估计，每增加一个测试分数，参与者的预期考试成绩将增加3.3到4.5分。</p>
+</section>
+<section id="assessing-influence-of-the-atypical-students">
+<h2><span class="section-number">8.4. </span>Assessing influence of the atypical students<a class="headerlink" href="#assessing-influence-of-the-atypical-students" title="Permalink to this heading">#</a></h2>
+<p>在分析的探索性阶段，我们确定了三名可能异常的学生。回想一下，这些是那3个在测试中得分大于16分但没有参加考试的学生。</p>
+<p>如果我们有理由认为这些学生“不典型”（我们有吗？），那么在分析时不考虑他们可能是合理的。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">## Remove atypical points - Note that ! means ’not’</span>
+<span class="n">Subset.df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">subset</span><span class="p">(</span><span class="n">Stats20x.df</span><span class="p">,</span><span class="w"> </span><span class="o">!</span><span class="p">(</span><span class="n">Test</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Attend</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;No&quot;</span><span class="p">))</span>
+<span class="n">TestAttend.fit3</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Test</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Attend</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Subset.df</span><span class="p">)</span>
+<span class="nf">summary</span><span class="p">(</span><span class="n">TestAttend.fit3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
+lm(formula = Exam ~ Test * Attend, data = Subset.df)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-27.059  -6.817   0.439   6.938  32.008 
+
+Coefficients:
+               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)     22.6522     5.2776   4.292  3.3e-05 ***
+Test             1.7590     0.5213   3.374 0.000960 ***
+AttendYes      -12.4637     6.5505  -1.903 0.059146 .  
+Test:AttendYes   2.1285     0.6034   3.527 0.000569 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 11.01 on 139 degrees of freedom
+Multiple R-squared:  0.6495,	Adjusted R-squared:  0.6419 
+F-statistic: 85.86 on 3 and 139 DF,  p-value: &lt; 2.2e-16
+</pre></div>
+</div>
+</div>
+</div>
+<p>R code to generate the plot of the full data with all three of the fitted Rlines:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">## Plot these data all together</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Test</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Subset.df</span><span class="p">,</span><span class="w"> </span><span class="n">pch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">substr</span><span class="p">(</span><span class="n">Attend</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="n">cex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.7</span><span class="p">)</span>
+
+<span class="c1">## Remember that we’ve defined b in Slide 26</span>
+<span class="c1">## Each abline() will have a different colour</span>
+<span class="nf">abline</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">2</span><span class="p">],</span><span class="w"> </span><span class="n">lty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;red&quot;</span><span class="p">)</span>
+<span class="nf">abline</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="m">3</span><span class="p">],</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="m">2</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="m">4</span><span class="p">],</span><span class="w"> </span><span class="n">lty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;blue&quot;</span><span class="p">)</span>
+
+<span class="c1">## The fitted line without the 3 atypical points</span>
+<span class="n">b2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">coef</span><span class="p">(</span><span class="n">TestAttend.fit3</span><span class="p">)</span><span class="w"> </span><span class="c1">## Easier to work with these terms</span>
+<span class="nf">abline</span><span class="p">(</span><span class="n">b2</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">2</span><span class="p">],</span><span class="w"> </span><span class="n">lty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;green&quot;</span><span class="p">)</span>
+
+<span class="c1">## Add a legend to help us differentiate between the lines for non-attenders</span>
+<span class="nf">legend</span><span class="p">(</span><span class="s">&quot;topleft&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="n">legend</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;All non-attenders&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Without atypical non-attenders&quot;</span><span class="p">),</span>
+<span class="w">    </span><span class="n">lty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">,</span>
+<span class="w">    </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;red&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;green&quot;</span><span class="p">),</span>
+<span class="w">    </span><span class="n">bty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;n&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/6504a7343d26871b2c8d671d859d84d624a7aa128c591aa7becba3e1f47735c9.png" src="_images/6504a7343d26871b2c8d671d859d84d624a7aa128c591aa7becba3e1f47735c9.png" />
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "r"
+        },
+        kernelOptions: {
+            name: "ir",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'ir'</script>
+
+                </article>
+              
+
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="07-power-law-linear-models.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">7. </span>Power law linear models</p>
+      </div>
+    </a>
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-using-both-test-score-and-attendance-to-explain-exam-score">8.1. Example: Using both test score and attendance to explain exam score</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fitting-the-linear-model">8.2. Fitting the linear model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interpretting-the-fitted-model">8.3. Interpretting the fitted model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#assessing-influence-of-the-atypical-students">8.4. Assessing influence of the atypical students</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By CWorld
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
