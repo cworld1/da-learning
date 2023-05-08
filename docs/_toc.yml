@@ -18,6 +18,7 @@ parts:
       - file: 05-linear-model-with-a-categ-explan-var
       - file: 06-multiplicative-linear-models
       - file: 07-power-law-linear-models
+      - file: 08-linear-model-with-both-var
 
 
   - caption: About Project
