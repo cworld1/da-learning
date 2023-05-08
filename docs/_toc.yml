@@ -20,6 +20,7 @@ parts:
       - file: 07-power-law-linear-models
       - file: 08-linear-model-with-both-var
       - file: 09-linear-model-with-both-var-without-interact
+      - file: 10-multi-linear-regress-model
 
 
   - caption: About Project
