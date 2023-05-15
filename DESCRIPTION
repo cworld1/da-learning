@@ -14,6 +14,7 @@ Imports:
     IRkernel (>= 1.3.2),
     s20x (>= 3.1-36),
     bootstrap (>= 3.3.7),
+    emmeans (>= 1.8.5),
 Suggests:
     rmarkdown (>= 2.10),
     knitr (>= 1.33),
