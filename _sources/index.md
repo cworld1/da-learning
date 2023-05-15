@@ -17,7 +17,7 @@ Get started
 
 ```{hint}
 点击侧栏的目录或下滑以阅览更多章节。
-当然，你也可以下载 {download}`PDF 版本 <./book.pdf>` 的笔记。它来自 Github Actions 的自动构建。
+当然，你也可以下载 {download}`PDF 版本 <./book.pdf>` 的笔记。它来自 Github Actions 的自动构建，并时刻保持最新。
 ```
 
 ## Development
