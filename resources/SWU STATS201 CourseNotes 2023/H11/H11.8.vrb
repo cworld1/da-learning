@@ -1,0 +1,25 @@
+\frametitle{Fruit fly\ldots}
+\framesubtitle{Linear  model with multi-level ($>2$) explanatory factor}
+
+As seen in previous chapters that involved categorical explanatory variables, our model specification uses indicator variables. In this case:
+
+\[\rcode{days}=\beta_0+\beta_{1}\times\rcode{D2} +\beta_{2}\times\rcode{D3} + \beta_{3}\times\rcode{D4}+  \beta_{4}\times\rcode{D5} + \epsilon\]
+where, as usual $\epsilon \iid N(0, \sigma^2)$, and
+
+\medskip
+\begin{itemize}
+\item \rcode{D2} is an indicator variable whereby \rcode{D2}=1 if the fruit fly is in group 2, otherwise it is 0.
+
+\item \rcode{D3} is an indicator variable whereby \rcode{D3}=1 if the fruit fly is in group 3, otherwise it is 0.
+
+\item ... and so on.
+\end{itemize}
+
+For example, $\beta_{1}$ and $\beta_{2}$ represent the differences in expected longevity (\rcode{days}) when we compare groups 2 and 3 to group 1 (the baseline).
+
+%Take a look at the design matrix (5 groups of 4 obs each)
+%Grp=rep(c("G1","G2","G3","G4","G5"),c(4,4,4,4,4))
+%y=rnorm(20,60,10)
+%MadeUpDataFrame=data.frame(Grp,y)
+%lmFit=lm(y~Grp,data=MadeUpDataFrame)
+%model.matrix(~Grp,data=MadeUpDataFrame)

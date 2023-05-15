@@ -1,0 +1,4 @@
+\beamer@sectionintoc {1}{Using categorical variables as explanatory variables by using indicator variables}{3}{0}{1}
+\beamer@sectionintoc {2}{Model checking and inference}{15}{0}{2}
+\beamer@sectionintoc {3}{Putting the two-sample \emph {t}-test{} into the linear model framework}{28}{0}{3}
+\beamer@sectionintoc {4}{{\color {darkgreen}\texttt {R}} tips and relevant code}{33}{0}{4}

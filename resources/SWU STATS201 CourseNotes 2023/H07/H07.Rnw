@@ -1,0 +1,605 @@
+\documentclass{beamer}
+\usepackage{graphicx}
+% \usepackage{comment}
+
+\input{../s20xPreambleRBM.tex}
+
+<<RC-H07-000, echo=FALSE>>=
+source("../s20xNotesHelper.R")
+
+## these are global knitr options and settings for the
+## whole document
+library(knitr)
+library(s20x)
+## comment = NA removes ## from all output lines
+## prompt = TRUE means the console input prompt > is displayed
+## tidy = TRUE means the code is properly spaced and tidied. 
+opts_chunk$set(comment = NA, size = "scriptsize", prompt = TRUE, tidy = TRUE)
+@
+
+\begin{document}
+\newcommand{\thechapter}{7}
+%\SweaveOpts{concordance=TRUE}
+
+\title{Chapter 7: \\ Power law linear models}
+\institute{University of Auckland}
+
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+\begin{frame}[t]
+\frametitle{Learning Outcomes}
+In this chapter you will learn about:
+\begin{center}
+\vspace{16pt}
+\begin{minipage}{0.9\textwidth}
+  \begin{itemize}
+  \item Power law models 
+  \item How to interpret the effect of the explanatory variable
+  \item Relevant \rcode{R}-code.
+  \end{itemize}
+\end{minipage}
+\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Power law model example}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}
+\frametitle{Example -- Weight of snapper as a function of length}
+
+Those of you who fish in the Hauraki Gulf will know that the minimum legal size for
+retaining a snapper is 30 cm.
+Here, we want to use snapper length to explain snapper weight, and in particular
+we want to estimate the weight of 30 cm snapper.
+
+\begin{columns}
+\begin{column}{0.45\textwidth}
+Note that this research question is highly relevant, 
+since the relationship between length and weight is crucial for the 
+stock assessments of snapper.
+\end{column}
+\begin{column}{0.55\textwidth}
+\includegraphics[width=2.5in]{SnapperAtLeigh.jpg}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Weight of snapper as a function of length}
+What does our intuition tell us about the shape of the relationship between length and weight?
+\bigskip
+\begin{itemize}\setlength{\itemsep}{5mm}
+\item Straight line?
+\item Quadratic?
+\item Exponential?
+\item Other?
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Weight of snapper as a function of length\ldots}
+The data file \rcode{SnapWgt.txt} contains measurements on 844 snapper.
+The variables are:
+
+\begin{center}
+\begin{tabular}{lp{15cm}}
+\rcode{len} & fork length (cm) \\
+\rcode{wgt} & weight (kg)
+\end{tabular}
+\end{center}
+
+<<RC-H07-001, fig.show='hide'>>=
+Snap.df=read.table("SnapWgt.txt",header=TRUE)
+plot(wgt~len,data=Snap.df,xlab="Length (cm)",ylab="Weight (kg)")
+@
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Weight of snapper as a function of length\ldots}
+<<RC-H07-002,echo=FALSE>>=
+trimPlot(wgt~len,
+         data = Snap.df,
+         fileName = "figure/RC-H07-002.pdf",
+         x.lab = "Length (cm)",
+         y.lab = "Weight (kg)",
+         cex = 0.7,
+         fig.height = 3,
+         fig.width = 4.5)
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H07-002}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Weight of snapper as a function of length\ldots}
+Clearly there is a non-linear relationship between weight and length.\\
+\medskip
+Geometry tells us that if an object changes in overall size while keeping the
+same shape (i.e., same ratio between height, depth and length), 
+then its volume will increase with the 3rd power of length.\\
+\medskip
+\begin{itemize}
+\item For a cube with sides of length $l$, $volume=len^3$.
+\item For a sphere with radius $r$, $volume=\frac{4}{3}\pi r^3$.
+\end{itemize}
+\medskip
+That is, $volume \propto len^3$. In other words
+\[ 
+volume = k_1 \times len^3 
+\]
+for some constant $k_1$.\\
+\medskip
+Assuming weight of a solid object is proportional to its volume, we conclude
+\[ 
+weight = \alpha \times len^3
+\]
+for some constant $\alpha$.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Weight of snapper as a function of length\ldots}
+Those of you who have caught snapper will know that they do exhibit a small change 
+in shape as they grow larger, so it would be better to use the model
+\[ 
+weight = \alpha \times len^{\beta_1} 
+\]
+where $\beta_1$ is some constant that may be close to, but not necessarily equal to 3.\\
+\medskip
+Taking logs gives
+\[ \log(weight) = \log(\alpha) + \beta_1 \times \log(len) \]
+which we can rewrite as
+\[ \log(weight) = \beta_0 +\beta_1 \times \log(len) \ . \]
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Weight of snapper as a function of length\ldots}
+The formula on the previous slide specifies an assumed (i.e, expected) relationship between
+$\log(weight)$ and $\log(len)$ of a snapper.\\
+\medskip
+Of course, snapper of a given length will have some variability in their weight,
+just as humans of a given height vary in their weight.
+So, what we are really saying is that the weight (kg) of an individual snapper of length $len$ (cm)
+is
+\[
+\log(weight) = \beta_0 +\beta_1 \times \log(len) + \varepsilon 
+\]
+where $\varepsilon$ is some random variability (i.e., error around the expected value).
+
+\medskip
+
+The above formula should be of very familiar form to you by now. 
+Provided that we make the assumption that $\varepsilon \sim N(0,\sigma^2)$ then this is precisely
+the simple linear regression model with response variable $\log(weight)$ and
+explanatory variable $\log(len)$.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Weight of snapper as a function of length\ldots}
+\framesubtitle{Fitting a simple linear model using log(weight) and log(length)}
+Let us look at the relationship between log(wgt) and log(len)
+
+<<RC-H07-003, fig.show='hide'>>=
+plot(log(wgt)~log(len),data=Snap.df,xlab="log(Length)",ylab="log(Weight)")
+@ 
+
+<<RC-H07-004, echo=FALSE>>=
+trimPlot(log(wgt)~log(len),
+         data = Snap.df,
+         fileName = "figure/RC-H07-004.pdf",
+         cex = 0.7,
+         fig.height = 2.35,
+         fig.width = 4.35,
+         mai = c(0.45, 0.5, 0.1, 0.1),
+         x.lab = "log(Length)",
+         y.lab = "log(Weight)")
+@ 
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H07-004}
+\end{figure}
+
+Looking good.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Weight of snapper as a function of length\ldots}
+\framesubtitle{Fitting a simple linear model using log(weight) and log(length)\ldots}
+
+<<RC-H07-005, fig.show = 'hide'>>=
+Snap.lm=lm(log(wgt)~log(len),data=Snap.df)
+plot(Snap.lm,which=1)
+@ 
+
+<<RC-H07-006, echo=FALSE>>=
+trimPlot(Snap.lm,
+         which = 1,
+         fileName = "figure/RC-H07-006.pdf",
+         cex = 0.7,
+         fig.height = 2.5,
+         fig.width = 4.5,
+         x.lab = "Fitted values",
+         y.lab = "Residuals")
+@ 
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H07-006}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Weight of snapper as a function of length\ldots}
+\framesubtitle{Fitting a simple linear model using log(weight) and log(length)\ldots}
+
+Check the Normality assumption.
+<<RC-H07-007, fig.show = 'hide'>>=
+normcheck(Snap.lm)
+@ 
+
+<<RC-H07-008, echo=FALSE>>=
+trimPlot(Snap.lm,
+         plotCommand = normcheck,
+         fileName = "figure/RC-H07-008.pdf",
+         fig.height = 2.1,
+         fig.width = 4.1)
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.5]{figure/RC-H07-008}
+\end{figure}
+
+% No worries.
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Weight of snapper as a function of length\ldots}
+\framesubtitle{Fitting a simple linear model using log(weight) and log(length)\ldots}
+
+Check for influential observations.
+<<RC-H07-009, fig.show='hide'>>=
+cooks20x(Snap.lm)
+@ 
+
+<<RC-H07-010, echo=FALSE>>=
+trimPlot(Snap.lm,
+         plotCommand = cooks20x,
+         fileName = "figure/RC-H07-010.pdf",
+         fig.height = 2.1,
+         fig.width = 4.1)
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.5]{figure/RC-H07-010}
+\end{figure}
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Weight of snapper as a function of length\ldots}
+\framesubtitle{Making inference}
+We can trust the fitted model.
+
+<<RC-H07-011, results='hide'>>=
+summary(Snap.lm)
+@
+<<RC-H07-012, echo=-1>>=
+slimSummary(Snap.lm)
+confint(Snap.lm) 
+@ 
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Weight of snapper as a function of length\ldots}
+\framesubtitle{The fitted line on the log scale}
+
+<<RC-H07-013, fig.show='hide'>>=
+plot(log(wgt)~log(len),data=Snap.df,xlab="log(Length)",ylab="log(Weight)")
+abline(coef(Snap.lm),lty=5, col="red")
+@ 
+
+<<RC-H07-014, echo=FALSE>>=
+trimPlot(log(wgt)~log(len),
+         data = Snap.df,
+         fileName = "figure/RC-H07-014.pdf",
+         cex = 0.7,
+         fig.height = 2.5,
+         fig.width = 4.5,
+         x.lab = "log(Length)",
+         y.lab = "log(Weight)",
+         addElements = list(
+           abline(coef(Snap.lm),lty=5, col="red", lwd = 1.5)
+         ))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H07-014}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Weight of snapper as a function of length\ldots}
+\framesubtitle{The fitted line on the log scale\ldots}
+
+Let us redo the plot on the raw scale (rather than log scale):
+<<RC-H07-015, fig.show='hide'>>=
+plot(wgt~len, data = Snap.df)
+pred.df = data.frame(len = 20:90)
+Snap.pred = exp(predict(Snap.lm, pred.df))
+lines(pred.df$len, Snap.pred, col="red")
+@ 
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Weight of snapper as a function of length\ldots}
+\framesubtitle{The fitted line on the raw scale}
+<<RC-H07-016, echo=FALSE>>=
+trimPlot(wgt~len,
+         data = Snap.df,
+         fileName = "figure/RC-H07-016.pdf",
+         cex = 0.7,
+         fig.height = 2.5,
+         fig.width = 4.5,
+         x.lab = "Length (cm)",
+         y.lab = "Weight (kg)",
+         addElements = list(
+           lines(pred.df$len, Snap.pred, col="red")
+         ))
+@ 
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H07-016}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Weight of snapper as a function of length\ldots}
+\framesubtitle{Estimated weight of a 30cm snapper}
+
+Recall that we wanted to estimate the weight of 30 cm snapper.
+Since the linear model is fitted to log(wgt), we must back-transform,
+and are making inference about median weight.
+
+<<RC-H07-017, echo=1:2>>=
+Pred.df=data.frame(len=30) 
+exp(predict(Snap.lm,Pred.df,interval="confidence")) 
+ci = exp(predict(Snap.lm,Pred.df,interval="confidence")) 
+@
+That is, we estimate 30 cm snapper to have median weight between \Sexpr{round(1000 * ci[2])} and \Sexpr{round(1000 * ci[3])} grams.
+\medskip
+
+\textbf{Note:} If the research question had asked up to {\em predict} the weight of a 30 cm 
+snapper then we would use
+<<RC-H07-018, echo=1>>=
+exp(predict(Snap.lm,Pred.df,interval="prediction")) 
+ci = exp(predict(Snap.lm,Pred.df,interval="prediction")) 
+@
+We predict a 30 cm snapper to weigh between about \Sexpr{round(1000 * ci[2])} and \Sexpr{round(1000 * ci[3])} grams.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Weight of snapper as a function of length\ldots}
+\framesubtitle{Testing $H_0: \beta_1=3$}
+
+A few slides earlier we deduced that the power coefficient $\beta_1$ should be close to,
+though not necessarily equal to 3.\\
+\bigskip
+Let us examine this formally by testing the null hypothesis $H_0: \beta_1=3$.\\
+\bigskip
+\textbf{Question 1} Is this hypothesis rejected at the 5\% level?
+(Hint: the answer can be worked out from output already seen) \\
+\bigskip
+\textbf{Question 2} What is the \pval{} for $H_0: \beta_1=3$? (This takes a bit more work).
+\bigskip
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{What is the \pval{}?}
+<<RC-H07-019>>=
+beta1 = coef(Snap.lm)[2]
+seBeta1 = summary(Snap.lm)$coefficients[2,2]
+hyp = 3
+tstat = (beta1 - hyp)/seBeta1
+tstat
+pval = 2 * (1 - pt(abs(tstat), df = nrow(Snap.df) - 2))
+pval
+@
+The \pval{} is so small that it been rounded down to zero.
+
+If we really want to see the \pval{} then we can get the \rcode{pt} function 
+to do the probability calculation on the log scale, and then exponentiate:\footnote{Not examinable}
+
+<<RC-H07-019b>>=
+logP = log(2)+pt(-abs(tstat), df = nrow(Snap.df) - 2, log.p = T)
+exp(logP)
+@
+We see that the \pval() is in the order of $10^{-41}$, i.e., virtually zero.\footnote{By way of comparison, the earth has about $10^{50}$ atoms.}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Power law curves and their interpretation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[fragile]
+\frametitle{Power law relationships}
+\framesubtitle{Other examples of power curves}
+<<RC-H07-020, echo=FALSE, fig.height=3.85>>=
+par(mfrow=c(2,3),mar=c(4,4,4,4),mai=c(0.35, 0.35, 0.2, 0.1),las=1)
+x=seq(2,45,0.1)
+y=x^{-1}
+plot(x,y,xlim=c(0,45),yaxt="n",main=expression(paste(beta[1]," = -1")),type="l")
+title(ylab="y",line=1)
+y=x^{-0.5}
+plot(x,y,xlim=c(0,45),yaxt="n",main=expression(paste(beta[1]," = -0.5")),type="l")
+y=x^{-0.1}
+plot(x,y,xlim=c(0,45),yaxt="n",main=expression(paste(beta[1]," = -0.1")),type="l")
+y=x^0.1
+plot(x,y,xlim=c(0,45),yaxt="n",main=expression(paste(beta[1]," = 0.1")),type="l")
+title(ylab="y",line=1)
+y=x^0.5
+plot(x,y,xlim=c(0,45),yaxt="n",main=expression(paste(beta[1]," = 0.5")),type="l")
+y=x^3
+plot(x,y,xlim=c(0,45),yaxt="n",main=expression(paste(beta[1]," = 3")),type="l")
+@ 
+In general, 
+a power law model could be used whenever one has good reason to believe that the
+relationship between $x$ and $y$ takes any of these forms.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Power relationships\ldots}
+\framesubtitle{Interpretation of power curves}
+Recall, we are fitting the model 
+$\log(y)=\beta_0+\beta_1 \log(x)$, which is equivalent to
+$y=e^{\beta_0}x^{\beta_1} =\alpha x^{\beta_1}$.
+
+\medskip
+
+For the snapper example the confidence interval for $\beta_1$ is 
+<<RC-H07-013A, echo=1>>=
+confint(Snap.lm)[2,]
+ci = confint(Snap.lm)[2,]
+@
+
+One way to interpret this is to say that a 1\% increase in the $x=len$ value 
+results in a \Sexpr{round(ci[1], 2)}\% to a \Sexpr{round(ci[2], 2)}\% increase in the median value of $y=wgt$.
+
+\medskip
+
+\textbf{Explanation:} Increasing $x$ by 1\% is the same as multiplying $x$ by 1.01.
+So the  relative change in $y$ is: 
+
+\vspace{-0.5em}
+
+\[
+\Delta y=\frac{\alpha (1.01x)^{\beta_1}}{\alpha x^{\beta_1}}
+=\frac{\alpha x^{\beta_1}(1.01)^{\beta_1}}{\alpha x^{\beta_1}}=1.01^{\beta_1}
+\]
+
+\vspace{-1em}
+
+$1.01^{\beta_1}\approx 1+\beta_1\times .01$ for reasonable values of $\beta_1$  (Taylor's series).
+So, a 1\% increase in $x$ results in an approximate relative increase in $y$ of  $\Delta y\approx \beta_1\times .01$ or an increase of $\beta_1\%$
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Power relationships\ldots}
+\framesubtitle{Interpretation of power curves\ldots}
+Alternatively, it might be more meaningful to quantify the change in the median of $y$ arising from a 50\% increase in $x$, or perhaps a doubling of $x$, say 50\% increase in $x$: Then $y$ changes from $\alpha x^{\beta_1}$ to 
+
+\[ \alpha (1.5x)^{\beta_1} =  \alpha x^{\beta_1} 1.5^{\beta_1} \]
+
+i.e., the median of $y$ gets multiplied by $1.5^{\beta_1}$. \\
+
+\bigskip
+
+Doubling in $x$: Then $y$ changes from $\alpha x^{\beta_1}$ to 
+\[ \alpha (2x)^{\beta_1} =  \alpha x^{\beta_1} 2^{\beta_1} \]
+i.e., the median of $y$ gets multiplied by $2^{\beta_1}$.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Power relationships\ldots}
+\framesubtitle{Interpretation of power curves\ldots}
+
+<<RC-H07-014A, echo=1>>=
+1.5^confint(Snap.lm)[2,]
+ci  = 1.5^confint(Snap.lm)[2,]
+@
+That is, increasing length by 50\% corresponds to an increase in median
+snapper weight between \Sexpr{round(100*(ci[1] - 1))}\% and \Sexpr{round(100*(ci[2] - 1))}\%\footnote{These percentages are given by \rcode{100*(1.5\^{}confint(Snap.lm)[2,]-1)}.}.
+\footnote{One could also say that median snapper weight is between 2.06 and 2.14 times higher. Be careful {\bf not} to say that it is between 3.06 and 3.14 times higher (since it actually multiplies by between 3.06 and 3.14). It is probably safest to talk about \% change.}
+
+\vspace{7mm}
+<<RC-H07-015A>>=
+2^confint(Snap.lm)[2,]
+@
+That is, doubling length corresponds to an increase in median
+weight between 578\% and 606\%.
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Relevant \rcode{R}-code}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[fragile]
+\frametitle{Most of the \rcode{R}-code you need for this chapter}
+
+When your response variable is right skew and you have a good reason to believe the underlying relationship follows a power relationship then try taking logs of both $y$ and $x$.
+
+<<RC-H06-016, eval=F, comment=NA>>= 
+Snap.lm=lm(log(wgt)~log(len),data=Snap.df)
+@ 
+\medskip
+
+We state the effect as the \% change in the median of $y$ for a given \% change in $x$.
+\bigskip
+
+The confidence interval for $\beta_1$ is 
+<<RC-H07-17, eval=F, comment=NA>>= 
+confint(Snap.lm)[2,]
+@
+and is the (approximate) \% change in the median $y$ for a 1\% increase in $x$.
+\medskip
+
+In general, for a $z$\% increase in $x$, the multiplier for the median of $y$ is
+<<RC-H07-18, eval=F, comment=NA>>= 
+(1+z/100)^confint(Snap.lm)[2,]
+@
+or alternatively, the percentage change in the median of $y$ is
+<<RC-H07-19, eval=F, comment=NA>>= 
+100*((1+z/100)^confint(Snap.lm)[2,]-1)
+@
+
+\end{frame}
+
+\end{document}
+
+
+

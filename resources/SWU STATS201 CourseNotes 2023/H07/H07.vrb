@@ -1,0 +1,44 @@
+\frametitle{Most of the \rcode{R}-code you need for this chapter}
+
+When your response variable is right skew and you have a good reason to believe the underlying relationship follows a power relationship then try taking logs of both $y$ and $x$.
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{Snap.lm}\hlkwb{=}\hlkwd{lm}\hlstd{(}\hlkwd{log}\hlstd{(wgt)}\hlopt{~}\hlkwd{log}\hlstd{(len),}\hlkwc{data}\hlstd{=Snap.df)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\medskip
+
+We state the effect as the \% change in the median of $y$ for a given \% change in $x$.
+\bigskip
+
+The confidence interval for $\beta_1$ is
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{confint}\hlstd{(Snap.lm)[}\hlnum{2}\hlstd{,]}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+and is the (approximate) \% change in the median $y$ for a 1\% increase in $x$.
+\medskip
+
+In general, for a $z$\% increase in $x$, the multiplier for the median of $y$ is
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{(}\hlnum{1}\hlopt{+}\hlstd{z}\hlopt{/}\hlnum{100}\hlstd{)}\hlopt{^}\hlkwd{confint}\hlstd{(Snap.lm)[}\hlnum{2}\hlstd{,]}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+or alternatively, the percentage change in the median of $y$ is
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlnum{100}\hlopt{*}\hlstd{((}\hlnum{1}\hlopt{+}\hlstd{z}\hlopt{/}\hlnum{100}\hlstd{)}\hlopt{^}\hlkwd{confint}\hlstd{(Snap.lm)[}\hlnum{2}\hlstd{,]}\hlopt{-}\hlnum{1}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+

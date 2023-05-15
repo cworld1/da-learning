@@ -1,0 +1,1028 @@
+\documentclass{beamer}
+\usepackage{graphicx}
+
+\input{../s20xPreambleRBM.tex}
+
+<<RC-H10-000, echo=FALSE>>=
+source("../s20xNotesHelper.R")
+## these are global knitr options and settings for the
+## whole document
+library(knitr)
+library(s20x)
+## comment = NA removes ## from all output lines
+## prompt = TRUE means the console input prompt > is displayed
+## tidy = TRUE means the code is properly spaced and tidied.
+opts_chunk$set(comment = NA, size = "scriptsize", prompt = TRUE, tidy = TRUE)
+@
+
+\begin{document}
+\newcommand{\thechapter}{10}
+
+\title{Chapter 10: Multiple linear regression modelling}
+\institute{University of Auckland}
+
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+\begin{frame}[t]
+\frametitle{Learning Outcomes}
+In this chapter you will learn about:
+\begin{center}
+\vspace{16pt}
+\begin{minipage}{0.9\textwidth}
+  \begin{itemize}
+  \item Models with several explanatory variables
+  \item Exploring pairwise relationships between all variables
+  \item Multiple linear regression and the problem of multi-collinearity
+  \item Fixing multi-collinearity
+  \item Relevant \rcode{R}-code.
+  \end{itemize}
+\end{minipage}
+\end{center}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Example: Modelling birth weights using several explanatory variables}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}
+  \frametitle{Multiple explanatory variables }
+  We have learned how to model the effects of numeric and/or factor explanatory variables using linear models.\\
+  \bigskip
+  More generally, we can (in principle) fit as many explanatory variables as we like. However, we shall see that this is not always a good idea.\\
+  \bigskip
+  Caution needs to be applied.\\
+  \bigskip
+  By way of example, let us examine which variables might explain the birth weight of babies.\\
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Example: Birth weight of babies}
+\begin{tabular}{ll }
+
+   \rcode{bwt}            & birth weight in ounces (=28.35gm) \\
+   \rcode{gestation}      & length of pregnancy in days  \\
+   \rcode{not.first.born} & 0=first born, 1=not first-born\\
+   \rcode{age}            & mother's age in years \\
+   \rcode{height}         & mother's height in inches \\
+   \rcode{weight}         & mother's pre-pregnancy weight in pounds \\
+   \rcode{smoke}          & smoking status of mother  0=not, 1=smoker.
+
+\end{tabular}
+\medskip
+
+The response variable is the baby's birth weight (\rcode{bwt}).
+\bigskip
+
+This dataset\footnote{It accompanies the excellent text Stat Labs: Mathematical Statistics through Applications Springer-Verlag (2001) by Deborah Nolan and Terry Speed.} was obtained from
+\href{http://www.stat.berkeley.edu/users/statlabs/labs.html}{http://www.stat.berkeley.edu/users/statlabs/labs.html}.
+\medskip
+
+The dataset has 1174 observations.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Exploring relationships between the variables}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies}
+% note code gets rid of white space by pretending to submit but doing it `on the sly' later
+Let us first inspect the relationships between the numerical explanatory variables and the response variable. 
+The numeric explanatories are \rcode{gestation}, \rcode{age}, \rcode{height}   and \rcode{weight}. 
+
+\bigskip
+The five variables are in columns 1,2,4,5  and 6 in the data frame \rcode{Babies.df}.
+
+\bigskip
+<<RC-H10-001, fig.show = 'hide'>>=
+## Invoke the s20x library
+library(s20x)
+## Importing data into R
+Babies.df = read.table("Data/babies_data.txt", header=T)
+## Create the pairs plot of the five numeric variables
+pairs20x(Babies.df[,c(1,2,4,5,6)])
+@
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+<<RC-H10-002, echo = FALSE>>=
+trimPlot(Babies.df[,c(1,2,4,5,6)],
+         fileName = "figure/RC-H10-002.pdf",
+         plotCommand = pairs20x,
+         oma = c(1.75, 1.75, 1.75, 1.75))
+@
+\begin{figure}
+  \centering
+  \includegraphics[scale = 0.45]{figure/RC-H10-002}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+\rcode{pairs20x} gives a histogram of each variable in the diagonal cells. 
+Above the diagonal, in the $(i,j)$ cell ($i<j$) it gives scatter plots of variable $i$ (y-axis) against variable $j$ (x-axis).
+To illustrate, variable 1 is \rcode{bwt} and variable 4 is the mother's height (\rcode{height}). The scatter plot in cell (1,4) is
+
+<<RC-H10-003, fig.show = 'hide'>>=
+plot(bwt ~ height,data = Babies.df)
+lines(lowess(Babies.df$height,Babies.df$bwt))
+@
+
+<<RC-H10-004, echo=FALSE>>=
+trimPlot(bwt ~ height,
+         data = Babies.df,
+         pty = "s",
+         x.lab = "height",
+         y.lab = "bwt",
+         fileName = "figure/RC-H10-004.pdf",
+         fig.height = 2.1,
+         fig.width = 3.6,
+         cex = 0.5,
+         addElements = list(
+           lines(lowess(Babies.df$height,Babies.df$bwt),col="red")
+         ))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H10-004}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+The correlation coefficient between \rcode{height} and \rcode{bwt} is in cell (4,1).
+It is $0.20$, indicating that a straight-line relationship is, at best, weak.\\
+\bigskip
+This correlation coefficient can only measure the strength of a straight line relationship between $x$ (\rcode{height}) and a $y$ (\rcode{bwt}). It can be useful but can, on occasion, be misleading.
+In other words, look at the scatter plot and use it only if the relationship looks like a straight line.\\
+\bigskip
+\textbf{Note:} In a simple linear regression of $y$ on $x$, the resulting $R^2$ value is the square of the sample correlation coefficient. To illustrate:
+
+\medskip
+<<RC-H10-005>>=
+summary(lm(bwt ~ height,data = Babies.df))$r.squared
+cor(Babies.df$bwt,Babies.df$height)^2
+@
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+Looking at the pairs plot again, we also see a somewhat weak relationship between \rcode{bwt} and mother's \rcode{weight}.
+\medskip
+
+<<RC-H10-006, fig.show = 'hide'>>=
+plot(bwt ~ weight,data = Babies.df)
+lines(lowess(Babies.df$weight,Babies.df$bwt))
+@
+
+<<RC-H10-007, echo=FALSE>>=
+trimPlot(bwt ~ weight,
+         data = Babies.df,
+         pty = "s",
+         x.lab = "weight",
+         y.lab = "bwt",
+         fileName = "figure/RC-H10-007.pdf",
+         fig.height = 2.1,
+         fig.width = 3.6,
+         cex = 0.5,
+         addElements = list(
+           lines(lowess(Babies.df$weight,Babies.df$bwt),col="red")
+         ))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H10-007}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+
+There is a stronger relationship between the \rcode{gestation} time for the babies and its \rcode{bwt} which is not surprising, as the longer the child is in the mother's womb the longer the child has had time to have nutrition and grow.
+But, this relationship distinctly flattens out beyond a certain gestational age -- some people call this a ``hockey stick'' curve.
+
+<<RC-H10-008, fig.show = 'hide'>>=
+plot(bwt ~ gestation,data = Babies.df)
+lines(lowess(Babies.df$gestation,Babies.df$bwt))
+@
+%identify(Babies.df$gestation,Babies.df$bwt)
+
+<<RC-H10-009, echo=FALSE>>=
+trimPlot(bwt ~ gestation,
+         data = Babies.df,
+         pty = "s",
+         x.lab = "gestation",
+         y.lab = "bwt",
+         fileName = "figure/RC-H10-009.pdf",
+         fig.height = 2,
+         fig.width = 3.6,
+         cex = 0.5,
+         addElements = list(
+           lines(lowess(Babies.df$gestation,Babies.df$bwt),col="red")
+         ))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H10-009}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+
+There does not seem to be any relationship between a mother's age  and her child's \rcode{bwt}.
+
+<<RC-H10-010, eval=FALSE>>=
+plot(bwt ~ age,data = Babies.df)
+lines(lowess(Babies.df$age,Babies.df$bwt))
+@
+
+<<RC-H10-011, echo=FALSE>>=
+trimPlot(bwt ~ age,
+         data = Babies.df,
+         pty = "s",
+         x.lab = "age",
+         y.lab = "bwt",
+         fileName = "figure/RC-H10-011.pdf",
+         fig.height = 2.1,
+         fig.width = 3.6,
+         cex = 0.5,
+         addElements = list(
+           lines(lowess(Babies.df$age,Babies.df$bwt),col="red")
+         ))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H10-011}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Birth weight of babies\ldots}
+
+\textbf{Note:} There seem to be some outlying data points in these plots.
+There does not appear to be much of a relationship between the $x$ variables, except between \rcode{height} and \rcode{weight}.
+\medskip
+
+\begin{figure}
+  \centering
+  \includegraphics[scale = 0.3]{figure/RC-H10-002}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+Let us look at the categorical (factor) explanatory variables against the baby's birth weight \rcode{bwt}.
+
+The categorical variables are \rcode{not.first.born} and \rcode{smoke},
+in columns 3 and 7 of the data frame \rcode{Babies.df}.
+
+<<RC-H10-012, fig.show='hide'>>=
+pairs20x(Babies.df[,c(1,3,7)])
+@
+
+<<RC-H10-013, echo=FALSE>>=
+trimPlot(Babies.df[,c(1,3,7)],
+         fileName = "figure/RC-H10-013.pdf",
+         plotCommand = pairs20x,
+         oma = c(1.75, 1.75, 1.75, 1.75))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale = 0.3]{figure/RC-H10-013}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+We see a slight decrease in babies \rcode{bwt} if the mother smokes. This increases the chance of a mother having a low birth weight baby if she smokes -- perhaps another reason to avoid tobacco!\\
+\bigskip
+The variable \rcode{not.first.born} does not appear to have too much of an effect. This is perhaps not a surprise given that this variable may not be as important as it once was as family size has deceased markedly in the developed world (this is US data) and prenatal care has improved.\\
+\bigskip
+
+We will know begin our linear modelling of these data...
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+Let us start with an understanding of \rcode{gestation} to explain \rcode{bwt} since it is
+the strongest relationship. The atypical data points have been marked with question marks.
+We will add other explanatory variables later.
+%with(Babies.df,identify(gestation,bwt))
+<<RC-H10-014, fig.show = 'hide'>>=
+plot(bwt ~ gestation,data = Babies.df)
+lines(lowess(Babies.df$gestation, Babies.df$bwt), col = "red")
+text(c(152, 185),c(120, 115), "?", col = "red")
+abline(v = 294,lty = 3)
+@
+
+<<RC-H10-015, echo=FALSE>>=
+trimPlot(bwt ~ gestation,
+         data = Babies.df,
+         fileName = "figure/RC-H10-015.pdf",
+         cex = 0.5,
+         x.lab = "gestation",
+         y.lab = "bwt",
+         fig.height = 2.1,
+         fig.width = 3.6,
+         addElements = list(
+           lines(lowess(Babies.df$gestation, Babies.df$bwt), col = "red"),
+           text(c(152, 185),c(120, 115), "?", col = "red", cex = 0.7),
+           abline(v = 294,lty = 3)
+         ))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H10-015}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+Let us identify the two points denoted by the `?' symbol.\\
+\bigskip
+We can easily identify them in the plot as they have $\rcode{gestation}<200$.\\
+\bigskip
+They look extremely implausible as they have typical birth-weight but have a gestational age that is extremely low for these data.\\
+\bigskip
+<<RC-H10-017>>=
+id=(Babies.df$gestation<200)
+Babies.df[id,]
+@
+\bigskip
+These points (observations 239 and 820) may be be unduly influential.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+The above plot has a vertical line at 294 days. The relevance of 294 days is explained in the article \href{https://goo.gl/k8XbSd}{\underline{``How Your Baby Grows During Pregnancy''}}.\\
+\medskip
+
+Most babies are born before 42 weeks = $42 \times 7 =294$ days. It seems that beyond this point babies cease to grow and hence the `flattening out' and/or decrease. In other words, it looks like the effect of gestational age depends on whether the baby is overdue or not. That is, the effect of gestational age appears to {\bf interact} with overdue status.
+
+\medskip
+It would make sense to use overdue status as an explanatory variable. Note that gestational age is a numeric variable, and being overdue (or not) is a factor variable. We already know how to fit a model using both of these as explanatory variables. Let's create a factor variable \rcode{OD} for overdue status. 
+\medskip
+
+<<RC-H10-018>>=
+Babies.df$OD = factor(as.numeric(Babies.df$gestation > 294))
+## Check
+range(Babies.df$gestation[Babies.df$OD==0])
+range(Babies.df$gestation[Babies.df$OD==1])
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Fitting the initial model}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+Our initial model will be an interaction model using explanatory variables \rcode{gestation} and \rcode{OD}.
+<<RC-H10-019, fig.show = 'hide'>>=
+bwt.fit=lm(bwt~ gestation*OD,data = Babies.df)
+plot(bwt.fit, which = 1, add.smooth = FALSE)
+@
+
+<<RC-H10-020, echo = FALSE>>=
+trimPlot(bwt.fit,
+  which = 1,
+  add.smooth = FALSE,
+  x.lab = 'Fitted values',
+  y.lab = "Residuals",
+  fileName = "figure/RC-H10-020.pdf",
+  fig.height = 2.25,
+  fig.width = 4.25,
+  cex = 0.7)
+@
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H10-020}
+\end{figure}
+
+Observation 239 is a problem.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+<<RC-H10-021, fig.show = 'hide'>>=
+normcheck(bwt.fit)
+@
+
+<<RC-H10-022, echo=FALSE>>=
+trimPlot(bwt.fit,
+         plotCommand = normcheck,
+         fileName = "figure/RC-H10-022.pdf",
+         fig.height = 2.1,
+         fig.width = 4.1)
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale = 0.5]{figure/RC-H10-022}
+\end{figure}
+
+Other than observation 239, things look pretty good.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+<<RC-H10-023, fig.show = 'hide'>>=
+cooks20x(bwt.fit)
+@
+
+<<RC-H10-024, echo=FALSE>>=
+trimPlot(bwt.fit,
+         plotCommand = cooks20x,
+         fileName = "figure/RC-H10-024.pdf",
+         fig.height = 2.1,
+         fig.width = 4.1,
+         mai = c(0.5, 0.6, 0.1, 0.1))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale = 0.5]{figure/RC-H10-024}
+\end{figure}
+
+Point 239 is unduly influential. 
+This baby has a gestational age of just 148 days, and yet has a weight typical of a full term baby. It is clearly a data-entry mistake and we will remove this data point.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+Let us refit with observation 239 removed.
+<<RC-H10-025, fig.show = 'hide'>>=
+bwt.fit2=lm(bwt~ gestation*OD,data = Babies.df[-239,])
+cooks20x(bwt.fit2)
+@
+
+<<RC-H10-026, echo=FALSE>>=
+trimPlot(bwt.fit2,
+         plotCommand = cooks20x,
+         fileName = "figure/RC-H10-026.pdf",
+         fig.height = 1.85,
+         fig.width = 3.85,
+         mai = c(0.5, 0.6, 0.1, 0.1))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale = 0.5]{figure/RC-H10-026}
+\end{figure}
+
+Although observation 820~\footnote{Note that it is now identified as point 819 in this plot, but it was point 820 before we dropped point 239.} is not unduly influential,
+but we shall make a judgement call, and remove it.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+We refit the model using the reduced data.
+
+<<RC-H10-027, fig.show = 'hide'>>=
+#This time we demonstrate using the subset argument to remove points
+bwt.fit3=lm(bwt~ gestation*OD,data = Babies.df, subset = -c(239, 820))
+cooks20x(bwt.fit3)
+@
+
+<<RC-H10-028, echo=FALSE>>=
+trimPlot(bwt.fit3,
+         plotCommand = cooks20x,
+         fileName = "figure/RC-H10-028.pdf",
+         fig.height = 2,
+         fig.width = 4,
+         mai = c(0.5, 0.6, 0.1, 0.1))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale = 0.5]{figure/RC-H10-028}
+\end{figure}
+
+Now we have no unduly influential data points.
+\end{frame}
+
+
+
+\begin{frame}<0>[fragile]
+\frametitle{Birth weight of babies, alternate model}
+We refit the alternate model using the reduced data.
+
+<<RC-H10-027alt, fig.height=3>>=
+ODtime=ifelse(Babies.df$gestation<=294,0,Babies.df$gestation-294)
+bwt.fit3b=lm(bwt~ gestation+ODtime,data = Babies.df, subset = -c(239, 820))
+gest.seq=200:360; ODtime.seq=ifelse(gest.seq<=294,0,gest.seq-294)
+fit.seq=predict(bwt.fit3b,new=data.frame(gestation=gest.seq,ODtime=ODtime.seq))
+par(mar=c(4,4,0,4)); plot(bwt~gestation,data=Babies.df[-c(239, 820),])
+lines(gest.seq,fit.seq,col="red")
+@
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+Let us recheck the residuals now that we have removed these two points.
+<<RC-H10-029, fig.show = 'hide'>>=
+plot(bwt.fit3,which=1)
+@
+
+<<RC-H10-030, echo=FALSE>>=
+trimPlot(bwt.fit3,
+         plotCommand = plot,
+         fileName = "figure/RC-H10-030.pdf",
+         which = 1,
+         cex = 0.7,
+         mai = c(0.5, 0.5, 0.1, 0.1),
+         x.lab = "Fitted values",
+         y.lab = "Residuals",
+         fig.height = 1.95,
+         fig.width = 3.95)
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H10-030}
+\end{figure}
+
+EOV seems fine now, and the residuals seem to be centred around zero.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+Now we can trust this output let us interpret it.
+<<RC-H10-031, results = 'hide'>>=
+summary(bwt.fit3)
+@
+
+<<RC-H10-032, echo=FALSE>>=
+slimSummary(bwt.fit3)
+b = coef(bwt.fit3)
+r2 = summary(bwt.fit3)$r.squared
+@
+
+The fitted model is:
+\begin{align*}
+ \E[\rcode{bwt}]&=\Sexpr{round(b[1], 2)} + \Sexpr{round(b[2], 2)}\times\rcode{gestation} + \Sexpr{round(b[3], 2)}\times\rcode{OD}  \\
+                     &\quad\Sexpr{round(b[4], 2)}\times\rcode{OD}\times\rcode{gestation}
+\end{align*}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+So, for $\rcode{gestation} \le 294$ days (i.e., \rcode{OD = 0})
+\[
+\E[\rcode{bwt}]=\Sexpr{round(b[1], 2)}+\Sexpr{round(b[2], 2)}\times\rcode{gestation}
+\]
+So, on average, babies initially grow at \Sexpr{round(b[2], 2)} oz per day until about \Sexpr{round(b[1] + b[2] * 294)} oz\footnote{
+$\Sexpr{round(b[1] + b[2] * 294)} \approx \Sexpr{round(b[1], 2)} + \Sexpr{round(b[2], 2)}\times 294$} at week 42 (i.e., day 294).\\
+\bigskip
+For $\rcode{gestation} > 294$ days (\rcode{OD = 1})
+\begin{align*}
+\E[\rcode{bwt}]&=\Sexpr{round(b[1], 2)}+\Sexpr{round(b[3], 2)}+(\Sexpr{round(b[2], 2)}-\Sexpr{round(abs(b[4]), 2)})\times\rcode{gestation} \\
+           &= \Sexpr{round(b[1] + b[3], 2)} - \Sexpr{round(abs(b[2] + b[4]), 2)}\times\rcode{gestation}
+\end{align*}
+
+So, on average, it is estimated that overdue babies lose about \Sexpr{round(abs(b[2] + b[4]), 2)} oz per day after week 42.\footnote{{\bf Question:} How could we test whether this is significantly different from zero?}
+\end{frame}
+%Babies.df$OD2=relevel(Babies.df$OD,ref="1")
+%bwt.fit3b=lm(bwt~ gestation*OD2,data = Babies.df, subset = -c(239, 820))
+%coef(summary(bwt.fit3b))
+%confint(bwt.fit3b)
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+\textbf{Note} that this model only explains about \Sexpr{round(100 * r2)}\% of the variation in babies' birth weight, so it would be worth seeing if adding the other explanatory variables will help explain more.
+
+\bigskip
+In the \rcode{pairs20x} plot above we saw that \rcode{height} and \rcode{weight} had
+correlations of \Sexpr{sprintf("%4.2f", with(Babies.df, cor(bwt, height)))} and \Sexpr{round(with(Babies.df, cor(bwt, weight)), 2)} with \rcode{bwt}.
+
+\bigskip
+So let us see what we find when we introduce the \rcode{height} variable into the model. We will proceed with selecting variables one at a time (with reflection)  --  this is one of many multiple regression strategies!
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Multiple linear regression model: \\ Adding more terms to the model and the peril of multi-collinearity}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+Let us add the \rcode{height} variable and see how it works out.
+<<RC-H10-033, fig.show = 'hide', tidy = FALSE>>=
+bwt.fit4 = lm(bwt ~ gestation * OD + height, data = Babies.df, 
+    subset = -c(239,820))
+plot(bwt.fit4,which=1)
+@
+
+<<RC-H10-034, echo=FALSE>>=
+trimPlot(bwt.fit4,
+         plotCommand = plot,
+         fileName = "figure/RC-H10-034.pdf",
+         which = 1,
+         cex = 0.7,
+         mai = c(0.5, 0.5, 0.1, 0.1),
+         x.lab = "Fitted values",
+         y.lab = "Residuals",
+         fig.height = 2.1,
+         fig.width = 4.1)
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H10-034}
+\end{figure}
+
+All seems okay. Let us make sure that this makes sense in terms of output.
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+
+\frametitle{Birth weight of babies\ldots}
+<<RC-H10-035, results = 'hide'>>=
+summary(bwt.fit4)
+@
+
+<<RC-H10-036, echo=FALSE>>=
+slimSummary(bwt.fit4)
+@
+\bigskip
+This seems to make sense, whereby mother's height is positively related to a baby's birth weight (on average).\\
+\bigskip
+\textbf{Note:} We will drop the checking of fitted vs residuals plots as it has been okay to date and it is starting to get a little tedious. We will recheck this once we get to the final model.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+Let us add \rcode{weight} to the model.\\
+\bigskip
+<<RC-H10-037, results = 'hide', tidy = FALSE>>=
+bwt.fit5 = lm(bwt ~ gestation * OD + height + weight, data = Babies.df,
+    subset = -c(239,820))
+summary(bwt.fit5)
+@
+
+<<RC-H10-038, echo=FALSE>>=
+slimSummary(bwt.fit5)
+@
+
+This makes sense. Heavier mothers can be expected to have heavier babies.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+The mother being very underweight or excessively overweight can have negative effects
+on their babies health, but neither \rcode{height} or \rcode{weight} directly
+measures this.\\
+\bigskip
+We will construct a new variable, body mass index \rcode{bmi}.\\
+\bigskip
+\[
+BMI = \frac{\rcode{mass in kg}}{\rcode{height in metres}^2} =\frac{\rcode{mass in lb}}{\rcode{height in inches}^2}\times 703
+\]
+
+\bigskip
+The World Health Organisation classifies BMIs in the range 18.5--25 as healthy,
+25--30 as overweight, and 30+ as obese.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+Let us add \rcode{bmi} to the current model.
+<<RC-H10-039, results = 'hide', tidy=FALSE>>=
+# Create the variable BMI and add it to the model
+Babies.df$bmi = (Babies.df$weight / (Babies.df$height^2) ) * 703
+bwt.fit6 = lm(bwt ~ gestation * OD + weight + height + bmi, data = Babies.df, 
+    subset = -c(239, 820))
+summary(bwt.fit6)
+@
+
+<<RC-H10-040, echo = FALSE>>=
+slimSummary(bwt.fit6)
+@
+
+Hang on. Everything has gone weird!!!
+None of \rcode{weight}, \rcode{height} or \rcode{bmi} is statistically significant
+(at the 5\% level). So what is going on?
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+Let's look at these three variables to see what is happening.
+<<RC-H10-041, fig.show = 'hide'>>=
+pairs20x(Babies.df[-c(239,820), c(9,6,5)])
+@
+
+<<RC-H10-042, echo=FALSE>>=
+trimPlot(Babies.df[-c(239,820), c(9,6,5)],
+         fileName = "figure/RC-H10-042.pdf",
+         plotCommand = pairs20x,
+         oma = c(1.75, 1.75, 1.75, 1.75))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale = 0.35]{figure/RC-H10-042}
+\end{figure}
+
+Not surprisingly, we see that \rcode{bmi} and \rcode{weight} seem to explain each other.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+The problem is that we have a redundancy in our explanatory variables.
+Here, \rcode{bmi} is explained by \rcode{weight} and vice-versa.
+Note that adding \rcode{bmi} to the model barely changed $R^2$ and so is telling us that it did not increase our ability to explain variability in birth weight.\\
+\medskip
+In essence the statistically significance (i.e., \pval{}) of an explanatory
+variable is measuring its contribution toward explaining variability in the response variable (in our case \rcode{bwt})
+\emph{having adjusted for any other explanatory variables in the model}.\\
+\medskip
+So \rcode{bmi} explains little variability in \rcode{bwt} since \rcode{weight} has already
+explained most of that variability, and vice-versa.\\
+\medskip
+This problem is given the name \textbf{multi-collinearity}\footnote{The double `l' is not a mistake.}.\\
+\medskip
+In linear algebra, we say we have linear dependence (as opposed to linear independence) in these variables.
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+Back to the drawing board. Let us refit this model with \rcode{bmi} and \rcode{height}, but without \rcode{weight}.\\
+\medskip
+<<RC-H10-043, results = 'hide', tidy = FALSE>>=
+bwt.fit7 = lm(bwt ~ gestation*OD + height + bmi, data = Babies.df, 
+    subset = -c(239, 820))
+summary(bwt.fit7)
+@
+
+<<RC-H10-044, echo=FALSE>>=
+slimSummary(bwt.fit7)
+@
+
+Let us next investigate whether the categorical variable (\rcode{smokes}) helps to
+explain further variability in \rcode{bwt}.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+Let us add \rcode{smokes} to this analysis.
+<<RC-H10-045, results = 'hide'>>=
+bwt.fit8=lm(bwt~ gestation*OD+height+bmi+smokes,data = Babies.df, 
+            subset = -c(239, 820))
+summary(bwt.fit8)
+@
+
+<<RC-H10-046, echo=FALSE>>=
+slimSummary(bwt.fit8)
+@
+
+As we might have suspected, a mother smoking is associated with decreased birth weight.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+Let us see if \rcode{not.first.born} is useful:
+
+<<RC-H10-047, results = 'hide'>>=
+bwt.fit9=lm(bwt~ gestation*OD+height+bmi+smokes+not.first.born,
+            data = Babies.df, subset = -c(239, 820))
+summary(bwt.fit9)
+@
+
+<<RC-H10-048, echo=FALSE>>=
+slimSummary(bwt.fit9)
+@
+Hmmm, does the negative effect of \rcode{not.first.born} seem reasonable???
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+Let us check the assumptions on this final model:
+
+Independence should be okay, as this is (hopefully) a random sample of data from
+a carefully designed study.
+
+<<RC-H10-049, fig.show = 'hide'>>=
+plot(bwt.fit9,which=1)
+@
+
+<<RC-H10-050, echo=FALSE>>=
+trimPlot(bwt.fit9,
+         plotCommand = plot,
+         fileName = "figure/RC-H10-050.pdf",
+         which = 1,
+         cex = 0.7,
+         mai = c(0.5, 0.5, 0.1, 0.1),
+         x.lab = "Fitted values",
+         y.lab = "Residuals",
+         fig.height = 2.1,
+         fig.width = 4.1)
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H10-050}
+\end{figure}
+
+No trend, and EOV assumption is fine.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+<<RC-H10-051, fig.show = 'hide'>>=
+normcheck(bwt.fit9)
+@
+
+<<RC-H10-052, echo=FALSE>>=
+trimPlot(bwt.fit9,
+         plotCommand = normcheck,
+         fileName = "figure/RC-H10-052.pdf",
+         fig.height = 2.1,
+         fig.width = 4.1)
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.5]{figure/RC-H10-052}
+\end{figure}
+
+Normality assumption looks fine.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+<<RC-H10-053, fig.show = 'hide'>>=
+cooks20x(bwt.fit9)
+@
+
+<<RC-H10-054, echo=FALSE>>=
+trimPlot(bwt.fit9,
+         plotCommand = cooks20x,
+         fileName = "figure/RC-H10-054.pdf",
+         mai = c(0.5, 0.6, 0.1, 0.1),
+         fig.height = 2.1,
+         fig.width = 4.1)
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.5]{figure/RC-H10-054}
+\end{figure}
+
+No unduly influential points.
+
+\end{frame}
+
+
+
+\begin{frame}[fragile,t]
+\frametitle{Birth weight of babies\ldots}
+Let us get the CIs on this trusted output. \\ 
+<<RC-H10-055>>=
+confint(bwt.fit9)
+@
+
+\bigskip
+See Case Study 10.1 for a  detailed  executive summary.\
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+\framesubtitle{Closing remarks}
+
+Recall that we can fit as many explanatory variables as we like. So, did fitting all of these explanatory variables help us describe the variability of the birth weight of babies?
+
+\medskip
+
+{\renewcommand{\arraystretch}{1.15}
+
+  \begin{tabular}{l|ll}
+     & What we did & Multiple $R^2$ \\ \hline
+    \rcode{bwt.fit3} & Added \rcode{gestation * OD} & \Sexpr{round(100*summary(bwt.fit3)$r.squared, 1)}\% \\
+    \rcode{bwt.fit4} & Added \rcode{height} & \Sexpr{round(100*summary(bwt.fit4)$r.squared, 1)}\% \\
+    \rcode{bwt.fit5} & Added \rcode{weight} & \Sexpr{round(100*summary(bwt.fit5)$r.squared, 1)}\% \\
+    \rcode{bwt.fit6} & Added \rcode{bmi} & \Sexpr{round(100*summary(bwt.fit6)$r.squared, 1)}\% \\ 
+    \rcode{bwt.fit7} & Dropped \rcode{weight} & \Sexpr{round(100*summary(bwt.fit7)$r.squared, 1)}\% \\
+    \rcode{bwt.fit8} & Added \rcode{smokes} & \Sexpr{round(100*summary(bwt.fit8)$r.squared, 1)}\% \\
+    \rcode{bwt.fit9} & Added \rcode{not.first.born} & \Sexpr{round(100*summary(bwt.fit9)$r.squared, 1)}\%
+  \end{tabular}
+
+}
+\medskip
+
+Our final model, \rcode{bwt.fit9}, includes explanatory variables we deemed suitable and it has a Multiple $R^2$ of \Sexpr{round(100*summary(bwt.fit9)$r.squared, 1)}\%. 
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Birth weight of babies\ldots}
+\framesubtitle{Closing remarks\ldots}
+In situations where there are many explanatory variables,
+some of which may be strongly correlated,
+selecting the best subset for the final model can be challenging.
+
+\bigskip
+Model selection is a crucial component of statistical modelling and machine learning.
+STATS 330 (Advanced Statistical Modelling) covers this topic in more detail,
+using techniques such as stepwise variable selection, AIC (Akaike's information criterion), and assessment of prediction error using cross validation.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Relevant \rcode{R}-code}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[fragile]
+\frametitle{Most of the \rcode{R}-code you need for this chapter}
+
+Note that this code comes with the usual code/checks discussed in chapters 1 and 2.
+\medskip
+
+Useful tools for inspecting many relationships are:
+
+<<RC-H10-56, eval=F, comment=NA>>= 
+## Create the pairs plot of the five numeric variables
+pairs20x(Babies.df[,c(1,2,4,5,6)])
+@
+
+and for the factor variables:
+
+<<RC-H10-057, eval=F, comment=NA>>=
+pairs20x(Babies.df[,c(1,3,7)])
+@
+
+Then it is a dialogue with your usual outputs (e.g: \rcode{summary(bwt.fit3)} and \rcode{summary(bwt.fit4)} etc...) and to see if what you observe makes sense. Note that this requires constant vigilance. 
+\smallskip
+
+Also note that many times several models may be selected that make sense and are acceptable.  
+\end{frame}
+
+\end{document}

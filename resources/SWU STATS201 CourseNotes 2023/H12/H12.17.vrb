@@ -1,0 +1,33 @@
+\frametitle{Exam vs test success and attendance\ldots}
+Let us investigate what our model tells us in terms of the estimated parameters:
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{summary}\hlstd{(Exam.fit)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{verbatim}
+Coefficients:
+                        Estimate Std. Error t value Pr(>|t|)
+(Intercept)               35.143      3.223  10.905  < 2e-16 ***
+AttendYes                  3.190      4.557   0.700  0.48504
+Pass.testpass             13.017      4.371   2.978  0.00341 **
+AttendYes:Pass.testpass   11.599      5.679   2.042  0.04297 *
+---
+Residual standard error: 14.77 on 142 degrees of freedom
+Multiple R-squared:  0.3878,	Adjusted R-squared:  0.3749
+F-statistic: 29.98 on 3 and 142 DF,  p-value: 4.452e-15
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+The \pval{} for interaction is the same as before.
+
+\medskip
+
+Note also that the $R^2=39\%$ can be obtained from the ANOVA table above as follows: $R^2 =100\times\left(1-\frac{30968}{30968+ 910 + 11077 + 7631} \right)$ is the proportion of variability that is explained by our model terms.

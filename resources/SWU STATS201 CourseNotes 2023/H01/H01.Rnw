@@ -1,0 +1,966 @@
+\documentclass{beamer}
+
+\usepackage{graphicx}
+\usepackage{lscape}
+\usepackage{changepage}
+%\input{../s20xPreamble.tex}
+\input{../s20xPreambleRBM.tex}
+
+\setlength{\parskip}{9pt}
+
+% suppress footnote numbering
+\makeatletter
+\def\blfootnote{\xdef\@thefnmark{}\@footnotetext}
+\makeatother
+
+
+\begin{document}
+\newcommand{\thechapter}{1}
+<<RC-H01-000, echo=FALSE>>=
+source("../s20xNotesHelper.R")
+
+## these are global knitr options and settings for the
+## whole document
+library(knitr)
+library(s20x)
+## comment = NA removes ## from all output lines
+## prompt = TRUE means the console input prompt > is displayed
+## tidy = TRUE means the code is properly spaced and tidied. 
+opts_chunk$set(comment = NA, size = "scriptsize", prompt = TRUE, tidy = TRUE)
+@
+
+
+
+\title{Chapter 1: \\ Getting started with linear regression}
+\institute{University of Auckland}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+%Test of orientation not very successful. Using left= or right= messes things up
+%COULD TRY {\setlength\paperheight {297mm} etc
+%\begin{landscape} %Test of changing page orientation
+%\newgeometry{hoffset=0cm,voffset=-1cm,textwidth=9cm,textheight=20cm,top=1cm,right=1cm}
+%\begin{adjustwidth}{0cm}{0cm}
+\begin{frame}[t]
+\frametitle{Learning outcomes}
+In this chapter you will learn about:
+\begin{center}
+\vspace{16pt}
+\begin{minipage}{.9\textwidth}
+\begin{itemize}
+  \item Getting started using \rcode{R} with an example that analyses data from a previous class of STATS 20x students
+  \item Getting data into \rcode{R} -- creating a dataframe
+  \item Working with dataframes in \rcode{R}
+  \item How to  fit straight lines to your data --  the simple linear model
+  \item How to predict using the fitted model
+  \item How good is the fitted model for prediction? --  $R^2$
+  \item Some technical asides and relevant \rcode{R}-code for this section.
+  \end{itemize}
+\end{minipage}
+
+\end{center}
+\end{frame}
+%\restoregeometry 
+%\end{adjustwidth}
+%\end{landscape}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{A motivating example - previous 20x students}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}
+\frametitle{Example -- Former STATS 20x Students}
+Over the next few weeks we will repeatedly make use of a dataset we collected from previous students who sat STATS 20x.
+\bigskip
+
+In this chapter we will examine a simple straight line model to see if a student's test mark can explain and predict their final exam mark.
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+
+\frametitle{Data collected from former students in 20x}
+
+\begin{tabular}{lp{15cm}}
+\rcode{Exam} &  the student's final exam mark (out of 100) \\
+\rcode{Degree}& the degree the student is enrolled for:\\
+				&Arts = BA, Commerce = BCom\\
+				&Science = BSc, Other = Other\\
+\rcode{Gender} & the student's gender: Female or Male\\
+\rcode{Attend} & whether the student attended lectures regularly:\\
+               & No or Yes\\
+\rcode{Assign} & the student's Assignment mark (out of 20)\\
+\rcode{Test} & the student's midterm mark (out of 20)\\
+\rcode{Stage1}  & the student's grade for Stage 1 Statistics:\\
+                & A, B or C\\
+\rcode{Years.Since} &  the number of years since the student \\
+& passed Stage 1 Statistics\\
+\rcode{Repeat} &	whether the student is repeating the course:\\
+              & No or Yes.
+\end{tabular}\blfootnote{Note: In this Chapter we'll be using only \rcode{Test} to predict \rcode{Exam}. What other variables in the dataset might be useful for predicting \rcode{Exam}?}
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Getting data into \rcode{R} -- creating a dataframe}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}[fragile]
+\frametitle{How do we import this data into R?}
+
+The original data are stored in a text file called \rcode{STATS20x.txt} in a suitable folder.
+
+\begin{center}
+\includegraphics[width=4in]{Pictures/WhereData}
+\end{center}
+
+Text files often have \texttt{.txt} appended to their name. The letters after the full stop in the file name are sometimes called a file-name \emph{extension}, and are often used by the operating system (Windows, Mac OS X, Linux) to decide which application/programme should be used to open the file.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{What do the data look like?}
+As data analysts we love our data to be in `rectangular' (i.e., matrix or array) form.
+Our raw data looks like this in the Notepad text editor.
+\vspace{-3mm}
+\begin{center}
+\includegraphics{Pictures/Stats20xdata}
+\end{center}
+\vspace{-3mm}
+Note that the first row of this \rcode{.txt} file contains the variable (i.e. column) names.
+Each row represents a different student. The columns within each row are separated by a  \rcode{TAB} character -- i.e. the file is  \emph{\rcode{TAB} delimited}.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{How do we import this data-file?}
+<<RC-H01-001, comment=NA>>=
+## Importing data into R
+Stats20x.df = read.table("Data/STATS20x.txt", header=TRUE)
+@
+Here we are importing the \rcode{STATS20x.txt} data from a folder called \rcode{Data} that resides within our ``working directory''.
+We are also telling \rcode{R} that the 1\textsuperscript{st} line of data contains the variable names by using
+the argument \rcode{header = TRUE}.\footnote{\rcode{T} can be used as an abbreviation for \rcode{TRUE}. } \\[9mm]
+
+If the data file resides in the working directory then it is enough to use
+<<RC-H01-002, eval=F>>=
+Stats20x.df = read.table("STATS20x.txt", header=TRUE)
+@
+
+You can set the working directory using the \rcode{Session} menu of RStudio.
+
+{\bf Note:} In \rcode{R} code, we preface comment lines with the  {\color{darkgreen}\verb|#|} symbol.
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Working with dataframes in \rcode{R}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]
+\frametitle{Where are the data?}
+
+It is there all right!\footnote{Provided that you have {\bf Run} the code chunk -- knitting does not save the objects created.} 
+The data exist in the \rcode{R} session as a dataframe object with the name \rcode{Stats20x.df}. 
+
+You can use whatever name you want (within reason) for objects you create in your \rcode{R} session, so always try to use meaningful names that will help you remember what the object is. That is why we used the \rcode{.df} suffix for our dataframe.
+
+To see the dataframe you just need to ask. For example:
+<<RC-H01-003, comment=NA>>=
+## 1st 5 rows and 7 columns of data set Stats20x.df
+Stats20x.df[1:5,1:7]
+@
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{How do we obtain the dimensions of a dataframe?}
+
+What are the dimensions of the \rcode{Stats20x.df} dataframe?
+<<RC-H01-004, comment=NA>>=
+dim(Stats20x.df)
+@
+It consists of \Sexpr{dim(Stats20x.df)[1]} rows (students) and \Sexpr{dim(Stats20x.df)[2]} columns. Each column represents a recorded measurement, characteristic, or feature of the students -- that is, a variable.
+
+\medskip
+{\bf Note:} {\rcode R} is case sensitive. For example, the dataframe \rcode{stats20x.df} does not exist, and so asking for its dimensions will give an error:
+
+<<RC-H01-004b, eval=F>>=
+dim(stats20x.df)
+@
+
+<<RC-H01-004b2, echo=F>>=
+try( dim(stats20x.df) )
+@
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Summarising STATS 20x exam marks}
+You can ask for one variable at a time using the \rcode{\$} sign after the dataframe name.
+For example, we type \rcode{Stats20x.df\$Exam} to obtain the \rcode{Exam} variable.
+
+Here we just look at the first 10 observations for brevity.
+<<RC-H01-005>>=
+Stats20x.df$Exam[1:10]
+@
+
+If we want to look at the distribution of \rcode{Exam}, the visualisation tool of choice will be a histogram. 
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Summarising STATS 20x exam marks\ldots}
+\framesubtitle{A histogram}
+\medskip
+<<RC-H01-006, fig.show='hide'>>=
+#Using xlab="STATS 20x exam score" to label the x-axis.
+hist(Stats20x.df$Exam, xlab="STATS 20x exam score")
+@
+
+<<RC-H01-007, echo=FALSE>>=
+trimPlot(Stats20x.df$Exam,
+         fileName = "figure/RC-H01-007.pdf", 
+         plotCommand = hist, 
+         main = "",
+         x.lab = "STATS 20x exam mark",
+         y.lab = "Frequency",
+         fig.height = 2.5,
+         fig.width = 4.5)
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H01-007}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Summarising STATS 20x exam marks\ldots}
+\framesubtitle{Numerical summaries}
+
+Let us obtain some numerical summaries.
+
+<<RC-H01-008, comment=NA>>=
+summary(Stats20x.df$Exam)
+@
+\begin{itemize}
+\item So the lowest mark was \Sexpr{summary(Stats20x.df$Exam)[1]} (\rcode{Min.}\,$\equiv$ minimum),
+\item the highest \Sexpr{summary(Stats20x.df$Exam)[6]} (\rcode {Max.}\,$\equiv$ maximum),
+\item $\frac{1}{4}$ got \Sexpr{summary(Stats20x.df$Exam)[2]} or less (\rcode{1st Qu.}\,$\equiv$ lower quartile),
+\item $\frac{1}{2}$ got less/more than \Sexpr{summary(Stats20x.df$Exam)[3]} (\rcode{Med.}\,$\equiv$  median),
+\item $\frac{1}{4}$ got more than \Sexpr{summary(Stats20x.df$Exam)[5]} (\rcode{3rd Qu.}\,$\equiv$ upper quartile),
+\item and the average (\rcode{Mean}) mark was about 53 (\Sexpr{round(summary(Stats20x.df$Exam)[4], 2)}) marks.
+\end{itemize}
+%There may be evidence of two underlying populations? Discuss (or not).
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{How to  fit straight lines to your data - a.k.a. the simple linear model}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}
+\frametitle{Example -- Former STATS 20x students' exam marks}
+From the above summary we have some understanding about STATS 20x students' final exam marks. This is mildly interesting, but perhaps we could ask more interesting questions than this?
+
+\medskip
+\textbf{Here is one:}
+\medskip
+Does my mid-term test mark relate to my final exam mark?
+
+\medskip
+To be honest, I am pretty sure we know the answer to this question but let us answer this question, based on our data (not based on a strong opinion) and see if this suspected relationship is real or not.
+
+\medskip
+The specific research question addressed in this chapter is
+{\bf can we use mid-term test score to explain final exam score?}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks}
+\framesubtitle{The particular variables of interest}
+
+\begin{tabular}{lp{15cm}}
+\rcode{Exam} &  the student's exam mark (out of 100) \\
+
+\rcode{Test} & the student's Test mark (out of 20)\\
+
+\end{tabular}
+
+As scientists our first task is to determine whether or not there really is an association between \rcode{Test} and \rcode{Exam}.
+
+If \rcode{Test} {\bf is} found to be associated with \rcode{Exam} then the next step is to quantify the magnitude of that relationship.
+\medskip
+
+{\bf Note:} that our question really is about the `typical' or average relationship.
+Some students may do well in the term test but not in the exam and vice-versa.
+We are really interested in the `expected' effect of test on exam.
+
+\medskip
+As our variables \rcode{Test} and \rcode{Exam} are both numerical we draw a scatter-plot to see what relationship is suggested (if any).
+A scatter-plot (sometimes called a {\it xy}-plot) has two axes,
+a horizontal {\it x}-axis and a vertical {\it y}-axis.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{Let us look at these data}
+\rcode{Test} is the explanatory (or independent) variable and goes on the {\it x}-axis.\\
+\rcode{Exam} is the response (or dependent) variable and goes on the {\it y}-axis. \\
+\phantom{A space}
+
+<<RC-H01-009, fig.show='hide'>>=
+## Importing data into R
+Stats20x.df = read.table("Data/STATS20x.txt", header=T)
+## Plot the data
+plot(Exam ~ Test, data = Stats20x.df)
+@
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{Let us look at these data\ldots}
+
+<<RC-H01-010, echo=FALSE>>=
+trimPlot(Exam ~ Test,
+         data = Stats20x.df,
+         fileName = "figure/RC-H01-010.pdf",
+         plotCommand = plot,
+         x.lab = "Test",
+         y.lab = "Exam",
+         cex = 0.7,
+         fig.height = 3,
+         fig.width = 4.5)
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H01-010}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{Let us look at these data\ldots}
+
+{\bf Note} that the \rcode{plot(Exam \textasciitilde{} Test, data = Stats20x.df)} statement
+asks \rcode{R} to produce a plot suitable for showing how  \rcode{Test} ({\it x}-axis variable)
+is related to \rcode{Exam} ({\it y}-axis variable).
+
+Looking at this plot, it is clear that there is some relationship,
+but there is also a lot of variability in exam score amongst students with the same
+test score, especially in the middle of the data.
+
+\medskip As we are interested in the `typical' exam score 
+for a given test score we would like to visually see
+what the underlying trend is,
+and how much the exam scores vary (scatter) about that trend.
+It is helpful to run a smooth trend line through the scatter-plot.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{Let us look at these data\ldots}
+
+<<RC-H01-011, fig.show='hide'>>=
+## Load the s20x library to use the trendscatter function
+library(s20x)
+trendscatter(Exam ~ Test, data = Stats20x.df)
+@
+
+<<RC-H01-012, echo=FALSE>>=
+trimPlot(Exam ~ Test,
+         data = Stats20x.df,
+         fileName = "figure/RC-H01-012.pdf",
+         plotCommand = trendscatter,
+         x.lab = "Test",
+         y.lab = "Exam",
+         main = "",
+         cex = 0.7,
+         mai = c(0.5, 0.5, 0.1, 0.1),
+         fig.height = 2.25,
+         fig.width = 4.25)
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H01-012}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{Let us look at these data\ldots}
+This is our first application of a `bespoke'\footnote{(Of a computer program) written or adapted for a specific user or purpose: \it{``completely bespoke software systems''}  -- Oxford Dictionary.}
+function, \rcode{trendscatter}, made just for you.
+It is one of the many functions to be found when you load the \rcode {s20x} package.
+The \rcode{trendscatter} function computes a lowess\footnote{\emph{lowess} stands for \underline{l}ocally \underline{w}eighted \underline{s}catterplot \underline{s}moothing.} smoother to the data (the {\color{blue} blue} line) along with estimates of the variation about that line (the {\color{red}red} lines).
+
+\medskip The underlying trend here looks like a straight line.
+The variability looks roughly constant -- except, perhaps,
+for those students who got high test marks.
+
+{\bf Note:} When we talk about ``variability'' it is in the vertical direction.
+That is, we are talking about the variability in exam score for a given fixed value
+of test score.
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{How to predict using the fitted model?}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{Fitting a simple linear model}
+\begin{large}\centering
+\textbf{Pro Tip:} If it looks like a straight line then fit a straight line.\\
+\end{large}
+\vspace{12pt}
+A straight line is a simple (but not the simplest) form  of a linear model.
+
+\medskip
+<<RC-H01-013, results='hide'>>=
+examtest.fit = lm(Exam ~ Test, data = Stats20x.df)
+summary(examtest.fit)
+@
+
+<<RC-H01-014, echo=FALSE>>=
+slimSummary(examtest.fit)
+@
+
+Note that \rcode{examtest.fit} now resides in our \rcode{R} session as an \rcode{lm} \emph{object}. An object, in the \rcode{R} language, is a structure than can contain data, variables, functions or other objects.
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{The simple linear model}
+Let us see what this means.\\
+\vspace{12pt}
+
+The summary output has a number of different components.
+Let us start with the \rcode{Estimate} column.
+
+You will (or should!) recall from high school and/or STATS 10x that the equation for a straight line,
+\[
+y=a+bx,
+\]
+is described using two numbers (parameters), where:\\
+\begin{itemize}
+\item $a$ is called the \emph{intercept} since it is the value of $y$ when the line intercepts the y-axis. Note that the y-axis corresponds to $x=0$.
+
+\item $b$ is called the \emph{slope}. It tells us the rate of increase (or decrease) in $y$, for every additional unit increase in the value $x$.
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{The simple linear model}
+In the linear modelling context,
+it is the expected value of variable $y$, $\E[Y|x]$,
+that is assumed to follow a linear relationship with $x$. We read $\E[Y|x]$ as ``the expected value of $y$ given $x$.'' This is called a \emph{conditional expectation}. It means that the expected value (or mean) of $y$ will, or may, change depending on the value of $x$.
+That is, we assume
+\[
+\E[Y|x]=a+bx
+\]
+
+The first row of the above \rcode{summary(examtest.fit)} table is labelled \rcode{Intercept}, and in the \rcode{Estimate} column is the estimated value
+of $a$ (i.e., the estimated value of $y=$ \rcode{Exam} when $x=$ \rcode{Test = 0}). 
+The second row gives the estimated value of $b$, which is the increase in expected value of $y=$ \rcode{Exam} when $x=$ \rcode{Test} increases by one mark.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{The simple linear model, general notation}
+
+In the previous slides we used $a$ and $b$ to denote the intercept and slope parameters. 
+This is just a naming choice, and we could have used 
+\[
+\E[Y|x]=\theta+\gamma x
+\] or
+\[
+\E[Y|x]=c+dx,
+\] or
+\[
+\E[Y|x]=\beta_0+\beta_{1}x \ .
+\]
+
+In this class we shall use the $\beta_0$, $\beta_1$, choice of parameter names
+since it is easiest to generalize to more complex models having many parameters.
+
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{The simple linear model}
+In the linear modelling context,
+it is the expected or typical value of variable $y$ that follows a linear model. 
+So, for the simple linear model:
+\[
+\E[Y|x]=\beta_0+\beta_{1}x.
+\]
+We can say that each $y$ can be broken into what we expect to see plus a component that is random and, therefore, cannot be explained.\footnote{This also applies to the more complex linear models we see later.}
+
+We can write this as
+\[
+y=\E[Y|x]+\varepsilon=\beta_0+\beta_{1}x+\varepsilon
+\]
+where $\varepsilon$ (epsilon) is random with expected value 0. This expresses how an observation varies around its expected or typical value. We will discuss these ideas  in greater detail in the next chapter.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{Let us look at this model}
+
+Let us extract the coefficients component from the fitted model object:
+
+<<RC-H01-015>>=
+coef(examtest.fit)
+@
+
+<<RC-H01-016, echo=FALSE>>=
+beta0 = sprintf("%.2f", coef(examtest.fit)[1])
+beta1 = sprintf("%.2f", coef(examtest.fit)[2])
+@
+
+You can see this corresponds to the \rcode{Estimate} column of the regression summary table.
+
+We are saying that the `best' fit of the data tells us that the predicted exam score
+for a student with test score \rcode{Test} is given by the
+following equation (to two decimal places):
+\begin{center}
+$ \widehat{\rcode{Exam}}=\Sexpr{beta0}+\Sexpr{beta1}\times \rcode{Test}$\footnote{ We use the notation $\widehat{\rcode{Exam}}$ as this is an estimated value.}.
+\end{center}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{Let us look at this model\ldots}
+So, if you have received $0$ in the \rcode{Test}, then we estimate that you should be able (on average) to get 9.08 marks for just turning up to the exam and guessing your way through it.
+
+\medskip
+
+Thereafter, for every extra mark you get in the the test (out of 20) your final exam score will increase (on average) by about 3.79 marks.
+
+\medskip
+<<RC-H01-017, echo=FALSE>>=
+predict0 <- sprintf("%.2f", coef(examtest.fit)[1]+coef(examtest.fit)[2]*0)
+predict10 <- sprintf("%.2f", coef(examtest.fit)[1]+coef(examtest.fit)[2]*10)
+predict20 <- sprintf("%.2f", coef(examtest.fit)[1]+coef(examtest.fit)[2]*20)
+@
+Here are some predictions for typical students who got test mark of 0, 10 or 20:
+\begin{itemize}
+\item \rcode{Test = \phantom{0}0} then $\widehat{\rcode{Exam}}=\Sexpr{beta0}+\Sexpr{beta1}\times \phantom{0}0 =\phantom{0}\Sexpr{predict0}\%$ in the exam,
+
+\item \rcode{Test = 10} then $\widehat{\rcode{Exam}}=\Sexpr{beta0}+\Sexpr{beta1}\times 10 =\Sexpr{predict10}\%$ in the exam,
+
+\item \rcode{Test = 20} then $\widehat{\rcode{Exam}}=\Sexpr{beta0}+\Sexpr{beta1}\times 20 =\Sexpr{predict20}\%$ in the exam.
+\end {itemize}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{Let us look at this model\ldots}
+Let us see how this model works out overall.
+Here we are plotting the `best' estimated straight line that we obtained from fitting our model. \\
+\phantom{A space}
+
+<<RC-H01-018, fig.show='hide', tidy = FALSE>>=
+plot(Exam ~ Test, data = Stats20x.df, xlim = c(0, 20))
+## Add the lm estimated line to this plot
+abline(examtest.fit, lty = 2, col = "blue")
+## Calculate predicted values for students who get test=0,10,20
+predns=predict(examtest.fit, newdata = data.frame(Test=c(0,10,20)))
+## Add the predicted values to the plot
+points(c(0,10,20), predns,col = "blue", pch = 19)
+@
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{Let us look at this model\ldots}
+
+<<RC-H01-019, echo=FALSE>>=
+trimPlot(Exam ~ Test,
+         data = Stats20x.df,
+         fileName = "figure/RC-H01-019.pdf",
+         plotCommand = plot,
+         x.lab = "Test",
+         y.lab = "Exam",
+         xlim = c(0,20),
+         cex = 0.7,
+         cex.main = 0.7,
+         fig.height = 3,
+         fig.width = 4.5,
+         addElements = list(
+           abline(examtest.fit,lty=2, col="blue"),
+           points(0,predict(examtest.fit, data.frame(Test = 0)),col="blue",pch= 19, cex=0.7),
+           points(10,predict(examtest.fit, data.frame(Test = 10)),col="blue",pch= 19, cex=0.7),
+           points(20,predict(examtest.fit, data.frame(Test = 20)),col="blue",pch= 19, cex=0.7)
+         ))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H01-019}
+\end{figure}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{How good is the fitted model for prediction?  --  $R^2$}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{The null model}
+This model is not too bad. It appears to do a reasonable job of describing the data and appears to make sense -- but compared to what? How useful is the variable  \rcode{Test} in explaining and predicting \rcode{Exam}?
+
+We can fit a model that is even simpler than the straight line model. This is called the null\footnote{The null model is the model assumed by a one sample \ttest{}, as seen in Chapter 3.} model and simply estimates the  typical exam mark without an explanatory variable $x$. That is , $\E[Y|x]=\E[Y]$. Here is our null model for $y=Exam$: 
+\vspace{-0.5em}
+\begin{align*}
+y &=\E[Y|x]+\varepsilon\\
+  &=\E[Y] +\varepsilon\\
+  &=\beta_0+\varepsilon\\
+  &\equiv \mu+\varepsilon
+\end{align*}
+That is, $x=Test$, say, is not related to exam mark.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{The null model\ldots}
+Let us fit this $null$ model:
+<<RC-H01-020, results='hide'>>=
+## Null model
+examnull.fit=lm(Exam ~ 1, data = Stats20x.df)
+summary(examnull.fit)
+@
+<<RC-H01-021, echo=FALSE>>=
+slimSummary(examnull.fit)
+
+beta0.null <- sprintf("%.2f", coef(examnull.fit)[1])
+sigma.null <- sprintf("%.2f", summary(examnull.fit)$sigma)
+lower.null <- sprintf("%.2f", coef(examnull.fit)[1] - 2*summary(examnull.fit)$sigma)
+upper.null <- sprintf("%.2f", coef(examnull.fit)[1] + 2*summary(examnull.fit)$sigma)
+@
+
+In comparison, the simple linear model \rcode{examtest.fit}
+gives us different predictions for different test marks. Naturally we would suspect this to be a better model for predicting $Exam$ as we are pretty sure that $Test$ explains $Exam$ quite well.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{The null model\ldots}
+Our null model was $Exam =\beta_0 +\varepsilon$ where $\varepsilon \iid N(0, \sigma_{Null}^2)$\footnote {If we were were doing a one sample \ttest{} we would use parameter name $\mu$ instead of the more general $\beta_0$.} with the best estimate of $\mu=\beta_0$ being the
+sample mean, $\bar{y}=\Sexpr{beta0.null}$.
+
+\medskip
+Note that the estimate of the standard deviation ($\sigma$) of the random $\varepsilon$ component  was $\hat{\sigma}_{Null}=s_{Null}=\Sexpr{sigma.null}$.\footnote{Here we use the hat notation to denote that $\hat{\sigma}_{Null}$ is an estimate of the unknown parameter $\sigma_{Null}$. }
+
+This is also called the residual standard error.
+
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{Null vs. simple linear model}
+
+Compare the null model to the simple linear model that
+used \rcode{Test} as an explanatory variable.
+<<RC-H01-022, results='hide'>>=
+## Exam vs. Test model
+summary(examtest.fit)
+@
+
+<<RC-H01-023, echo=FALSE>>=
+## Exam vs. Test model
+slimSummary(examtest.fit)
+
+sigma <- sprintf("%.2f", summary(examtest.fit)$sigma)
+ratio <- 1- (summary(examtest.fit)$sigma^2)/(summary(examnull.fit)$sigma^2)
+ratio.1 <- sprintf("%.4f", ratio)
+ratio.2 <- sprintf("%.2f", ratio)
+multiple.R <- summary(examtest.fit)$r.squared
+multiple.R.1 <- sprintf("%.4f", multiple.R)
+multiple.R.2 <- sprintf("%.0f", multiple.R*100)
+@
+
+Note that the estimate $(s_{Test})$ of the standard deviation
+$(\sigma_{Test})$ of the  random $(\varepsilon)$ component 
+has been reduced to $s_{Test}=\Sexpr{sigma}$.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{How good is this simple linear model?}
+
+If $y=\rcode{Exam}$ and $x=\rcode{Test}$, then here are our fitted null (the {\color{red} red} line) and linear (the {\color{blue} blue} line) models. We clearly see that the blue line does a far better job of describing this relationship than the red line.  
+
+% Null model: $y=\beta_0+\varepsilon$ (red) versus 
+% $y=\beta_0+\beta_1 x+\varepsilon$ (blue) where $\varepsilon\iid N(0,\sigma^2)$:
+
+<<RC-H01-020A, echo=FALSE>>=
+trimPlot(Exam ~ Test,
+         data = Stats20x.df,
+         x.lab = "Test",
+         y.lab = "Exam",
+         fileName = "figure/RC-H01-020A.pdf",
+         col="light grey",
+         cex = 0.7,
+         fig.height = 2.5,
+         fig.width = 4.5,
+         addElements = list(
+           abline(h = mean(Stats20x.df$Exam), lty=2, col="red"),
+           text(5,60, expression(hat(y)==hat(beta)[0]),col="red",cex=.8),
+           abline(examtest.fit$coeff, lty=2, col="blue"),
+           text(18,67, expression(hat(y)==hat(beta)[0]+hat(beta)[1]*x),col="blue",cex=.8)
+         ))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H01-020A}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{Multiple R-squared}
+
+The overall variation in the null model is given by the sum of the squared residuals, 
+denoted by $SS_{Null}$.
+In Chapter 2 we will see that $SS_{Null}=50586$.
+$SS_{Null}$ is more commonly known as the {\bf total sum of squares}, $SS_{Tot}$.
+
+The sum of squares of the residuals from the model using the variable \rcode{Test}, 
+denoted here by $SS_{Test}$, is $20901$.
+
+The reduction in overall variation from the \rcode{Null} model to the \rcode{Test} model can be expressed as a proportion of $SS_{Null}$:
+
+\medskip 
+\begin{center}
+$\frac{SS_{Null} - SS_{Test}}{SS_{Null}}=1-\frac{SS_{Test}}{SS_{Null}} =1-\frac{20901}{50586}\approx 0.59.$
+\end{center}
+
+This statistic is usually called multiple {\bf R-squared} ($R^2$) or the proportion of variation explained.
+
+\medskip
+In the above output it is: \rcode{Multiple R-squared: \Sexpr{multiple.R.1}}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{R-squared interpretation}
+
+We can say that ($100\times R^2)= \Sexpr{multiple.R.2}\%$ of the (total) variation in the exam mark is explained by using a straight line relationship (i.e., simple linear model) with
+test score.
+
+So by using just one explanatory variable, $x=Test$,  we can explain \Sexpr{multiple.R.2}\% of the variation that we observe in $y=Exam$.
+That is a pretty good return on one `piece of information', the \rcode{Test} score.
+\medskip \medskip
+
+You may have seen (from STATS 210 perhaps) that the estimates of 
+$\sigma_{Null}$ and $\sigma_{Test}$ are obtained from the residual sums of squares:
+$s_{Null}=\sqrt{SS_{Null}/(n-1)}$ and $s_{Test}=\sqrt{SS_{Test}/(n-2)}$.
+\medskip
+
+In the above calculation, $n$ is the number of observations ($n=146$ in this example), 
+and $n-1$ is the degrees of freedom of the null model 
+and $n-2$ is the degrees of freedom of the straight line model.
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Word of caution}
+
+\medskip
+
+In practice we need to first check the assumptions of our model before we can safely
+use it for inference such as calculating confidence intervals, making predictions, etc.
+\medskip
+
+This is the focus of the next Chapter.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Some technical asides}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]
+\frametitle{Aside: Getting help on functions in R}
+
+In this first chapter we have already used several \rcode{R} functions. It is easy to forget the details (e.g., the arguments that the function needs), in which case you can get help about the function by simply preceding its name with a question mark.
+
+For example, try
+<<RC-H01-025, eval=FALSE, tidy=FALSE>>=
+?summary
+@
+\vspace{-0.5em}
+
+or
+<<RC-H01-025b, eval=FALSE, tidy=FALSE>>=
+?lm
+@
+
+In RStudio this opens a sub-window for the help file. It can be useful to look at the examples (at the bottom of the help file) of a function's usage to get an idea of how it is used.
+
+Unfortunately, the \rcode{R} help can be rather difficult to understand at first because of all the computer jargon it uses. There is plenty of other online help on most \rcode{R} functions that can be found through your favourite search engine.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Aside: Data types in R}
+There are several data types in \rcode{R}, but the three that we need to know about are \emph{numerical}, \emph{character} and \emph{logical}.
+\bigskip
+
+We'll see in Chapter 5 that we can also use character data as an explanatory variable. In that chapter we use the character variable class attendance ("Yes" or "No") to explain exam mark. We regard attendance as a two-level factor variable  --  stay tuned...
+
+<<RC-H01-026, comment=NA>>=
+summary(Stats20x.df$Attend)
+@
+
+<<RC-H01-026b, comment=NA>>=
+summary(as.factor(Stats20x.df$Attend))
+@
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Relevant \rcode{R}-code}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[fragile]
+\frametitle{Most of the \rcode{R}-code you need for this chapter}
+
+
+Creating a data frame by importing the text file \rcode{Data/STATS20x.txt} from the subfolder \rcode{Data}:
+
+<<RC-H01-027, eval=F, comment=NA>>=
+Stats20x.df = read.table("Data/STATS20x.txt", header=TRUE)
+@
+
+Plotting a scatter plot of y (Exam) vs. x  (Test):
+
+<<RC-H01-028, eval=F, comment=NA>>=
+plot(Exam~Test, data=Stats20x.df)
+@
+
+and/or a trend-scatter-plot:
+
+<<RC-H01-029, eval=F, comment=NA>>=
+trendscatter(Exam ~Test, data = Stats20x.df)
+@
+
+
+Fitting a linear (straight line) model and getting the estimated values:
+
+
+<<RC-H01-030, eval=F, comment=NA>>=
+examtest.fit=lm(Exam~Test, data=Stats20x.df)
+summary(examtest.fit)
+@
+
+Adding your fitted/predicted blue-dashed line to the scatter-plot created above:
+
+<<RC-H01-031, eval=F, comment=NA>>= 
+abline(examtest.fit, lty = 2, col = "blue")
+@
+
+\end{frame}
+
+
+\end{document}
+
+%Notes modified Feb 2021 to no longer use random variable capitalization.
+\begin{frame}
+\frametitle{Aside: Notation}
+You might have noticed that sometimes we use upper-case letters, and sometimes we use lower-case letters when talking about variables.
+
+There is actually a meaning to the change in case. A convention in statistics is to write random variables in upper-case, and observed or fixed values in lower-case letters. When we write out the linear model we write
+\[
+y = \E[Y|x] + \varepsilon
+\]
+In this expression $X$ and $Y$ are random variables. When we write
+\[
+\beta_0 + \beta_1x + \varepsilon
+\]
+We are talking about the distribution of $Y$ for a particular value of $X$, i.e. $x$. If this does not mean much to you, or is incomprehensible, then do not worry about it. We just like you to know there is some logic here.
+
+\end{frame}
+

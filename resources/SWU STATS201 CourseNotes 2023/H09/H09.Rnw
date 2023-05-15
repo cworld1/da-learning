@@ -1,0 +1,721 @@
+\documentclass{beamer}
+\usepackage{graphicx}
+
+\input{../s20xPreambleRBM.tex}
+
+<<RC-H09-000, echo=FALSE>>=
+source("../s20xNotesHelper.R")
+## these are global knitr options and settings for the
+## whole document
+library(knitr)
+library(s20x)
+## comment = NA removes ## from all output lines
+## prompt = TRUE means the console input prompt > is displayed
+## tidy = TRUE means the code is properly spaced and tidied.
+opts_chunk$set(comment = NA, size = "scriptsize", prompt = TRUE, tidy = TRUE)
+@
+
+\begin{document}
+\newcommand{\thechapter}{9}
+
+\title{Chapter 9: \\ Linear models with both numeric and factor explanatory variables \\~\\ Part 2: The model without interaction}
+\institute{University of Auckland}
+
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}[t]
+\frametitle{Learning Outcomes}
+In this chapter you will learn about:
+\begin{center}
+\vspace{16pt}
+\begin{minipage}{0.9\textwidth}
+  \begin{itemize}
+  \item More about linear models with both categorical and numeric explanatory variables
+  \item Model selection using Occam's razor
+  \item The \rcode{anova} function for joint hypothesis tests
+  \item Fitting a model without an interaction term
+  \item Interpretting fitted models with factors having more than two levels 
+  \item Changing the reference level of a categorical variable
+  \item Relevant \rcode{R}-code.
+  \end{itemize}
+\end{minipage}
+\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Example: Using both IQ and teaching method to explain increase in language proficiency}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}
+\frametitle{Student language score by teaching method and IQ}
+In the following example, educational experts were interested in which of three different teaching methods was most effective in increasing a language score for students of a range of abilities -- as measured by IQ.\\
+\bigskip 
+In order to do this, 
+30 students were randomly allocated into three groups and each group was taught using a different teaching method. 
+Each student's IQ was measured before the teaching programme began. \\
+\bigskip 
+This randomisation was done to ensure that a range of student abilities was represented in each group. As students were in a test environment we can assume that their test scores are independent of each other.\\
+
+\bigskip
+The variables measured were:
+\medskip
+
+\begin{tabular}{lp{15cm}}
+  \rcode{lang} & the language test score achieved by the student after instruction\\
+	\rcode{IQ}	& the student's IQ\\
+	\rcode{method} &	the teaching method used (1, 2 or 3) 
+\end{tabular}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Student language score by  teaching method and IQ\ldots}
+It was of interest to see if there was any difference in the students' expected language score between teaching methods, and if this difference depended on IQ.
+\medskip
+
+As usual, we begin by inspecting the data:
+
+<<RC-H09-001, fig.show='hide'>>=
+## Invoke the s20x library
+library(s20x)
+## Importing data found in the s20x library into R
+data(teach.df)
+## Plot the data with trendscatter()
+trendscatter(lang ~ IQ, f = 0.8, ylim = c(40, 110), data = teach.df,
+             ylab="Language score")
+## Note that f is the proportion of points in the plot which influence the
+## smooth at each value. Larger values of f give more smoothness!
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Student language score by teaching method and IQ\ldots}
+<<RC-H09-002, echo=FALSE>>=
+trimPlot(lang~IQ,
+  data = teach.df,
+  fileName = "figure/RC-H09-002.pdf",
+  plotCommand = trendscatter,
+  main = "",
+  x.lab = "IQ",
+  y.lab = "Language score",
+  cex = 0.7,
+  fig.height = 2.25,
+  fig.width = 4.25,
+  f = 0.8,
+  ylim = c(40, 110))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H09-002}
+\end{figure}
+
+Hmmm -- positive relationship with IQ suggested, but statistical significance not obvious. A plot that shows the teaching method would be more useful.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Student language score by teaching method and IQ\ldots}
+In dataframe \rcode{teach.df} the \rcode{method} is recorded as a number, 1, 2 or 3. 
+<<RC-H09-003a>>=
+teach.df$method
+class(teach.df$method)
+@
+
+However, these are just labels and could as easily have been "A", "B" or "C".
+So, \rcode{method} needs to be `coerced' into a factor so that it does not 
+get treated as a numeric variable\footnote{What would happen if \rcode{lm} was treated \rcode{method} as numeric???}.\\
+\medskip
+<<RC-H09-003b>>=
+teach.df$method = factor(teach.df$method)
+teach.df$method
+class(teach.df$method)
+@
+\medskip
+Not much has changed, but when we use \rcode{method} as the explanatory variable,
+plot functions and \rcode{lm} will now do the right thing since it is now a factor variable.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Student language score by teaching method and IQ\ldots}
+<<RC-H09-004, fig.show='hide'>>=
+plot(lang ~ method, ylim=c(40,110), data=teach.df, ylab="Language score")
+@
+
+<<RC-H09-005, echo=FALSE>>=
+trimPlot(lang ~ method,
+  data = teach.df,
+  fileName = "figure/RC-H09-005.pdf",
+  plotCommand = boxplot,
+  fig.height = 2.5,
+  fig.width = 3,
+  x.lab = "method",
+  y.lab = "Language score",
+  .at = c(1, 2, 3),
+  ylim = c(40, 110))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H09-005}
+\end{figure}
+
+Teaching method 2 seems best. The worst appears to be method 3.
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Student language score by teaching method and IQ\ldots}
+A more useful plot:
+<<RC-H09-006, fig.show = 'hide'>>=
+plot(lang ~ IQ, ylim=c(40,110), pch=as.character(method), data = teach.df,
+     ylab="Language score")
+@
+
+%plot(lang ~ IQ, ylim=c(40,110), pch=as.character(method), data = teach.df,
+%     ylab="Language score",col=c("red","blue","green")[method])
+
+
+<<RC-H09-007, echo=FALSE>>=
+trimPlot(lang ~ IQ,
+  data = teach.df,
+  fileName = "figure/RC-H09-007.pdf",
+  pch = as.character(method),
+  cex=0.6,
+  ylim = c(40, 110),
+  x.lab = "IQ",
+  y.lab = "Language score",
+  fig.height = 2.25,
+  fig.width = 4.25
+  )
+@ 
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H09-007}
+\end{figure}
+
+What do you see in this plot?
+
+\end{frame}
+ 
+ 
+ 
+\begin{frame}[fragile]
+\frametitle{Student language score by  teaching method and IQ\ldots}
+
+What we see here is that the data for methods 1, 2, 3 seem to be scattered around approximately parallel straight lines. This means the \rcode{IQ} effect appears the same regardless of the teaching method. Conversely, the \rcode{Method} effect appears to be the same regardless of IQ. \\
+\bigskip
+
+In other words, it looks like \rcode{IQ} and \rcode{method} {\bf do not} interact, i.e., there is no need to complicate the model by using a different slope for each method.  \\
+\bigskip 
+When we look at this data we see that the method 2 students are (on average) doing considerably better than method 1 students,  who are (on average) better than the method 3 students.\\
+\bigskip
+So, we suspect that we there may be a difference in the expected teaching scores between methods, and that the effect of IQ may be the same regardless of method. We'll need to   fit an appropriate linear model to find out for sure.\\
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Student language score by  teaching method and IQ\ldots}
+\framesubtitle{Fitting and checking the interaction model}
+We will fit the model with interaction first, anticipating that the interaction will not be significant.\\
+\medskip
+Here goes\ldots, along with the usual assumption checks.\\
+\medskip
+<<RC-H09-008, fig.show = 'hide'>>=
+TeachIQmethod.fit=lm(lang~IQ*method, data=teach.df)
+plot(TeachIQmethod.fit, which = 1)
+@
+<<RC-H09-009, echo=FALSE>>=
+trimPlot(TeachIQmethod.fit,
+  which = 1,
+  add.smooth = FALSE,
+  x.lab = 'Fitted values',
+  y.lab = "Residuals",
+  fileName = "figure/RC-H09-009.pdf",
+  fig.height = 1.75,
+  fig.width = 3.75,
+  cex = 0.7)
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H09-009}
+\end{figure}
+
+The \textbf{EOV} and no-trend assumptions seem to be okay.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Student language score by  teaching method and IQ\ldots}
+\framesubtitle{Fitting and checking the interaction model\ldots}
+<<RC-H09-010, fig.show = 'hide'>>=
+normcheck(TeachIQmethod.fit)
+@
+
+<<RC-H09-011, echo=FALSE>>=
+trimPlot(TeachIQmethod.fit,
+  fileName = "figure/RC-H09-011.pdf",
+  plotCommand = normcheck,
+  fig.height = 2.1,
+  fig.width = 4.1)
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.5]{figure/RC-H09-011}
+\end{figure}  
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Student language score by  teaching method and IQ\ldots}
+\framesubtitle{Fitting and checking the interaction model\ldots}
+<<RC-H09-012, fig.show = 'hide'>>=
+cooks20x(TeachIQmethod.fit)
+@
+
+<<RC-H09-013, echo = FALSE>>=
+trimPlot(TeachIQmethod.fit,
+  fileName = "figure/RC-H09-013.pdf",
+  plotCommand = cooks20x,
+  fig.height = 2.1,
+  fig.width = 4.1,
+  mai = c(0.5, 0.6, 0.1, 0.1)
+)
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.5]{figure/RC-H09-013}
+\end{figure}
+
+It looks like we can trust the output of the fitted model.
+\end{frame}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Model selection using Occam's razor}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}[fragile]
+\frametitle{Student language score by  teaching method and IQ\ldots}
+\framesubtitle{The fitted interaction model}
+Our fitted interaction model is:
+\bigskip
+
+<<RC-H09-014, results = 'hide'>>=
+summary(TeachIQmethod.fit)
+@
+
+<<RC-H09-015, echo=FALSE>>=
+slimSummary(TeachIQmethod.fit)
+@
+\vfill
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Model selection using Occam's razor}
+In previous Chapters we've seen that we remove terms that are not significant if doing so simplifies the fitted model. This is a very important principle of model selection and is an application of the ``principle of parsimony'', also known as \textbf{Occam's Razor}.\footnote{Named after William of Ockham (c. 1287-1347), who was an English Franciscan friar and scholastic philosopher and theologian.} :
+\medskip
+
+``The principle states that among competing models that predict equally well, the one with the fewest parameters should be selected."
+\medskip
+
+In STATS20x we sometimes call it the \textbf{KISS} principle -- ``keep it simple, statistician".
+\bigskip
+
+In this class the general model selection approach we use is to do a hypothesis test to determine if we can remove the most complicated term from our current model.\footnote{In STATS 330 you will several holistic approaches to model selection that are based on the estimated predictive ability of the model.}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Student language score by teaching method and IQ\ldots}
+\framesubtitle{Model selection using Occam's razor}
+In our above interaction model for language score, the interaction term is the most complicated term, so we need to test whether the interaction is significant.
+\bigskip
+
+Hmmm, the null hypothesis of no interaction is saying that the last two coefficients in the summary table are both zero. That is, $H_0: \beta_4=\beta_5=0$.\footnote{A hypothesis that specifies the value of two or more coefficients is called a {\bf joint} hypothesis.}\\
+\bigskip
+
+To do a single test about whether two or more coefficients are zero we need to produce an ANOVA table, using the \rcode{anova} function.
+\vfill
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Student language score by  teaching method and IQ\ldots}
+\framesubtitle{Model selection using Occam's razor\ldots}
+<<RC-H09-017>>=
+anova(TeachIQmethod.fit)
+@
+The \pval{} associated with the interaction term \rcode{IQ:method} is large. 
+So we conclude we do not have evidence of an interaction.
+\medskip
+
+This means we do not need to compute a different slope for each teaching method -- just different intercepts. Our instincts were right. 
+This saves us having to have an extra two parameters in our final model, and simplifies the interpretation of our model since the lines are parallel.
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Understanding the ANOVA table}
+
+An \rcode{anova} table is  based on partitioning the total sums of squares, TSS. Recall, this is the residual sums of squares of the null model. The TSS is given by summing the values in the \rcode{Sum sq} column of the table.
+\bigskip
+
+In the above table, TSS $=1004.42+2901.83+78.82+922.13=4907.2$. The amount of unexplained variability in our fitted model is given by the \rcode{Residuals} value of 922.13. This means that $922.13/4907.2=0.188$ is the proportion of the total variability that is not explained. The $R^2$ is therefore $1-0.188=0.812$.
+\bigskip \bigskip
+
+Now, back to our example, where we now need to consider the formulation of the parallel line model.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Student language score by  teaching method and IQ\ldots}
+\framesubtitle{Fitting the model without interaction}
+Occam's razor dictates that we sharpen our model by removing the interaction term.
+To do this, we simply replace \rcode{*} by \rcode{+} in the model formula.\\
+
+Non-interaction models are sometimes referred to as \emph{additive models} (as the effects `add up'),
+or `main effects' models.
+
+<<RC-H09-018, results = 'hide'>>=
+TeachIQmethod.fit2=lm(lang~IQ+method, data=teach.df)
+summary(TeachIQmethod.fit2)
+@
+
+<<RC-H09-019, echo=FALSE>>=
+slimSummary(TeachIQmethod.fit2)
+@
+
+All the assumptions are fine (not shown) -- not surprising, as all we have done is remove
+a term that was not significant.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Student language score by teaching method and IQ\ldots}
+\framesubtitle{Interpretting the no-interaction model}
+The equation for the parallel lines (i.e, no-interaction) model is
+\[
+\rcode{lang}=\beta_0+\beta_1 \times \rcode{IQ}+\beta_{2} \times \rcode{D2} +\beta_{3} \times \rcode{D3} +\varepsilon
+\]
+where, as usual $\varepsilon \iid N(0, \sigma^2)$.
+
+There are two indicator variables since teaching method has three levels:
+\begin{itemize}
+\item \rcode{D2} is an indicator variable whereby: \rcode{D2 = 1} if teaching method 2 is taught -- otherwise it is 0.
+\item \rcode{D3} is an indicator variable whereby: \rcode{D3 = 1} if teaching method 3 is taught -- otherwise it is 0.
+\item Teaching method 1 is the \textbf{reference/baseline} level group. 
+\end{itemize}
+\medskip 
+
+\hl{$\beta_{2}$} and \hl{$\beta_{3}$} represent the change in expected score 
+(for any fixed student IQ)
+when we compare teaching method 2 or 3 to teaching method 1 (baseline).
+\end{frame}
+
+
+
+\begin{frame}[fragile] 
+\frametitle{Student language score by  teaching method and IQ\ldots}
+\framesubtitle{Model selection using Occam's razor\ldots}
+The KISS principle requires us to determine if we can further simplify our model. 
+\medskip
+
+The no-interaction model can be simplified by removing the \rcode{IQ} term and/or the \rcode{method} terms. We see immediately from the summary table that \rcode{IQ} is highly significant, and so should not be removed.
+\medskip
+
+To see if the \rcode{method} terms can be removed we want to test the joint null hypothesis that the intercepts are all identical, $H_0: \beta_2=\beta_3=0$.
+This would simplify our model to a simple linear regression model.
+\bigskip
+
+\textbf{Recall:} 
+To do a test about whether two or more coefficients are zero we need to produce an 
+ANOVA table, using the \rcode{anova} function.
+\vfill
+\end{frame}
+
+
+
+\begin{frame}[fragile, label={anova1}]
+\frametitle{Student language score by  teaching method and IQ\ldots}
+\framesubtitle{Model selection using Occam's razor\ldots}
+Let us see if we really do have identical intercepts.  \\
+\medskip
+<<RC-H09-020>>=
+anova(TeachIQmethod.fit2)
+@
+\medskip
+The \pval{} associated with the \rcode{method} term is very small, so we conclude that the intercepts are different.\\
+\medskip
+We do have to fit different intercepts for each teaching method. Our instincts were right.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Student language score by  teaching method and IQ\ldots}
+\framesubtitle{Our preferred model}
+Our preferred model is the no-interaction model:
+
+<<RC-H09-021, results = 'hide'>>=
+summary(TeachIQmethod.fit2)
+@
+
+<<RC-H09-022, echo=FALSE>>=
+slimSummary(TeachIQmethod.fit2)
+@
+\vfill
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Student language score by teaching method and IQ\ldots}
+\framesubtitle{The fitted model}
+<<RC-H09-0022b,fig.height=3.25,echo=-1>>=
+par(oma=c(0,0,0,0),mar=c(4,4,0,4))
+plot(lang ~ IQ, ylim=c(40,110), pch=as.character(method), data = teach.df,
+     ylab="Language score")
+b = coef(TeachIQmethod.fit2)
+abline(b[1], b[2], lty = 2, col = "darkorange")
+abline(b[1] + b[3], b[2], lty = 2, col = "tomato")
+abline(b[1] + b[4], b[2], lty = 2, col = "steelblue")
+@
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Student language score by teaching method and IQ\ldots}
+\framesubtitle{Interpreting the output\ldots}
+We are now able to deduce:
+\bigskip
+\begin{itemize}
+\item $\beta_1>0$ $\implies$\footnote{ $\implies$ means \emph{implies that}.} \rcode{IQ} has a common positive effect on the expected language score of all students
+\item $\beta_{2}>0$ $\implies$ teaching method 2  is better than teaching method 1 regardless of a student's \rcode{IQ}.
+\item $\beta_{3}< 0$ $\implies$ teaching method 3 is worse than teaching method 1 regardless of a student's \rcode{IQ}.
+\end{itemize}
+\bigskip
+Our initial hunch about the best model has been justified.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Changing the reference level of teaching method}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[fragile]
+\frametitle{Student language score by  teaching method and IQ\ldots}
+\framesubtitle{Changing the reference level}
+The above statements are useful, but are incomplete -- we still don't know how method 2 differs from method 3?\footnote{The issue of estimating all pairwise differences between factor levels is an issue we deal with more
+fully in a later chapter.}\\
+\bigskip
+The \rcode{lm} function has chosen the baseline (i.e., reference) level to be method 1 since ``1'' comes before ``2'' and ``3'' when these values are sorted by a computer.
+We need to change this to make method 2 (or alternatively method 3) the baseline.
+The fitted model will be exactly the same, but the intercept coefficients will change due to the change in reference level. \\
+\bigskip
+Here is the \rcode{R} code to do this:\\
+\medskip
+
+<<RC-H09-023>>=
+teach.df$method = relevel(teach.df$method, ref = "2")
+TeachIQmethod.fit3=lm(lang~IQ+method, data=teach.df)
+@
+
+Let us compare the \rcode{summary}s of \rcode{TeachIQmethod.fit3} and \rcode{TeachIQmethod.fit2}.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Student language score by  teaching method and IQ\ldots}
+\framesubtitle{Interpreting the output}
+<<RC-H09-024, results = 'hide'>>=
+summary(TeachIQmethod.fit3)
+@
+<<RC-H09-025, echo = FALSE>>=
+slimSummary(TeachIQmethod.fit3, showCall = FALSE, showAOVsummary = FALSE, showGLMsummary = FALSE)
+@
+<<RC-H09-026, results = 'hide'>>=
+summary(TeachIQmethod.fit2)
+@
+<<RC-H09-027, echo = FALSE>>=
+slimSummary(TeachIQmethod.fit2, showCall = FALSE, showAOVsummary = FALSE, showGLMsummary = FALSE)
+@
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Student language score by  teaching method and IQ\ldots}
+\framesubtitle{Interpreting the output\ldots}
+Note that the \rcode{method1} coefficient in \rcode{fit3} has the same magnitude, but opposite sign to \rcode{method2} in \rcode{fit2}. This is because \rcode{fit3} measures how method 1 differs form method 2 whereas \rcode{fit2} measures how method 2 differs from method 1.
+
+\bigskip 
+Note also that the original missing `contrast', method 2 vs method 3, is now available in \rcode{fit3}. We see that method 3 is markedly worse than method 2.
+\vfill
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Student language score by  teaching method and IQ\ldots}
+\framesubtitle{Interpreting the output\ldots}
+Let us put confidence bounds on our effects.
+\bigskip
+<<RC-H09-028>>=
+## Baseline method here is method1.
+confint(TeachIQmethod.fit2)
+@
+
+<<RC-H09-029, echo=1:2>>=
+## Baseline method here is method2.
+confint(TeachIQmethod.fit3)
+ci = confint(TeachIQmethod.fit3)
+ci2 = confint(TeachIQmethod.fit2)
+r2 = summary(TeachIQmethod.fit3)$r.squared
+@
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Student language score by  teaching method and IQ\ldots}
+\framesubtitle{An Executive Summary}
+
+The best teaching method is method 2 regardless of the student's IQ. \\
+\medskip
+With 95\% confidence, we can make the following statements:
+\begin{enumerate}[1.]
+\item For students experiencing the same teaching method, we estimate that the mean language test score increases by between 1.6 and 4.7 marks for each additional ten\footnote{This is the CI for $\beta_1\times 10$ to demonstrate stating it on a different scale.} IQ points.
+
+\item For students with the same IQ, we estimate that the mean language test score\ldots
+\begin{enumerate}[$\triangleright$]
+\item for students taught using method 2 is between 4.1 and 15.7 marks higher than those taught using method 1, 
+\item for students taught using method 3 is between 8.3 and 20 marks lower than those taught using method 1, 
+\item for students taught using method 3 is between 18.3 and 29.7 marks lower than those taught using method 2.
+\end{enumerate}
+\end{enumerate}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Closing remarks and relevant \rcode{R}-code.}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[fragile]
+\frametitle{Most of the \rcode{R}-code you need for this chapter}
+
+When your response variable can be explained by a categorical variable and a numeric variable then you can use both explanatory variables in your analysis to explain $y$. 
+\bigskip
+
+You do not need to create indicator variables for levels of the categorical variable since \rcode{R} does this for you. It will choose the reference level for you, so be careful.  You can change this if needed. For example:
+
+<<RC-H07-30, eval=F, comment=NA>>= 
+teach.df$method = relevel(teach.df$method, ref = "2")
+@
+
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Most of the \rcode{R}-code you need for this chapter...}
+
+Follow the following steps:
+\bigskip
+
+Gain some intuition from looking at a suitable scatter plot of the data -- this could suggest whether the response should be logged, etc. 
+\bigskip
+
+Then, fit the model with interaction term,
+<<RC-H07-31, eval=F, comment=NA>>= 
+TeachIQmethod.fit=lm(lang~IQ*method, data=teach.df)
+@
+
+Then, assuming no reason to question the independence assumption,
+do our usual EOV, normality and influence checks.
+\bigskip
+
+If checks are OK, then see whether you really need a separate slope for each level of your factor variable.
+We can use \rcode{summary} if the factor variable has two levels, otherwise we must use \rcode{anova}
+
+<<RC-H07-32, eval=F, comment=NA>>= 
+data.frame(anova(TeachIQmethod.fit))
+@
+
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Most of the \rcode{R}-code you need for this chapter...}
+
+If the interaction term is not significant (large \pval{} for the `\rcode{:}' term) then apply Occam's razor by fitter the simpler main effects model.
+\bigskip
+
+To fit the simpler `main effects' (parallel lines) model:
+
+<<RC-H09-032, results = 'hide'>>=
+TeachIQmethod.fit2=lm(lang~IQ+method, data=teach.df)
+summary(TeachIQmethod.fit2)
+@
+\bigskip
+
+Note that sometimes we may see that we don't need one or more of the explanatory variables at all  --  do this by checking for a large \pval{} on each term. Apply Occam's razor accordingly.
+\vfill
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{{\bf Cautionary remark} about \rcode{anova}}
+When using \rcode{anova} to test a joint hypothesis for a multi-level explanatory factor, that factor {\bf must be the bottom term} in the \rcode{anova} output.\footnote{Unlike the \rcode{summary} table, the \pval{s} for the terms in the \rcode{anova} output depend on the terms above it. } That is, immediatately above the \rcode{Residuals} line.
+\medskip
+
+By way of example, suppose we change the order of the explanatory variables when we fit the model using \rcode{lm},
+
+<<RC-H09-033, results="hide">>=
+TeachIQmethod.fit2b=lm(lang~method+IQ, data=teach.df)
+anova(TeachIQmethod.fit2b)
+@
+
+<<RC-H09-034, echo=F>>=
+#For slimmer output
+wk.anova=anova(TeachIQmethod.fit2b)
+wk.anova[,names(wk.anova)]
+@
+
+In this case, the change in \pval{s} (see slide \ref{anova1}) makes no difference to conclusions , but this may not always be the case.
+\vfill
+
+\end{frame}
+
+\end{document}
+
+

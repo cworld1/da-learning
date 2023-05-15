@@ -1,0 +1,41 @@
+\frametitle{Most of the \rcode{R} code you need for this chapter...}
+
+Estimated values from the fitted model:
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{summary}\hlstd{(examtest.fit)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+Confidence intervals for the model parameters (intercept and slope)
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{confint}\hlstd{(examtest.fit)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+Creating a  data frame of new values (for, say,  Test =0, 10 or 20):
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{preds.df}\hlkwb{=}\hlkwd{data.frame}\hlstd{(}\hlkwc{Test}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{10}\hlstd{,}\hlnum{20}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+Confidence intervals for expected values and prediction intervals for new observations:
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlcom{# confidence interval for expected value:}
+\hlstd{> }\hlkwd{predict}\hlstd{(examtest.fit, preds.df,} \hlkwc{interval}\hlstd{=}\hlstr{"confidence"}\hlstd{)}
+\hlstd{> }\hlcom{# prediction interval for new observation:}
+\hlstd{> }\hlkwd{predict}\hlstd{(examtest.fit, preds.df,} \hlkwc{interval}\hlstd{=}\hlstr{"prediction"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+

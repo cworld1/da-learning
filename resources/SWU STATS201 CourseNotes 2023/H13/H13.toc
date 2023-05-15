@@ -1,0 +1,7 @@
+\beamer@sectionintoc {1}{The nature of count data}{3}{0}{1}
+\beamer@sectionintoc {2}{Example: Number of R packages submitted to the \\ Comprehensive R Archive Network (CRAN)}{8}{0}{2}
+\beamer@sectionintoc {3}{The Poisson Distribution}{19}{0}{3}
+\beamer@sectionintoc {4}{The generalized linear model (GLM)}{28}{0}{4}
+\beamer@sectionintoc {5}{Interpretting the GLM output}{41}{0}{5}
+\beamer@sectionintoc {6}{Closing Remarks}{47}{0}{6}
+\beamer@sectionintoc {7}{Relevant {\color {darkgreen}\texttt {R}}-code}{52}{0}{7}

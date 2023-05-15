@@ -1,0 +1,17 @@
+\frametitle{Most of the \rcode{R}-code you need for this chapter}
+
+If you suspect the relationship between your $x$ and $y$ variables follows a curve rather than a straight line (as revealed in the plot of residuals vs fitted values), and the scatter remains constant around this curve, then fit a quadratic:
+\bigskip
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{examassign.fit2}\hlkwb{=}\hlkwd{lm}\hlstd{(Exam}\hlopt{~} \hlstd{Assign} \hlopt{+} \hlkwd{I}\hlstd{(Assign}\hlopt{^}\hlnum{2}\hlstd{),} \hlkwc{data} \hlstd{= Stats20x.df)}
+\hlstd{> }\hlcom{#Check the residual plot again - hopefully the curvature is gone.}
+\hlstd{> }\hlkwd{plot}\hlstd{(examassign.fit2,}\hlkwc{which}\hlstd{=}\hlnum{1}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\bigskip
+
+{\bf NOTE:} If the null hypothesis $H_0: \beta_2=0$ is {\bf not} rejected (i.e, \pval{}$>0.05$), then our preferred model would be the simple linear regression model.

@@ -1,0 +1,30 @@
+\frametitle{Exam vs test success and attendance}
+\framesubtitle{Pairwise comparisons\ldots}
+
+To see only the within-level comparisons we can use the
+\rcode{displayPairs} function from the \rcode{s20x} package.
+\bigskip
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{displayPairs}\hlstd{(exam.pairs,} \hlkwd{c}\hlstd{(}\hlstr{"No"}\hlstd{,}\hlstr{"Yes"}\hlstd{),} \hlkwd{c}\hlstd{(}\hlstr{"nopass"}\hlstd{,}\hlstr{"pass"}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{verbatim}
+ within               contrast        est       lwr        upr         pval
+     No    No nopass - No pass -13.017143 -24.38137  -1.652912 1.776097e-02
+    Yes  Yes nopass - Yes pass -24.616034 -34.04182 -15.190247 1.701486e-09
+ nopass No nopass - Yes nopass  -3.190476 -15.03851   8.657554 8.969010e-01
+   pass     No pass - Yes pass -14.789367 -23.59933  -5.979408 1.423139e-04
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+For example, the first row of the above output says that the estimated difference between the means of the two levels of \rcode{Pass.test} conditional on the level of \rcode{Attend} = \rcode{No} is \texttt{-13.02}. So, for students who do not regularly attend lectures, those who pass the test can expect to score 13 points higher in the exam than those who fail.

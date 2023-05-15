@@ -1,0 +1,496 @@
+\makeatletter \def\NR@nopatch@beamer{} \makeatother %Temporary due to bug on 17 May
+
+\documentclass{beamer}
+\input{../s20xPreambleRBM.tex}
+
+% \setlength{\parskip}{7pt}
+% \setlength{\topsep}{0mm} %To reduce line spacing in R output
+
+\begin{document}
+\newcommand{\thechapter}{14}
+
+\title{Chapter \thechapter: \\ Poisson modelling of count data: \newline Two examples.}
+\institute{University of Auckland}
+
+<<RC-H14-000, echo = FALSE, warning=FALSE>>=
+source("../s20xNotesHelper.R")
+## these are global knitr options and settings for the
+## whole document
+library(knitr)
+library(s20x)
+## comment = NA removes ## from all output lines
+## prompt = TRUE means the console input prompt > is displayed
+## tidy = TRUE means the code is properly spaced and tidied.
+opts_chunk$set(comment = NA, size = "scriptsize", prompt = TRUE, tidy = TRUE)
+@
+
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+
+\begin{frame}[t]
+\frametitle{Learning Outcomes}
+In this chapter you will learn about using a Poisson regression GLM to model:
+\begin{center}
+\vspace{16pt}
+\begin{minipage}{0.9\textwidth}
+  \begin{itemize}
+    \item Earthquake frequencies using earthquake magnitude (numeric) and location (factor) as explanatory variables.
+    \item Snapper counts using location (factor) and reservation status (factor) as explanatory variables.
+  \end{itemize}
+\end{minipage}
+\end{center}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Example 1: Earthquake frequency}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}
+\frametitle{Earthquake magnitudes}
+\framesubtitle{The Gutenberg-Richter law}
+
+The Gutenberg-Richter law says that the expected number of earthquakes in a given period of time
+decreases multiplicatively with their magnitude.
+The formula is
+\[ \log_{10} N = a - b M \]
+where $N$ is the expected number of earthquakes of magnitude $M$ or more
+on the Richter scale. 
+Here, $a$ and $b$ are unknown parameters.
+
+\medskip
+The Richter scale is logarithmic (base 10). 
+So, for example, an earthquake that registers 5.0 on the Richter scale has a shaking amplitude 10 times that of an earthquake that registers 4.0. It can be shown that this corresponds to 30 times the release of energy.
+
+\medskip
+FYI, the most powerful earthquake ever recorded was in Chile in 1960, measuring 9.5 on the
+Richter scale.
+The largest known seismic events on earth have been caused by asteroid impact,
+exceeding 13 on the Richter scale.
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Earthquake magnitudes\ldots}
+\framesubtitle{The Gutenberg-Richter law\ldots}
+
+After applying a healthy dash of calculus,
+this formula can be re-expressed in a form that is more familiar to us
+\[ E[Y|x] = \exp(\beta_0 + \beta_1 x) \]
+where $Y$ is the number of earthquakes having magnitude between
+$x-\delta$ and $x+\delta$.\footnote{
+In the above formula, $\beta_0$ and $\beta_1$ depend on $a$, $b$ and $\delta$
+in a complicated way that we are not going to concern ourselves with.}
+
+\medskip
+
+E.g., if $x=6$ and $\delta=0.125$ then $Y$ is the number of earthquakes
+between 5.875 and 6.125 in magnitude.
+
+\medskip
+
+The above formula should look familiar. It is the one we use for a Poisson regression GLM when there is a single numeric explanatory variable $x$.
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Sthn California and Washington earthquakes, 1987--2019}
+The research question is to quantify the rate of decrease in earthquake
+frequency (with increasing magnitude) in both Southern California (SC) and the State of Washington (WA),
+and to assess whether these rates are the same.
+
+<<RC-H14-001>>=
+Quakes.df=read.table("Data/EarthquakeMagnitudes.txt",header=TRUE)
+Quakes.df$Locn=as.factor(Quakes.df$Locn)
+subset(Quakes.df,subset=c(Locn=="SC"))[1:4,] #Print first 4 SC observations
+subset(Quakes.df,subset=c(Locn=="WA"))[1:4,] #Print first 4 WA observations
+@
+Here we have one explanatory variable that is a factor variable,
+and another that is numeric. 
+We have seen this before in Chapter 8, and we handle it in much the same way as before,
+but using \rcode{glm} instead of \rcode{lm}.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Sthn CA and WA earthquakes, 1987--2019\ldots}
+\framesubtitle{Plotting the data}
+<<RC-H14-002, fig.show = 'hide'>>=
+plot(Freq~Magnitude,data=Quakes.df,pch=substr(Locn,1,1))
+@
+
+<<RC-H14-003, echo = FALSE>>=
+trimPlot(Freq ~ Magnitude,
+         data = Quakes.df,
+         pch = substr(Locn, 1, 1),
+         fileName = "figure/RC-H14-003.pdf",
+         cex = 0.7,
+         fig.height = 2.5,
+         fig.width = 4.5,
+         x.lab = "Magnitude",
+         y.lab = "Freq")
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.8]{figure/RC-H14-003}
+\end{figure}
+
+The data look consistent with an exponential decay. It is not clear if the rates of exponential decay are the same.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Sthn CA and WA earthquakes, 1987--2019\ldots}
+\framesubtitle{Model fit and assumption checking}
+Recall from Chapter 8 that we fit the interaction model first, and then simplify if possible.
+
+<<RC-H14-006, fig.show = 'hide'>>=
+Quake.gfit = glm(Freq ~ Locn * Magnitude, family = poisson, 
+                 data = Quakes.df)
+plot(Quake.gfit, which = 1)
+@
+
+<<RC-H14-007, echo = FALSE>>=
+trimPlot(Quake.gfit,
+         which = 1,
+         fileName = "figure/RC-H14-007.pdf",
+         fig.height = 2.25,
+         fig.width = 4.25,
+         x.lab = "Fitted values",
+         y.lab = "Residuals",
+         cex = 0.7)
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.7]{figure/RC-H14-007}
+\end{figure}
+
+Looks OK, notwithstanding that observation 16 has a high residual. This observation has low expected value (approx $\exp(-2)$), so this residual is not reliable and no cause for concern. 
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Sthn CA and WA earthquakes, 1987--2019\ldots}
+\framesubtitle{Checking influence}
+
+<<RC-H14-006b, fig.show = 'hide'>>=
+plot(Quake.gfit, which = 4)
+@ 
+
+<<RC-H14-007b, echo = FALSE>>=
+trimPlot(Quake.gfit,
+         which = 4,
+         fileName = "figure/RC-H14-007b.pdf",
+         fig.height = 2.25,
+         fig.width = 4.25,
+         x.lab = "Obs. number",
+         y.lab = "Cook's distance",
+         cex = 0.7)
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.7]{figure/RC-H14-007b}
+\end{figure}
+
+No influential points. 
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Sthn CA and WA earthquakes, 1987--2019\ldots}
+\framesubtitle{Summary output}
+<<RC-H14-008, results = 'hide'>>=
+summary(Quake.gfit)
+@
+
+<<RC-H14-009, echo = FALSE>>=
+slimSummary(Quake.gfit)
+@
+
+\medskip
+
+The residual deviance of \Sexpr{round(Quake.gfit$deviance, 2)} is less than the \Sexpr{Quake.gfit$df.residual} residual degrees of freedom, so there won't be any problems with the variance check.   
+
+<<RC-H14-010>>=
+1 - pchisq(8.23, 14)
+@ 
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Sthn CA and WA earthquakes, 1987--2019\ldots}
+
+The interaction term \pval{} is \Sexpr{round(coef(summary(Quake.gfit))[4,4], 3)}, so we conclude that the effect of magnitude is different at the two locations.
+\bigskip
+
+Next, lets quantify these rates. First, for Southern California:
+<<RC-H14-011, echo=1:4>>=
+Quake.cis = confint(Quake.gfit)
+exp(Quake.cis[3,])
+## To interpret as percentage decreases
+100*(1-exp(Quake.cis[3,]))
+
+Quake.gci <- round(100*(1-exp(Quake.cis[3,])), 0)
+@
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Sthn CA and WA earthquakes, 1987--2019\ldots}
+We change the baseline to get the rate for Washington:
+
+<<RC-H14-012, echo = 1:6>>=
+Quakes.df$Locn2=factor(Quakes.df$Locn,levels=c("WA","SC"))
+
+Quake2.gfit=glm(Freq~Locn2*Magnitude,family=poisson,data=Quakes.df)
+(Quake.WA.ci = exp(confint(Quake2.gfit)[3,]))
+## To interpret as percentage decreases
+100*(1 - Quake.WA.ci)
+
+Quake2.gci <- round(100*(1 - Quake.WA.ci), 0)
+@
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Sthn CA and WA earthquakes, 1987--2019\ldots}
+\framesubtitle{Executive Summary}
+Our Executive Summary would say that the rate of decline in the frequency of
+earthquakes (with increasing magnitude) is more rapid in WA than CA.
+\bigskip
+
+In WA, there is a \Sexpr{Quake2.gci[2]} to \Sexpr{Quake2.gci[1]}\% drop in the expected number of earthquakes for a one
+unit increase in their magnitude on the Richter scale. 
+In CA, the decrease is between \Sexpr{Quake.gci[2]} to \Sexpr{Quake.gci[1]}\%.
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Example 2: Snapper counts in and around marine reserves}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}[fragile]
+\frametitle{Snapper counts in and around marine reserves}
+Baited underwater video (BUV) is an established tool for counting fish such as snapper.
+\medskip
+
+BUV was used at two coastal locations in New Zealand, Leigh and Hahei. 
+Each location has a marine reserve. 
+The BUV was deployed at sites inside the marine reserve, 
+and at sites just outside the reserve.
+There was a total of 18 sites.
+\medskip
+
+The three variables measured were
+\begin{itemize}
+\item Count of snapper
+\item Location (Leigh or Hahei)
+\item Reservation status (Yes or No)
+\end{itemize}
+\medskip
+
+It was of interest to explore the count of snapper with regard
+to location and reservation status.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Snapper counts in and around marine reserves\ldots}
+
+<<RC-H14-013>>=
+Snap.df=read.table("Data/SnapperCROPvsHAHEI.txt",header=TRUE)
+with(Snap.df,{Locn=as.factor(Locn); Reserve=as.factor(Reserve)})
+Snap.df
+@
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Snapper counts in and around marine reserves\ldots}
+\framesubtitle{Plotting the data}
+
+<<RC-H14-014, fig.show = 'hide'>>=
+interactionPlots(Freq ~ Locn + Reserve, data = Snap.df)
+@
+
+<<RC-H14-015, echo = FALSE, fig.height = 2.75, fig.width = 6>>=
+par(mar = c(4, 4, 3, 0), oma = rep(0.1, 4), cex = 0.75, las = 1)
+interactionPlots(Freq ~ Locn*Reserve, data = Snap.df)
+@
+
+{\bf NOTE:} Parallel lines no longer corresponds to lack of interaction.
+{\bf Why?}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Snapper counts in and around marine reserves\ldots}
+\framesubtitle{Model fit and assumption checking}
+There are two categorical explanatory variables, so we follow the steps from Chapter 12. First, we fit an interaction model:
+\medskip
+
+<<RC-H14-016, fig.show = 'hide'>>=
+Snap.glm = glm(Freq ~ Locn*Reserve, family = poisson, data = Snap.df)
+plot(Snap.glm, which = 1)
+@
+
+<<RC-H14-017, echo = FALSE>>=
+trimPlot(Snap.glm,
+         which = 1,
+         cex = 0.7,
+         fig.height = 2.25,
+         fig.width = 4.25,
+         x.lab = "Fitted values",
+         y.lab = "Residuals",
+         fileName = "figure/RC-H14-017.pdf")
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.7]{figure/RC-H14-017}
+\end{figure}
+
+Looks fine.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Snapper counts in and around marine reserves\ldots}
+\framesubtitle{Influence checking}
+
+<<RC-H14-016b, fig.show = 'hide'>>=
+plot(Snap.glm, which = 4)
+@
+
+<<RC-H14-017b, echo = FALSE>>=
+trimPlot(Snap.glm,
+         which = 4,
+         cex = 0.7,
+         fig.height = 2.25,
+         fig.width = 4.25,
+         x.lab = "Obs. number",
+         y.lab = "Cook's distance",
+         fileName = "figure/RC-H14-017b.pdf")
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.9]{figure/RC-H14-017b}
+\end{figure}
+
+No overly influential points.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Snapper counts in and around marine reserves\ldots}
+\framesubtitle{Assumption checking\ldots}
+
+<<RC-H14-018, results = 'hide'>>=
+summary(Snap.glm)
+@
+
+<<RC-H14-019, echo = FALSE>>=
+slimSummary(Snap.glm)
+@
+
+\medskip
+
+The residual deviance is \Sexpr{round(Snap.glm$deviance, 3)} on \Sexpr{Snap.glm$df.residual} dof. No problems there.
+
+<<RC-H14-020>>=
+1 - pchisq(14.678, 14)
+@ 
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Snapper counts in and around marine reserves\ldots}
+\framesubtitle{Apply Occam's razor}
+We see that the interaction between Location and Reserve is not required,
+so lets redo the \rcode{glm} without the interaction.
+\medskip
+
+<<RC-H14-021, results = 'hide'>>=
+Snap2.glm = glm(Freq ~ Locn + Reserve, family = poisson, data = Snap.df)
+summary(Snap2.glm)
+@
+
+<<RC-H14-022, echo = FALSE>>=
+slimSummary(Snap2.glm)
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Snapper counts in and around marine reserves\ldots}
+The residual deviance still indicates no evidence of a problem:
+<<RC-H14-023>>=
+1 - pchisq(14.879, 15)
+@ 
+\bigskip
+
+Lets calculate some confidence intervals, 
+remembering to exponentiate them to get the multiplicative effects of
+location and reservation status.
+
+<<RC-H14-024, echo = 1>>=
+(Snap.cis <- exp(confint(Snap2.glm)))
+
+leigh.ci <- round(Snap.cis[2, ],1)
+reserve.ci <- round(Snap.cis[3, ], 1)
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Snapper counts in and around marine reserves\ldots}
+\framesubtitle{Executive Summary}
+We conclude that the expected count of snapper is between \Sexpr{reserve.ci[1]} and \Sexpr{reserve.ci[2]} times as high in marine reserves than in the area just outside of the reserve.
+\bigskip
+
+Moreover, the Leigh location has higher expected snapper counts than Hahei,
+ - they are between \Sexpr{leigh.ci[1]} and \Sexpr{leigh.ci[2]} times as high at Leigh.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Closing remark -- use of \rcode{anova} with a GLM}
+In situations where we need to test a joint hypothesis (see Chapter 9) we can continue to use the \rcode{anova} function.
+\medskip
+
+However, be aware that \rcode{anova} for GLMs can use several different methods for calculating the appproximate \pval{} for the joint hypothesis. We recommend using \rcode{test="Chisq"}. 
+\medskip
+
+By way of example:"
+<<RC-H14-025>>=
+Snap.anova=anova(Snap2.glm,test="Chisq")
+data.frame(Snap.anova) #Using data.frame removes extraneous output
+@
+
+Note that the \pval{} for the reserve effect is different from that obtained from \rcode{summary(Snap2.glm)}, but both \pval{s} tell the same story -- a very highly significant effect of reserve.
+\end{frame}
+
+\end{document}

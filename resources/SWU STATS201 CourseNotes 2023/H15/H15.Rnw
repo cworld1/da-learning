@@ -1,0 +1,1415 @@
+\documentclass{beamer}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{pifont}
+\input{../s20xPreambleRBM.tex}
+\begin{document}
+\newcommand{\thechapter}{15}
+
+
+\newcommand{\cmark}{\ding{51}}
+\newcommand{\xmark}{\ding{55}}
+
+% \DeclareMathOperator{\E}{{E}}
+% \DeclareMathOperator{\Var}{{Var}}
+
+%% Sets the document title 
+\title{Chapter \thechapter: \\ Modelling proportion data using the binomial distribution}
+\institute{University of Auckland}
+
+%\setlength{\topsep}{0mm} %Remove space before R output
+
+
+
+<<RC-H15-000, echo=FALSE, warning=FALSE,message=FALSE>>=
+source("../s20xNotesHelper.R")
+#source("../predictGLM.R") #Required until predictGLM() added to s20x library
+## these are global knitr options and settings for the
+## whole document
+library(knitr)
+library(s20x)
+## comment = NA removes ## from all output lines
+## prompt = TRUE means the console input prompt > is displayed
+## tidy = TRUE means the code is properly spaced and tidied. 
+opts_chunk$set(comment = NA, size = "scriptsize", prompt = TRUE, tidy = F)
+@
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+\begin{frame}[t]
+\frametitle{Learning outcomes}
+In this chapter you will learn about:
+\begin{center}
+\vspace{16pt}
+\begin{minipage}{0.9\textwidth}
+  \begin{itemize}
+    \item Binary (Bernoulli) data, odds and log-odds
+    \item Modelling log-odds
+    \item Modelling the response when it is binary (ungrouped data) via \rcode{glm}
+    \item Modelling the response when it is binomial (grouped binary data) via \rcode{glm}
+    \item Example 1: Space shuttle {\em Challenger} accident
+    \item Example 2: Probability of retaining fish in a trawl
+    \item Relevant \rcode{R}-code.
+  \end{itemize}
+\end{minipage}
+\end{center}
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Binary (Bernoulli) data, odds and log-odds }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}
+\frametitle{Binary (Bernoulli) data}
+Here we are considering the situation where the response can only take \textbf{two} possible values. These might be coded in the form of:
+\begin{itemize} \setlength{\itemsep}{2mm}
+\item Zeros or ones. 
+\item \rcode{TRUE} or \rcode{FALSE}. 
+\item \rcode{Yes} or \rcode{No}.
+\item \rcode{Success} or \rcode{Failure}..
+\item Or any other pair of categorical values. 
+\end{itemize}
+\medskip
+
+This is called a binary response and can be modelled using the \textbf{Bernoulli} distribution. 
+\medskip
+
+A Bernoulli distribution is just the special case of the binomial distribution\footnote{Recall, the binomial models the number of ``successes'' out of a fixed number of Bernoulli trials.} 
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Binary (Bernoulli) data\ldots}
+\framesubtitle{Examples}
+A Bernoulli random variable is the outcome for a single trial expressed as a 0 or 1, E.g.,
+\medskip
+
+\begin{itemize}
+\item Whether or not I get a heads when I flip a coin.
+\item Whether or not I roll a six with a six-sided dice.
+\item Whether or not a soccer player scores a penalty kick.
+\item Whether or not I score a shot in basketball.
+\item Whether or not a green light is observed at a single set of traffic lights
+on my regular commute to work.
+\item Whether or not a patient survives an experimental procedure.
+\end{itemize}
+\medskip
+
+In each of these examples we get to choose which outcomes are assigned the values 0 or 1.
+\medskip
+
+Typically, 0 = ``No'' (or ``Failure''), and 1 = ``Yes'' (or ``Success'').
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Bernoulli random variables}
+If $Y$ is a Bernoulli random variable with parameter $p$, then $Y$ will take the value 1 with probability $p$, and the value 0 with probability $1-p$. %, i.e.
+% \[
+% \Pr(Y = y) = \begin{cases}
+% p, &y = 1 \\
+% 1 - p, & y=0\\
+% \end{cases}
+% \]
+
+\medskip
+
+Since it is a probability, $p$ must be a value that is between 0 and 1, i.e. $p \in [0, 1]$.
+
+\medskip \medskip
+
+For Bernoulli trials, the usual terminology is to refer to $Y$ as the
+number of successes, either \textbf{zero} or \textbf{one}, from a single trial. 
+\bigskip
+
+It is easy to show\footnote{See STATS 210.} that the mean of a Bernoulli random variable is
+\[
+\E[Y]=p
+\]
+and that the variance is
+\[
+\Var(Y)=p (1-p)
+\]
+
+\end{frame}
+
+
+\begin{frame}
+% \frametitle{The Logit Function}
+\frametitle{Odds}
+We will soon be modelling Bernoulli data using the \rcode{glm} function. To be able to make sense of the fitted model we first need to know about {\bf odds}. 
+
+The odds of an event occurring is given by
+\[
+\text{Odds} = \frac{\text{probability~event~occurs}}{\text{probability ~event~does~not~occur}}~=~\frac{\Pr(Y=1)}{\Pr(Y=0)}~ = ~\frac{p}{1-p}
+\]
+
+Note that $\text{Odds}$ must be a value between 0 to infinity, i.e. $\text{Odds} \in [0, \infty)$.
+\medskip \medskip 
+
+A little of bit of calculus gives us 
+\[
+p = \frac{\text{Odds}}{\text{Odds}+1}
+\]
+
+So, if we know the odds of an event then we also know the probability of that event (and vice-versa).
+\end{frame}
+
+
+\begin{frame}
+\frametitle{What's the odds?}
+The definition of odds is given in the previous slide.
+\medskip
+
+Luckily for us, the above definition of odds
+has exactly the same meaning that we give to the word ``odds'' when we use it in
+everyday speech when we use ``odds'' to describe how likely an event is to occur.
+\bigskip
+
+By way of example, let event A=\{I get an A- or better in STATS 201\}.
+\medskip
+
+\begin{itemize}
+\item If the odds of A are 1 (i.e., 1-1, or even odds) then we are saying that
+A is as likely to occur as not. That is Pr(A)=0.5, and Pr(not A)=0.5.
+\item If the odds of A are 2 (i.e., 2-to-1) then we are saying that A is twice as likely to occur as not. That is Pr(A)=2/3 and Pr(not A)=1/3.
+\item If the odds of A are 0.25 (i.e., 0.25-to-1) then we are saying that A is only 1/4
+as likely to occur as not. That is Pr(A)=1/5 and Pr(not A)=4/5.
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Log-odds}
+
+The logarithm of the odds (the log-odds for short) is
+\[
+\text{Log-Odds} = \log(\text{Odds}) = \log\left(\frac{p}{1-p}\right) \equiv \logit(p)
+\]
+Note that the log-odds (as a function of $p$) is called the \emph{logit} function.
+
+Also, since $\text{Odds} \in [0,\infty)$ it follows that $\text{Log-Odds}$ can take any value on the real line, i.e. $\text{Log-Odds} \in (-\infty,+\infty)$.
+\medskip
+
+If we know the log-odds, then we can calculate $p$ using the following:
+\[
+p = \frac{\exp(\text{Log-Odds})}{1 + \exp(\text{Log-Odds})}
+\]
+This is called the \emph{logistic} function, and is well-known in mathematics as a function which maps the interval $(-\infty,+\infty)$ to $[0,1]$. In \rcode{R} it is the \rcode{plogis}\footnote{\rcode{plogis} is so named because it calculates the probability distribution function of the logistic distribution. This is precisely the logistic function.} function.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Modelling log-odds}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Wouldn't it be cool if we could find some function $g()$ that allowed us to relate $\E[Y]$ to a linear function of some explanatory variables? I.e. so that
+% \[
+% g(E[Y]) = \beta_0 + \beta_1X_1+\beta_2X_2 + \cdots + \beta_pX_p \]
+
+
+\begin{frame}
+\frametitle{Why log-odds?}
+Our aim in this Chapter is to be able to fit models for binary data that allow the probability of success, $p$, to depend on explanatory variables. This is equivalent to allowing the odds or log-odds to depend on the explanatory variables.
+\medskip
+
+For example, if $x$ is a numeric explanatory variable then we have the following modelling options:
+\medskip
+
+\begin{itemize}
+  \item $p = \beta_0 + \beta_1  x$
+  \item $\text{Odds} = \beta_0 + \beta_1 x$
+  \item $\text{Log-Odds} = \beta_0 + \beta_1 x$
+\end{itemize}
+\medskip
+
+Which would your suggest, and why?
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Why log-odds?\ldots}
+Since our model places no restrictions\footnote{i.e., $\beta_0 \in (-\infty,\infty), \beta_1 \in (-\infty,\infty)$} on the values of $\beta_0$ or $\beta_1$, it is the case that $\beta_0 + \beta_1 x$ can take any value on the real line. 
+\medskip
+
+That is, $\beta_0 + \beta_1 x \in (-\infty,\infty)$.
+
+\bigskip
+
+\begin{itemize}
+  \item $p = \beta_0 + \beta_1 x$ \xmark \\
+  $p$ must be between 0 and 1. \medskip
+    
+  \item $\text{Odds} = \beta_0 + \beta_1 x$ \xmark \\
+  $\text{Odds}$ must be between 0 and infinity. \medskip
+    
+  \item $\text{Log-Odds} = \beta_0 + \beta_1 x$ \cmark \\
+  $\text{Log-Odds}$ can be any real number.
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Modelling log-odds}
+We shall apply our linear model to the log-odds, and so our general form of the model is:
+\[
+\begin{split}
+\log(\text{Odds}) &= \logit(p) \\
+                  &= \logit(\mu) \\
+                  &= \logit(E[Y|x_1 \ldots]) \\
+                  &= \beta_0 + \beta_1 x_1  + \dots  
+\end{split}
+\]
+\bigskip 
+
+{\bf Remark:} This is analogous to what we did when the response variable was Poisson count data.
+There we were using the model
+\[ \log(\mu) = \log( E[Y|x_1 \ldots] ) = {\beta_0 + \beta_1 x_1 + \dots} \]
+and note that $\log(\mu) \in (-\infty,\infty)$.
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Modelling log-odds\ldots}
+\framesubtitle{With a single numeric explanatory variable}
+When we have just a single explanatory variable $x$ that is numeric 
+(i.e., not a factor) then the linear model for log-odds is:
+\[ \log(\text{Odds}) = \beta_0 + \beta_1 x \]
+
+In other words,
+\[ \log \left( \frac{p}{1-p} \right) = \beta_0 + \beta_1 x  \]
+where $p$ is the probability of ``success'' for a subject with explanatory variable $x$.
+
+This can be re-arranged in the logistic form
+\[ p= \frac{\exp(\beta_0 + \beta_1 x)}{1+exp(\beta_0 + \beta_1 x)} \]
+This equation forms an ``S'' shaped curve as a function of $x$.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Modelling log-odds\ldots}
+\framesubtitle{With a single continuous explanatory variable\ldots}
+For example, 
+if $\beta_0=-10$ and $\beta_1=0.3$ then the curve looks like:
+
+% \vspace{-11mm}
+<<RC-H15-002, echo=FALSE>>=
+x=seq(20,50,0.01); beta0=-10; beta1=0.3
+p=exp(beta0+beta1*x)/(1+exp(beta0+beta1*x))
+# plot(x,p,type="l",las=1)
+df = data.frame(x, p)
+
+trimPlot(p ~ x,
+         data = df,
+         fileName = "figure/RC-H15-002.pdf",
+         fig.height = 2,
+         fig.width = 4,
+         type = "l",
+         x.lab = "x",
+         y.lab = "p")
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H15-002}
+\end{figure}
+
+\begin{itemize}
+\item The greater the magnitude of $\beta_1$ the steeper the curve.\\
+\item If $\beta_1<0$ the curve is a reverse ``S'' shape.\\
+\item Changing $\beta_0$ changes the horizontal position of the curve.
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Logistic regression}
+\begin{itemize}\setlength{\itemsep}{4mm}
+\item The logistic function gives its name to this approach for modelling binary data -- it is commonly called \emph{logistic} regression. 
+\item At the moment we are going to use logistic regression to model binary (\emph{Bernoulli}) data, 
+but it can also be used to model proportion data in the form of the number of ``successes'' divided by the number of trials. The number of ``successes'' is assumed to be binomially distributed, so logistic regression is often called a binomial GLM. 
+\item In GLMs, the function that links $\mu$ to the linear predictor is called the \emph{link} function. Here, $\mu=p$, and so the link function is the logit.
+\end{itemize}
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Modelling the response when it is binary \newline (ungrouped data) via \rcode{glm}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}
+\frametitle{Example -- Basketball}
+A few years ago the lecturer of an experimental design course conducted a basketball shooting experiment in class. In this experiment
+\begin{itemize}
+  \item there were ten females and ten males;
+  \item each shooter shot at the basket from 1m, 2m and 3m;
+  \item each person took one shot from each distance;
+  \item the order of the shooting distance was randomly chosen, and 
+\item a \rcode{1} was recorded if the shot was successful, and a \rcode{0} was recorded if the shot was missed.
+\end{itemize}
+
+\medskip
+
+What do \textbf{you} think is the most important factor affecting the probability of making the shot in this experiment?
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Inspect the data}
+\framesubtitle{Ungrouped format}
+The data are read in to dataframe \rcode{bb.df}. It contains 60 observations, since each of the 20 students takes 3 shots.
+
+<<RC-H15-003>>=
+bb.df = read.csv("Data/basketball.csv")
+head(bb.df, 10)
+@
+\bigskip
+
+These data are in an \emph{ungrouped} format as the response variable for each row is either a success or a failure (a 1 or a 0).
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Basketball}
+\framesubtitle{Grouped format}
+Because the ungrouped responses are zeros and ones, it is hard to detect patterns in this kind of data. However we can group the data over each combination of gender and distance. 
+\medskip
+
+The \rcode{xtabs} function produces a cross-tabulation table\footnote{Also called a frequency table.}
+
+<<RC-H15-004>>=
+success.tbl = xtabs(basket~distance+gender, data = bb.df)
+success.tbl
+@
+Our conclusions should be kind of obvious from the table in this example, even without the model fitting.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Basketball\ldots}
+\framesubtitle{Logistic regression model formula}
+We want to fit a model that estimates how the probability of scoring is related to distance (numeric explanatory) and gender (factor explanatory). The interaction model (Chapter 8) is
+\[
+\begin{split}
+\logit(p_i) &= \log\left(\frac{p_i}{1 - p_i}\right) \\
+            &= \beta_0 + \beta_1 distance_i + \beta_2 gender_i + \beta_3 (gender_i \times distance_i)
+\end{split}
+\]
+
+or in terms of $p_i$\footnote{We do not recommend that you try to write it this way in a test or assignment!}
+\[
+p_i = \frac{exp(\beta_0 + \beta_1 distance_i + \beta_2 gender_i + \beta_3 (gender_i \times distance_i))}{1 + exp(\beta_0 + \beta_1 distance_i + \beta_2 gender_i + \beta_3 (gender_i \times distance_i))}
+\]
+
+with $Y_i \sim \text{Bernoulli}(p_i)$ and $gender_i$ is an indicator variable which is 0 if the shooter is female, and 1 if the shooter is male.
+
+\vspace{1em}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Basketball\ldots}
+\framesubtitle{Fit the model\ldots}
+Fitting the logistic regression model is easy.
+\medskip
+
+We simply tell the \rcode{glm} function that the responses are Bernoulli random variables by setting \rcode{family = binomial}.\footnote{Recall, the Bernoulli distribution is a special case of the binomial distribution.}
+
+\medskip
+
+<<RC-H15-005>>=
+bb.fit = glm(basket ~ distance * gender, family = binomial, 
+             data = bb.df)
+@
+
+\medskip
+
+Note that, as with Poisson GLMs, we \textbf{do not} transform the responses. 
+\bigskip
+
+{\bf Aside:} By default the \rcode{glm()} function uses the logit link function (i.e., does logistic regression) when we set \rcode{family = binomial}. Other choices are possible -- see STATS 730.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Basketball\ldots}
+\framesubtitle{Check the model\ldots}
+Model checking is difficult when the data are \emph{ungrouped}.\footnote{This is because the data are {\em sparse}, in the sense that they are either 0's or 1's.}
+
+<<RC-H15-006, echo = 1, fig.show = 'hide'>>=
+plot(bb.fit, which = 1, lty=2)
+
+trimPlot(bb.fit,
+         which = 1,lty=2,
+         fig.height = 2,
+         fig.width = 4,
+         x.lab = "Fitted values",
+         y.lab = "Residuals",
+         cex = 0.7,
+         fileName = "figure/RC-H15-006.pdf")
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.8]{figure/RC-H15-006}
+\end{figure}
+
+The plot of the residuals versus the fitted values is not particularly informative. Even if the model is appropriate, it can looked quite patterned. Influence checks are also of little use.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Basketball\ldots}
+\framesubtitle{Inspect the fitted model}
+<<RC-H15-007, results = 'hide'>>=
+summary(bb.fit)
+@ 
+
+<<RC-H15-008, echo = FALSE>>=
+slimSummary(bb.fit)
+@
+
+When the data are \emph{ungrouped} we also {\bf cannot} use the residual deviance in the same way we did for Poisson GLMs.
+\medskip
+
+We just have to presume that the fitted model satisfies assumptions.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Basketball\ldots}
+\framesubtitle{Simplify the model}
+There is no evidence of an interaction between gender and distance. We'll apply Occam's razor and drop it from the model.
+\bigskip
+
+<<RC-H15-010, results = 'hide'>>=
+bb.fit1 = glm(basket ~ distance + gender, family = binomial, data = bb.df)
+summary(bb.fit1)
+@
+
+<<RC-H15-010A, echo = FALSE>>=
+slimSummary(bb.fit1)
+@
+
+Looks like we can drop gender, too.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Basketball\ldots}
+\framesubtitle{Simplify the model\ldots}
+<<RC-H15-011, results = 'hide'>>=
+bb.fit2 = glm(basket ~ distance, family = binomial, data = bb.df)
+summary(bb.fit2)
+@
+
+<<RC-H15-012, echo = FALSE>>=
+slimSummary(bb.fit2)
+@
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Basketball\ldots}
+\framesubtitle{Interpretting the fitted model}
+\label{pg:Odds}
+So, our final model is of the form
+\[ \text{Log-Odds} = \beta_0 + \beta_1 \times distance \] 
+This means that a 1 metre increase in distance increases the log-odds by $\beta_1$.
+\bigskip
+
+In terms of odds, we have
+\[ 
+\begin{split}
+\text{Odds} &= \exp( \beta_0 + \beta_1 \times distance) \\
+            &= \exp(\beta_0) \times \exp(\beta_1)^{distance} 
+\end{split}
+\] 
+This means that a 1 metre increase in distance multiplies the odds by $\exp(\beta_1) $.           
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Basketball\ldots}
+\framesubtitle{Interpretting the fitted model\dots}
+
+
+<<RC-H15-013, echo = FALSE, include = FALSE>>=
+summary(bb.fit2)$coefficients[2,]
+b1 = coef(bb.fit2)[2]
+@
+
+<<RC-H15-014>>=
+coef(bb.fit2)
+@
+
+The estimated coefficient on distance, $\hat\beta_1$, is \Sexpr{round(b1, 2)}. This says that the \emph{log-odds of success} decreases by \Sexpr{-round(b1, 2)} for every 1 metre increase of the shooter from the goal. 
+
+\medskip
+
+<<RC-H15-015>>=
+exp(coef(bb.fit2))
+100*(1-exp(coef(bb.fit2)))
+@
+<<RC-H15-016, echo = FALSE, include = FALSE>>=
+pct.chg = 100*round(1 - exp(b1), 3)
+@
+
+\medskip
+
+By exponentiating $\hat\beta_1$ we can now say that a 1 metre increase in the distance results multiplies the odds of shooting a basket by \Sexpr{round(exp(b1),3)}. However, it would be more natural to say that it results in a $100\times(1-\Sexpr{round(exp(b1), 3)})\% = \Sexpr{pct.chg}\%$ reduction in the odds. 
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Basketball\ldots}
+\framesubtitle{Interpretting the fitted model\ldots}
+For our Executive Summaries we need confidence intervals rather than point estimates:
+\medskip
+
+<<RC-H15-017>>=
+(bb.ci2 = confint(bb.fit2))
+100*(1-exp(bb.ci2))
+@ 
+
+A 1 metre increase in the distance results in a reduction in the odds of scoring of between \Sexpr{round(100*(1 - exp(confint(bb.fit2)[2, 2])), 1)}\% and \Sexpr{round(100*(1 - exp(confint(bb.fit2)[2, 1])), 1)}\%
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Estimating $p$}
+\framesubtitle{Basketball example}
+How do we estimate the probability of a successful shot from distances of 1, 2 and 3 m?
+\medskip
+
+By default, \rcode{predict} will give estimates on the log-odds scale, that is, it will calculate the linear predictor $\hat{\beta}_0+\hat{\beta}_1 \times distance$.
+
+<<RC-H15-018a>>=
+predn.df=data.frame(distance = 1:3)
+bb.logit.pred = predict(bb.fit2, newdata = predn.df)
+bb.logit.pred
+@
+We can easily convert this to the response (i.e., probability) scale
+
+<<RC-H15-018b>>=
+plogis(bb.logit.pred)
+@
+
+Even easier is to use the \rcode{type="response"} argument of \rcode{predict}:
+<<RC-H15-018c>>=
+predict(bb.fit2, newdata = predn.df, type="response")
+@ 
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Confidence Intervals for $p$}
+\framesubtitle{Basketball example\ldots}
+Confidence intervals need to first be calculated on the log-odds scale, and then transformed back to the probability scale.
+<<RC-H15-020, tidy = FALSE>>=
+bb.logit.predses = predict(bb.fit2, newdata = predn.df, se.fit = TRUE)$se.fit
+bb.logit.predses
+
+# Lower and upper bounds of CIs for the log-odds
+lower = bb.logit.pred - 1.96*bb.logit.predses
+upper = bb.logit.pred + 1.96*bb.logit.predses
+ci = cbind(lower, upper)
+@
+and convert these to probabilities:
+
+<<RC-H15-022>>=
+plogis(ci)
+@ 
+
+We see that the probability of a goal from 1 metre distance is between 0.828 and 0.991, but drops to between 0.034 and 0.303 at 3 metres.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Confidence Intervals for $p$ the easy way}
+\framesubtitle{Basketball example\ldots}
+Or we can use the \rcode{predictGLM} function from the \rcode{s20x} package.
+\medskip
+
+To get confidence intervals for log-odds
+<<RC-H15-022b,tidy=F>>=
+predictGLM(bb.fit2,newdata = data.frame(distance = 1:3),type="link")
+@
+or to get confidence intervals for the probabilities
+<<RC-H15-022c,tidy=F>>=
+predictGLM(bb.fit2,newdata = data.frame(distance = 1:3),type="response")
+@
+\bigskip
+
+In the next section, we reproduce the above analysis after first grouping the data. 
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Modelling the response when it is binomial \newline (grouped binary data) via \rcode{glm}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}
+\frametitle{The binomial distribution}
+
+A binomial random variable is the number of successes that occur over a fixed number ($n$) of Bernoulli trials, all with the same probability of success ($p$):
+\begin{itemize}
+\item The number of heads if I flip a coin fifty times.
+\item The number of sixes I get if I roll four dice.
+\item The number of penalties a football team scores in a penalty shoot-out.
+\item The number of successful basketball shots out of ten attempts.
+\item The number of green lights out of the total number of traffic lights
+on my regular commute to work.
+\item The number of patients who survive an experimental procedure, 
+out of the number that underwent that procedure.
+\item The number of O-rings that fail when a space shuttle is launched, 
+out of the total of six O-rings on the solid fuel rockets.
+\end{itemize}
+
+\bigskip
+
+One difference between a binomial and Poisson random variable is that the binomial has an upper limit set by the number of trials.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Example revisited -- Basketball: Grouped data}
+In many situations it is possible to format the binary data so that they are \emph{grouped}. 
+\medskip
+
+With grouped data, all trials with the same values of the explanatory variables are aggregated in the same row, along with the number of ``successes'' and ``failures''.
+\medskip
+
+We demonstrate with our basketball data:
+<<RC-H15-023, warning=FALSE, message=FALSE, tidy = FALSE>>=
+#Load dplyr package to manipulate data frames
+library(dplyr) 
+bb.grouped.df = bb.df %>% group_by(gender,distance) %>%
+                      summarize(n=n(),propn=sum(basket)/n)
+#Change tibble back to a data frame
+bb.grouped.df = data.frame(bb.grouped.df)
+bb.grouped.df
+@
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Basketball: Grouped data}
+We can still use \rcode{glm} to fit a logistic regression model to grouped data.
+\bigskip
+
+Previously, we considered each of the 60 attempts to score as a separate Bernoulli trial.
+
+\medskip
+
+Instead, we now consider the number of successes out of 10 attempts at each level of gender and distance. This is a binomial random variable.
+\bigskip
+
+Both approaches will give you the same estimates, confidence intervals, and conclusions, but there are some advantages to having grouped data. Especially, being better able to check model assumptions.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Basketball: Grouped data\ldots}
+\framesubtitle{Fitting the model}
+We set the proportion of successes as the response, and use the argument \rcode{weights} to specify the number of trials associated with each observation.
+
+<<RC-H15-031, tidy = FALSE, results='hide'>>=
+bb.fit3 = glm(propn ~ distance * gender, weights = n, 
+              family = binomial, data = bb.grouped.df)
+summary(bb.fit3)
+@ 
+
+<<RC-H15-031A, echo = FALSE>>=
+slimSummary(bb.fit3)
+@
+
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Basketball: Grouped data\ldots}
+\framesubtitle{Checking the model\ldots}
+
+The grouped data output is equivalent to that from working with the \emph{ungrouped} data, except that the deviance values have changed.
+\bigskip
+
+
+We may now interpret residual plots and check the residual deviance statistic, notwithstanding that we ideally require the expected count of both successes and failures to be reasonably large, say $>5$.\footnote{This is not satisfied for the basketball data, but we will proceed anyway.}
+\medskip
+
+<<RC-H15-028>>=
+1 - pchisq(2.3688, 2)
+@ 
+\medskip
+
+No problems with the residual deviance.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Basketball: Grouped data\ldots}
+\framesubtitle{Checking the model\ldots}
+
+<<RC-H15-029, fig.show = 'hide', echo = 1>>=
+plot(bb.fit3, which = 1, lty=2)
+
+trimPlot(bb.fit3,
+         which = 1,lty=2,
+         x.lab = "Fitted Values",
+         y.lab = "Residuals",
+         fig.height = 2,
+         cex = 0.7,
+         fig.width = 4,
+         fileName = "figure/RC-H15-029.pdf")
+@ 
+  
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H15-029}
+\end{figure}
+
+We only have six observations (one for each combination of distance and gender), so it is difficult to see if there is a pattern in the residuals, but in this case none are large enough to worry us.
+
+The fitted model is not perfect, but should still be useful.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{An alternative way to specify the model}
+\framesubtitle{Basketball: Grouped data\ldots}
+Sometimes the grouped data are provided as the number of successes and failures:
+\bigskip
+
+<<RC-H15-030>>=
+bb.grouped.df = transform(bb.grouped.df, success=n*propn, fail=n*(1-propn))
+bb.grouped.df
+@ 
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{An alternative way to specify the model\ldots}
+\framesubtitle{Basketball: Grouped data\ldots}
+Then, on the left-hand side of the model formula we provide \rcode{glm} with the names of the two columns containing the number of successes and failures, and omit the \rcode{weights} argument.
+\bigskip
+
+<<RC-H15-025, tidy = FALSE, results = 'hide'>>=
+bb.fit4 = glm(cbind(success, fail) ~ distance * gender, family = binomial,
+    data = bb.grouped.df)
+summary(bb.fit4)
+@
+
+<<RC-H15-025A, echo = FALSE>>=
+slimSummary(bb.fit4)
+@
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Basketball: Grouped data\ldots}
+\framesubtitle{Model selection}
+In practice, we would simplify these models by removing the interaction
+and gender effects in turn, as we did for analysis of the ungrouped data.
+\bigskip
+
+We have not done so because the results are unchanged.
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Example 1: Space shuttle {\em Challenger} accident}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}
+\frametitle{Space shuttle {\em Challenger} accident}
+This example tells a sad story showing what can happen if standard linear models are
+mis-applied to proportion data.
+
+\medskip
+The NASA space shuttle {\em Challenger} broke up during launch on the 
+cold morning of 28 January 1986. 
+Most of the crew survived the initial break-up, 
+but are believed to have been killed when the crew capsule hit the ocean
+at high speed.
+
+\medskip
+At the time, it was the most expensive human accident that had ever occurred.\footnote{Unfortunately, an even more deadly and expensive accident occurred just months later - Chernobyl.}
+
+\medskip
+It was particularly traumatic for the American people,
+because the shuttle was carrying the first civilian astronaut, Christa McAuliffe,
+who was a high-school social studies teacher.
+Approximately 17\% of Americans were watching the launch live.
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Space shuttle {\em Challenger} accident\ldots}
+\begin{columns}
+\begin{column}{0.6\textwidth}
+
+{\color{black} Subsequent investigation found that O-ring failures were the cause of the disaster. \\[3mm]
+
+The temperature\footnote{This is a fraction of a a degree Celsius below freezing point.} at the launch site was a chilly $31^{\circ}F$.
+The risk of O-ring failure in cold weather had been grossly underestimated due to 
+using a linear model on proportion data.}
+\end{column}
+
+\begin{column}{0.4\textwidth}
+\includegraphics[width=1.8in]{Figures/ShuttleSketch}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Space shuttle {\em Challenger} accident\ldots}
+The space shuttle solid-fuel rockets have a total of 6 O-rings.
+It was suspected that O-ring reliability was influenced by temperature.
+
+\medskip
+
+The rockets retrieved from previous launches were examined for O-ring distress, 
+and the proportion of distressed O-rings was plotted against temperature and
+a simple linear regression was fitted:
+\begin{center}
+\includegraphics[width=3in]{Figures/AllOringsLM}
+\end{center}
+The simple linear regression estimates a negative probability of O-ring distress for
+temperatures above about $79^{\circ}F$!?!
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Space shuttle {\em Challenger} accident\ldots}
+\begin{columns}
+\begin{column}{0.6\textwidth}
+{\color{black}To fix the problem with the negative estimated probabilities,
+``statisticians'' at NASA decided to remove all the zero data values
+since they felt that the zero values
+contained no information about the probability of O-ring distress.}
+\end{column}
+\begin{column}{0.4\textwidth}
+\includegraphics[width=1.8in]{Figures/HomerSimpson.jpg}
+\end{column}
+\end{columns}
+
+This kind of stupidity occurs even today.
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Space shuttle {\em Challenger} accident\ldots}
+With the zero values removed there is no evidence of a relationship between
+temperature and O-ring distress,
+\begin{center}
+\includegraphics[width=0.8\textwidth]{Figures/NonZeroOringsLM}
+\end{center}
+and so it was decided to approve the launch on that $31^{\circ} F$ morning.
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Space shuttle {\em Challenger} accident\ldots}
+73 seconds after lift-off the shuttle blew apart: \\[5mm]
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\begin{figure}
+  \centering
+  \includegraphics[width=1.8in]{Figures/ShuttleLiftoff.jpg}
+\end{figure}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{figure}
+  \centering
+  \includegraphics[width=1.8in]{Figures/ShuttleExplosion.jpg}
+\end{figure}
+\end{column}
+\end{columns}
+
+\bigskip
+
+These data should have been analysed using a binomial GLM 
+that is appropriate for proportion data.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Space shuttle {\em Challenger} accident\ldots}
+\framesubtitle{Logistic regression model}
+<<RC-H15-Challenger,tidy=FALSE>>=
+Space.df = read.table("Data/ChallengerShuttle.txt", head = TRUE)
+Space.df$Temp
+Space.df$Failure
+Space.gfit=glm(cbind(Failure, 6-Failure)~Temp, family = binomial,
+               data = Space.df)
+@
+
+<<RC-H15-Challenger2,results="hide">>=
+summary(Space.gfit)
+@
+<<RC-H15-Challenger3,echo=FALSE>>=
+slimSummary(Space.gfit)
+@
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Space shuttle {\em Challenger} accident\ldots}
+\framesubtitle{Conclusions\footnote{Model checks are left as an exercise.}}
+Our CI for the probability of an O-ring failing at $31^{\circ} F$ is
+
+<<RC-H15-Challenger4,tidy=FALSE>>=
+predictGLM(Space.gfit, newdata = data.frame(Temp=31), type = "response")
+@
+\medskip
+
+The rockets have 6 O-rings, so the expected number of O-rings failures is
+<<RC-H15-Challenger5,tidy=FALSE>>=
+6*predictGLM(Space.gfit, newdata = data.frame(Temp=31), type = "response")
+@
+
+Note that this is quite a wide confidence interval because we are estimating
+the probability at a temperature that is well beyond those observed
+in the dataset. This is called "extrapolation", and is always risky.
+
+\medskip
+
+The real message here is that there {\bf could} be a very high probability of 
+disaster.
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Space shuttle {\em Challenger} accident\ldots}
+
+The fit of this generalized linear model to the O-ring data looks like:
+\begin{center}
+\includegraphics[width=0.8\textwidth]{Figures/AllOringsGLM}
+\end{center}
+
+This model predicts that the probability of an O-ring experiencing distress at $31^{\circ}F$ is 0.818. This corresponds to expecting $6 \times 0.818 = 4.91$ distressed O-rings.
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Example 2: Catching the right size fish}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}
+\frametitle{Example -- Fishing}
+In commercial fishing it is important to let small fish escape so they can grow and breed. Experiments are frequently done with trawl gear to determine how the probability of retaining a fish depends on its size.
+\bigskip
+
+The experiment consisted of
+observing the number of fish (at given fork lengths) entering a trawl codend, 
+and the number of those retained by it.
+\medskip
+
+In the dataframe \rcode{Haddock.df}, 
+\rcode{codend} is the number in the codend and
+\rcode{cover} is the number that escape the codend and are retained in the cover.
+The total number of haddock is therefore \rcode{codend + cover}.
+
+\begin{center}
+\includegraphics[width=4in]{Figures/CoveredCodendFig.pdf}
+\end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Fishing}
+<<RC-H15-034>>=
+Haddock.df = read.table("Data/Haddock.dat", head = TRUE)
+Haddock.df = transform(Haddock.df,propn=codend/(codend+cover))
+head(Haddock.df, 17)
+@
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Fishing\ldots}
+<<RC-H15-035>>=
+tail(Haddock.df, 20)
+@
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Fishing\ldots}
+\framesubtitle{Plot the data}
+<<RC-H15-036, echo = 1, fig.show = 'hide'>>=
+plot(propn ~ forklen, data = Haddock.df, xlab = "Fork length (cm)")
+
+trimPlot(propn ~ forklen,
+         data = Haddock.df,
+         cex = 0.7,
+         x.lab = "Fork length (cm)",
+         y.lab = "propn",
+         fig.height = 2.5,
+         fig.width = 4.5,
+         fileName = "figure/RC-H15-036.pdf")
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H15-036}
+\end{figure}
+
+Note that the proportions retained seem to follow an ``S'' shape.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Fishing\ldots}
+\framesubtitle{Fitting the model}
+Let's fit a logistic regression model. 
+\bigskip
+
+Note that the data are grouped, and the number of ``successes'' and ``failures'' are given by the variables \rcode{codend} and \rcode{cover}, respectively\footnote{Retaining the fish may by a success for the fisherman, but perhaps not for the fish!}. 
+\bigskip
+
+<<RC-H15-037, tidy = FALSE>>=
+Haddock.glm = glm(cbind(codend,cover) ~ forklen, family = binomial,
+                  data = Haddock.df)
+@
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Fishing\ldots}
+\framesubtitle{Modelling proportion data using log-odds}
+%\framesubtitle{Logistic regression using glm}
+<<RC-H15-038, results = 'hide'>>=
+summary(Haddock.glm)
+@
+
+<<RC-H15-039, echo = FALSE>>=
+slimSummary(Haddock.glm)
+@
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Fishing\ldots}
+\framesubtitle{Checking the fitted model}
+
+As with the Poisson case, we need to check the residual deviance by comparing it to a $\chi^2$ distribution. We can do this here as the data are grouped: we have many observations for each level of fork-length, so the data are not `sparse'.
+
+\medskip
+
+The residual deviance is 23.44 on 34 degrees of freedom. 
+The \pval{} is 
+
+<<RC-H15-040>>=
+1-pchisq(23.44,34)
+@
+which indicates no significant problems with the fitted model.
+
+\bigskip
+{\bf Recall:} 
+If the residual deviance indicated lack of fit then we would have to refit
+using \rcode{family = quasibinomial}.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Fishing\ldots}
+\framesubtitle{Checking the fitted model\ldots}
+Let's check the residual plot
+<<RC-H15-041, fig.show = 'hide', echo = 1>>=
+plot(Haddock.glm,which=1, lty=2)
+
+trimPlot(Haddock.glm,
+         which = 1,lty=2,
+         x.lab = "Fitted values",
+         y.lab = "Residuals",
+         fig.height = 2.1,
+         cex = 0.7,
+         fig.width=  4.1,
+         fileName = "figure/RC-H15-041.pdf")
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H15-041}
+\end{figure}
+
+Looks good, other than one largish residual corresponding to the 48.5 cm fish that was in the cover.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Fishing\ldots}
+\framesubtitle{Checking the fitted model\ldots}
+Lets check the influence plot
+<<RC-H15-041b, fig.show = 'hide', echo = 1>>=
+plot(Haddock.glm,which=4)
+
+trimPlot(Haddock.glm,
+         which = 4,
+         x.lab = "Observation number",
+         y.lab = "Cook's distance",
+         fig.height = 2,
+         cex = 0.7,
+         fig.width=  4,
+         fileName = "figure/RC-H15-041b.pdf")
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H15-041b}
+\end{figure}
+
+Hmmm, the fit is somewhat influenced by the retention of small fish of length 24.5 cm. However, this is known to happen with trawl gear, so this observation will not be removed.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+% \frametitle{Modeling proportion data using log-odds\ldots}
+\frametitle{Fishing\ldots}
+\framesubtitle{Interpretation}
+<<RC-H15-042>>=
+  summary(Haddock.glm)$coef
+@
+Remember, the linear model is on the log-odds scale.
+So, the value \Sexpr{round(summary(Haddock.glm)$coef[2, 1], 3)} corresponds to an estimated increase in the log-odds of codend retention for every one cm increase in \rcode{forklen}.
+
+\bigskip
+
+The 95\% confidence intervals for $\beta_0$ and $\beta_1$ are:
+<<RC-H15-043>>=
+  confint(Haddock.glm)
+@
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+% \frametitle{Modeling proportion data using log-odds\ldots}
+\frametitle{Fishing\ldots}
+\framesubtitle{Interpretation\ldots}
+Exponentiating the above confidence intervals gives:
+<<RC-H15-044>>=
+exp(confint(Haddock.glm))
+@
+
+<<RC-H15-045, echo = FALSE, message = FALSE>>=
+ciMult = exp(confint(Haddock.glm))
+ci <- 100*(exp(confint(Haddock.glm)) - 1)
+@
+
+\medskip
+
+In our {\bf Executive Summary} we could say something like 
+\medskip
+
+``Every 1 cm increase in the fork length of a haddock multiplies the odds of it being retained in the codend by between \Sexpr{round(ciMult[2,1], 2)} and \Sexpr{round(ciMult[2,2], 2)}".
+\medskip
+
+Or, ``Every 1 cm increase in the fork length of a haddock corresponds to an increase
+in odds of it being retained in the codend of between \Sexpr{round(ci[2, 1], 0)}\% and \Sexpr{round(ci[2, 2], 0)}\%".
+\end{frame}
+
+
+\begin{frame}[fragile]
+% \frametitle{Fishing example}
+\frametitle{Fishing\ldots}
+
+Here is a plot of the data with the fitted ``S" curve overlaid:
+<<RC-H15-046, echo=FALSE>>=
+# plot(propn ~ forklen,data=Haddock.df,xlab="Fork length (cm)",las=1)
+#lines(Haddock.df$forklen,predict(Haddock.glm,type="response"),lty=2) #NA screws it up
+x=seq(19,56,0.1)
+predlens=data.frame(forklen=x)
+expresponse=predict(Haddock.glm,predlens,type="response")
+# lines(forklen,predict(Haddock.glm,type="response"),lty=2)
+
+trimPlot(propn ~ forklen,
+         data = Haddock.df,
+         cex = 0.7,
+         x.lab = "Fork length (cm)",
+         y.lab = "propn",
+         fig.height = 2.5,
+         fig.width = 4.5,
+         fileName = "figure/RC-H15-046.pdf",
+         addElements = list(
+           lines(x,expresponse,type="l",lty=2)
+         ))
+@
+
+\begin{figure}
+  % \centering
+  \includegraphics{figure/RC-H15-046}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Fishing\ldots}
+\framesubtitle{Confidence intervals for $p$}
+To estimate the probability of retention for haddock of lengths 25, 35 and 45 cm:
+\bigskip
+
+<<RC-H15-047, tidy=FALSE,  echo = 1:2>>=
+predn=predictGLM(Haddock.glm, data.frame(forklen=c(25,35,45)), type="response")
+predn
+predn=round(predn,3)
+@
+\bigskip
+
+The probability that a 25 cm haddock is retained in the codend is between \Sexpr{predn[1, 2]} and \Sexpr{predn[1, 3]}. This increases to between \Sexpr{predn[2, 2]} and \Sexpr{predn[2, 3]} for 35 cm haddock, and between \Sexpr{predn[3, 2]} and \Sexpr{predn[3, 3]} for 45 cm haddock.
+
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Relevant \rcode{R}-code.}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[fragile]
+\frametitle{Most of the \rcode{R}-code you need for this chapter}
+
+{\bf Ungrouped data}
+\medskip
+
+Ungrouped data are binary i.e., a 0 or 1 response value for each observation (for example \rcode{bb.df}). Fit the model with \rcode{glm} using \rcode{family=binomial}:
+
+<<RC-H15-48, eval=F, comment=NA>>= 
+bb.fit2 = glm(basket ~ distance, family = binomial, data = bb.df)
+@
+
+These type of data are known as sparse  (because either the count of successes is 0 or the count of failures is 0) and we cannot test our model assumptions effectively as we would like to. If possible we should group our data.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Most of the \rcode{R}-code you need for this chapter\ldots}
+
+{\bf Grouped data}
+\medskip
+
+We were also able to analyse the basketball data as grouped observations which allows us to check assumptions including if we have to make a \rcode{family= quasibinomial} adjustment to our model.
+
+\bigskip
+
+{\bf Syntax 1} - specify proportion of successes and number of trials
+
+<<RC-H15-52, eval=F, tidy=FALSE, comment=NA>>= 
+bb.fit3 = glm(propn ~ distance * gender,weight=n, 
+              family = binomial,data = bb.grouped.df) 
+@
+
+{\bf Syntax 2} - specify frequency of successes and failures
+
+<<RC-H15-50, eval=F, tidy=FALSE, comment=NA>>= 
+bb.grouped.df = transform(bb.grouped.df, success=n*propn, fail=n*(1-propn))
+bb.fit4 = glm(cbind(success, fail) ~ distance * gender, 
+              family = binomial,data = bb.grouped.df) 
+@
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Most of the \rcode{R}-code you need for this chapter\ldots}
+Both model syntaxs give exactly the same results and we can perform the residual deviance check as follows:
+\medskip
+
+<<RC-H15-53, eval=F, tidy=FALSE, comment=NA>>=
+1-pchisq(bb.fit4$deviance,bb.fit4$df.residual)
+# or directly
+1 - pchisq(2.3688, 2)
+@ 
+\bigskip
+
+If the p-value is below 0.05 then we have evidence against the assumed binomial distribution
+and need to refit our model using \rcode{family= quasibinomial}.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Most of the \rcode{R}-code you need for this chapter\ldots}
+Confidence intervals can be calculated for the parameters and back-transformed and interpreted as a  multiplicative effect on the odds (or as a \% change if you prefer).
+
+<<RC-H15-54, eval=F, tidy=FALSE, comment=NA>>= 
+(bb.ci2 = confint(bb.fit2))
+exp(bb.ci2)
+@ 
+\bigskip 
+
+Confidence intervals for probabilities take a bit more effort since they
+require calcuating a confidence interval on the logit scale (i.e., for log-odds) and then backtransforming using the logistic function. 
+\medskip
+
+Fortunately, we can use \rcode{predictGLM}.
+
+<<RC-H15-55, tidy=FALSE, comment=NA>>=
+bb.pred.intervals = predictGLM(bb.fit2,
+                            newdata = data.frame(distance = c(1, 2, 3)),
+                            type="response")
+bb.pred.intervals
+@ 
+ 
+\end{frame}
+
+
+
+\end{document}

@@ -1,0 +1,31 @@
+\frametitle{{\bf Cautionary remark} about \rcode{anova}}
+When using \rcode{anova} to test a joint hypothesis for a multi-level explanatory factor, that factor {\bf must be the bottom term} in the \rcode{anova} output.\footnote{Unlike the \rcode{summary} table, the \pval{s} for the terms in the \rcode{anova} output depend on the terms above it. } That is, immediatately above the \rcode{Residuals} line.
+\medskip
+
+By way of example, suppose we change the order of the explanatory variables when we fit the model using \rcode{lm},
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{TeachIQmethod.fit2b}\hlkwb{=}\hlkwd{lm}\hlstd{(lang}\hlopt{~}\hlstd{method}\hlopt{+}\hlstd{IQ,} \hlkwc{data}\hlstd{=teach.df)}
+\hlstd{> }\hlkwd{anova}\hlstd{(TeachIQmethod.fit2b)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{verbatim}
+          Df Sum Sq Mean Sq F value    Pr(>F)
+method     2 3194.6 1597.30  41.490 8.112e-09 ***
+IQ         1  711.6  711.65  18.485 0.0002134 ***
+Residuals 26 1001.0   38.50
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+In this case, the change in \pval{s} (see slide \ref{anova1}) makes no difference to conclusions , but this may not always be the case.
+\vfill
+

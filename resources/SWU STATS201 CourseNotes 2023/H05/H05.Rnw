@@ -1,0 +1,778 @@
+\documentclass{beamer}
+\usepackage{graphicx}
+\input{../s20xPreambleRBM.tex}
+
+\begin{document}
+\newcommand{\thechapter}{5}
+<<RC-H05-000, echo=FALSE>>=
+source("../s20xNotesHelper.R")
+
+## these are global knitr options and settings for the
+## whole document
+library(knitr)
+library(s20x)
+## comment = NA removes ## from all output lines
+## prompt = TRUE means the console input prompt > is displayed
+## tidy = TRUE means the code is properly spaced and tidied. 
+opts_chunk$set(comment = NA, size = "scriptsize", prompt = TRUE, tidy = TRUE)
+@
+
+
+\title{Chapter 5: \\ Linear models with a 2-level categorical (factor) explanatory variable}
+\institute{University of Auckland}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}[t]
+\frametitle{Learning Outcomes}
+In this chapter you will learn about:
+\begin{center}
+\vspace{16pt}
+\begin{minipage}{0.9\textwidth}
+  \begin{itemize}
+  \item Using a 2-level categorical variable as an explanatory variable in a linear model by using indicator variables
+  \item Putting the two-sample \ttest{} into the linear model framework
+  \item Relevant \rcode{R}-code.
+  \end{itemize}
+\end{minipage}
+\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Using categorical variables as explanatory variables by using indicator variables}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}
+\frametitle{New Example -- Exam marks vs Attendance}
+
+We have gained some understanding about STATS 20x students' final exam marks and
+how they are related to test and assignment scores, both of which are numeric explanatory variables.\\
+\bigskip
+Here, we are going to see if class attendance helps to explain exam score,
+where class attendance (did or did not) is a categorical explanatory variable.\\
+\bigskip
+I am pretty sure we know there is going to be a relationship, but let us answer the question anyway.
+This also lets us estimate the magnitude of the ``attendance effect''.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam marks vs Attendance}
+\framesubtitle{The particular variables of interest}
+
+\begin{tabular}{lp{15cm}}
+\rcode{Exam} &  the student's Exam mark (out of 100) \\
+
+\rcode{Attend} & whether the student regularly attended lectures or not
+
+-- {\it Yes} or {\it No}.\footnote{This was measured by taking 4 rolls throughout the semester of  lecture  attendance. If a student was present for at least 3 of those 4 rolls, then they were recorded as a regular `attender'.}  \\
+
+\end{tabular}
+
+\bigskip
+
+\textbf{Note:} As always, our question really is about the `typical' or average relationship. 
+Some students may attend regularly but not do well in the exam, and vice-versa. 
+That is part of the statistical variability, which we can deal with.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam marks vs Attendance\ldots}
+\framesubtitle{Preliminary exploration of the data}
+% note code get's rid of white space by pretending to submit but doing it on the sly later
+<<RC-H05-001, fig.show='hide'>>=
+## Invoke the s20x library
+library(s20x)
+## Importing data into R
+Stats20x.df = read.table("Data/STATS20x.txt", header=T)
+## Change Attend from a character variable to a factor variable
+Stats20x.df$Attend = as.factor(Stats20x.df$Attend)
+## Examine the data 
+Stats20x.df$Attend[1:20]
+@
+The \rcode{Attend} variable has been formatted as a factor variable with two levels - \rcode{Levels: No Yes}.
+\medskip
+
+By default, \rcode{No} is the first level and \rcode{Yes} is the second level, because of alphabetical order -- but this can be changed if need be. 
+In this case, we wish to contrast the attenders (\rcode{Yes}) against the non-attenders (\rcode{No})
+and (as you will see later) this ordering of the levels suits us.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam marks vs Attendance\ldots}
+\framesubtitle{Preliminary exploration of the data\ldots}
+
+<<RC-H05-002, fig.show='hide'>>=
+summaryStats(Stats20x.df$Exam,Stats20x.df$Attend)
+plot(Exam~ Attend, data = Stats20x.df, xlab="Attendance")
+@ 
+
+<<RC-H05-003, echo=FALSE>>=
+trimPlot(Exam ~ Attend,
+         data = Stats20x.df,
+         fileName = "figure/RC-H05-003.pdf", 
+         plotCommand = boxplot, 
+         main = "",
+         cex = 0.7,
+         x.lab = "Attendance",
+         y.lab = "Exam",
+         fig.height = 2.0,
+         fig.width = 3.5,
+         .at = c(1, 2),
+         .labels = c("No", "Yes"))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H05-003}
+\end{figure}
+{\bf NOTE:} \rcode{Attend} is a factor, so \rcode{R} used a boxplot to display the data.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam marks vs Attendance\ldots}
+\framesubtitle{Preliminary exploration of the data\ldots}
+
+Here, we are asking how a student's attendance mark ($x$) is related to a their exam  ($y$) mark.\\
+\bigskip 
+As we are interested in the `typical' student, we want to see what the underlying trend is and how students vary (scatter) about that trend. \\
+\bigskip 
+Looking at the boxplot, it seems that regular attendance is associated with higher exam scores. 
+Also, the equality of variance assumption seems okay. 
+\bigskip
+
+%We see that at least one non-attender earned a high exam score (relative to the other non-attenders), so we may have to keep an eye on this (e.g., there could be highly influential  points).
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam marks vs Attendance\ldots}
+\framesubtitle{Preliminary exploration of the data\ldots}
+
+If you wish to use \rcode{trendscatter}, we need to create a new $x$ variable that is numerical.
+We can do this by recoding non-attenders as $0$s and attenders as $1$s. \\
+\bigskip
+Here is the code for doing this recoding, with some checks to see that it has been successful.
+<<RC-H05-004>>=
+#Make a new variable Attend2 which is 1 if Attend = "Yes" and 0 otherwise
+
+#Note how we use two equal signs, ==, to test equality
+Stats20x.df$Attend2 = as.numeric(Stats20x.df$Attend=="Yes")
+with(Stats20x.df, table(Attend, Attend2))
+@
+\bigskip
+The \rcode{with} function lets us use the variables in the dataframe without having to type the dataframe name every time.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam marks vs Attendance\ldots}
+\framesubtitle{Preliminary exploration of the data\ldots}
+ \bigskip
+
+<<RC-H05-005, eval=FALSE>>=
+trendscatter(Exam~ Attend2, data = Stats20x.df)
+@
+
+<<RC-H05-006, echo=FALSE>>=
+trimPlot(Exam ~ Attend2,
+         data = Stats20x.df,
+         fileName = "figure/RC-H05-006.pdf", 
+         plotCommand = trendscatter, 
+         main = "",
+         cex = 0.7,
+         x.lab = "Attend2",
+         y.lab = "Exam",
+         fig.height = 2.25,
+         fig.width = 4.5)
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H05-006}
+\end{figure}
+
+EOV assumption seems valid. 
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam marks vs Attendance\ldots}
+\framesubtitle{Fitting a linear model using \rcode{Attend2}}
+Note that \rcode{Attend2} is a numeric explanatory variable (albeit with only two different values). So, we can fit a simple linear regression model to see how well \rcode{Attend2} explains \rcode{Exam}. What would this model tell us?
+\medskip
+
+The linear model for the expected value of \rcode{Exam} is
+\[
+\rcode{E[Exam|Attend2]}=\beta_0+\beta_1 \rcode{Attend2} \ .
+\]
+and so the full model equation is
+\[
+\rcode{Exam}_i=\beta_0+\beta_1 \rcode{Attend2}_i+\varepsilon_i \text{~where~} \varepsilon_i \iid N(0, \sigma^2) \ .
+\]
+
+If we use the notation \rcode{E[Exam|Attend2=0]} to denote the expected value of \rcode{Exam} when \rcode{Attend2}=0 then we have
+\[
+\rcode{E[Exam|Attend2=0]}=\beta_0 \ .
+\]
+Similarly, when \rcode{Attend2}=1
+\[
+\rcode{E[Exam|Attend2=1]}=\beta_0 + \beta_1\ .
+\]
+
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Exam marks vs Attendance\ldots}
+\framesubtitle{Fitting a linear model using \rcode{Attend2}\ldots}
+We see that $\beta_0$ is the mean exam mark for non-attenders and $\beta_0+\beta_1$ is the mean mark for attenders, and so $\beta_1$ is the difference in mean mark for attenders compared to non-attenders.
+\bigskip
+
+Our question of interest was to make inference about the "attendance effect" -- this "attendance effect" is simply $\beta_1$, so we can use the methods of inference about the slope of a linear model that we have already seen.
+\bigskip
+
+In particular, we know how to test the null hypothesis of no attendance effect, $H_0: \beta_1=0$, and how to obtain confidence intervals. Let's give it a go...
+
+
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Exam marks vs Attendance\ldots}
+\framesubtitle{Fitting a linear model using \rcode{Attend2}\ldots}
+
+\medskip
+<<RC-H05-007, results='hide'>>=
+examattend2.fit = lm(Exam~ Attend2, data = Stats20x.df)
+summary(examattend2.fit)
+@
+
+<<RC-H05-008, echo=FALSE>>=
+slimSummary(examattend2.fit)
+@
+Having to create the indicator variable\footnote{So-called because it indicates whether attendance is No or Yes. Some people call these dummy variables.} \rcode{Attend2} is a nuisance.
+The good news is that the linear model function \rcode{lm} implicitly does this for us.
+\medskip
+
+Here we made the choice to recode non-attenders as $0$s and attenders as $1$s, rather than the other way around. This was deliberate -- it is the same choice that \rcode{lm} would make....see below.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Exam marks vs Attendance\ldots}
+\framesubtitle{Fitting a linear model using \rcode{Attend}} 
+
+We now fit a linear model to these data using the factor variable \rcode{Attend}.
+The \rcode{lm} function automatically attributes \rcode{Attend=="No"} the zero value \footnote {This is called the \textbf{baseline} or reference level of the factor variable.} because \textbf{N}o comes before \textbf{Y}es in the alphabet, and \rcode{Attend=="Yes"} is attributed the value 1.
+
+\begin{small}
+<<RC-H05-009, results='hide'>>=
+examattend.fit = lm(Exam~ Attend, data = Stats20x.df)
+summary(examattend.fit)
+@
+
+<<RC-H05-010, echo=FALSE>>=
+slimSummary(examattend.fit)
+@
+\end{small}
+
+What is the difference? Nothing really -- slightly different formats of the coefficient
+names as \rcode{Attend2} is numerical and \rcode{Attend} is a categorical variable (factor).
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Model checking and inference}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[fragile]
+\frametitle{Exam marks vs Attendance\ldots}
+\framesubtitle{The fitted model}
+Note that the p-value for \rcode{Attend} is very small, so we conclude that there is indeed a significant effect of attendance.
+\medskip
+
+The estimates of $\beta_0$ and $\beta_1$ are
+<<RC-H05-011, echo=F>>=
+coef(examattend.fit)
+b = coef(examattend.fit)
+@
+That is, (formatted to 2 decimal places) $\hat{\beta}_0=\Sexpr{round(b[1], 2)}$ and $\hat{\beta}_1=\Sexpr{round(b[2], 2)}$.
+\medskip
+
+Using these estimated coefficients\footnote{Subject to verification of the model assumptions - stay tuned} 
+our estimated values for the exam score of a `typical' student are:
+\[
+\widehat{\rcode{Exam}}= \Sexpr{round(b[1], 2)} + \Sexpr{round(b[2], 2)}\times {\rcode{Attend2}}
+\]
+or
+\[
+\widehat{\rcode{Exam}}= 
+\begin{cases}
+  \Sexpr{round(b[1], 2)} &\mbox{, for non-attenders and} \\
+  \Sexpr{round(b[1], 2)} + \Sexpr{round(b[2], 2)} &\mbox{, for attenders.}
+\end{cases}
+\]
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam marks vs Attendance\ldots}
+\framesubtitle{The fitted model\ldots}
+Let's visualize the fit. Here we are plotting the `best' estimated straight line that we obtained from fitting our model using the indicator variable \rcode{Attend2}.
+
+<<RC-H05-012, fig.show='hide'>>=
+plot(Exam ~ Attend2, data = Stats20x.df)
+## Add the lm estimated line to this  plot  where a=intercept, b=slope
+abline(coef(examattend.fit),lty=2, col="blue")
+@
+
+<<RC-H05-013, echo=FALSE>>=
+trimPlot(Exam ~ Attend2,
+         data = Stats20x.df,
+         fileName = "figure/RC-H05-013.pdf",
+         fig.height = 2.0,
+         fig.width = 4.5,
+         cex = 0.7,
+         x.lab = "Attend2",
+         y.lab = "Exam",
+         addElements = list(
+           abline(coef(examattend.fit), lty=2, col="blue")
+         ))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H05-013}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam marks vs Attendance\ldots}
+\framesubtitle{The fitted model\ldots}
+
+Here is the same thing using the factor variable \rcode{Attend}, with the fit overlaid on the boxplots.
+
+<<RC-H05-014, echo=FALSE>>=
+trimPlot(Exam ~ Attend,
+         data = Stats20x.df,
+         fileName = "figure/RC-H05-014.pdf", 
+         plotCommand = boxplot, 
+         main = "",
+         cex = 0.7,
+         x.lab = "Attendance",
+         y.lab = "Exam",
+         fig.height = 2.0,
+         fig.width = 3.5,
+         .at = c(1, 2),
+         .labels = c("No", "Yes"),
+         addElements = list(
+           abline(coef(examattend.fit)[1] - coef(examattend.fit)[2], coef(examattend.fit)[2],lty=2, col="blue")
+         ))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H05-014}
+\end{figure}
+
+The two plots above essentially present the same information, 
+repackaged in a slightly different way. 
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam marks vs Attendance\ldots}
+\framesubtitle{Checking assumptions}
+We should check that our assumptions hold before we report (or use) the results from this analysis. Remember, we require independence, identical distribution and normality of the random components
+
+\[
+\varepsilon_i\iid N(0,\sigma^2).
+\]
+
+The assumptions (in order of importance):
+
+\medskip
+\textbf{i}id -- independence. We check this by investigating how we obtained the data.
+
+\medskip
+i\textbf{i}d -- identically distributed. This should result in the variation of the residuals being roughly constant (regardless of the fitted value) and the residuals more-or-less averaging around zero.  We can use \rcode{plot()} with the \rcode{which=1} argument.
+\medskip
+
+ii\textbf{d} -- Normality. We only check this having validated the first two assumptions, using \rcode{normcheck}.
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Exam marks vs Attendance\ldots}
+\framesubtitle{Checking our assumptions}
+
+<<RC-H05-015, fig.show='hide'>>=
+plot(examattend.fit,which=1)
+@
+
+<<RC-H05-016, echo=FALSE>>=
+trimPlot(examattend.fit,
+         fileName = "figure/RC-H05-016.pdf",
+         which=1,
+         cex = 0.7,
+         mai = c(0.5, 0.5, 0.1, 0.1),
+         x.lab = "Fitted values",
+         y.lab = "Residuals",
+         fig.height = 2.25,
+         fig.width = 4.25)
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H05-016}
+\end{figure}
+No cause for concern. 
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam marks vs Attendance\ldots}
+\framesubtitle{Checking our assumptions\ldots}
+\medskip
+
+
+<<RC-H05-017, eval=FALSE>>=
+normcheck(examattend.fit)
+@
+
+<<RC-H05-018, echo=FALSE>>=
+trimPlot(examattend.fit,
+         fileName = "figure/RC-H05-018.pdf",
+         cex = 0.7,
+         plotCommand = normcheck,
+         fig.height = 2.25,
+         fig.width = 4.25)
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.5]{figure/RC-H05-018}
+\end{figure}
+
+Looks good - the residuals appear to have a near normal distribution. 
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam marks vs Attendance\ldots}
+\framesubtitle{Checking our assumptions\ldots} \medskip
+
+<<RC-H05-019, fig.show='hide'>>=
+cooks20x(examattend.fit)
+@
+
+<<RC-H05-020, echo=FALSE>>=
+trimPlot(examattend.fit,
+         fileName = "figure/RC-H05-020.pdf",
+         cex = 0.7,
+         plotCommand = cooks20x,
+         fig.height = 2.25,
+         fig.width = 4.25,
+         mai = c(0.5, 0.6, 0.1, 0.1))
+
+examnull.fit = lm(Exam~1,data=Stats20x.df)
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.5]{figure/RC-H05-020}
+\end{figure}
+
+No unduly influential points.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Inference about Exam marks vs Attendance}
+\framesubtitle{Testing the null hypothesis}
+The model assumptions look to be reasonably well satisfied, so we can use the fitted model to make statistical inference (i.e., to answer questions of interest).
+\bigskip
+
+We begin by testing the null hypothesis that there is no effect of the explanatory variable \rcode{Attend}.\footnote{In this case, the null hypothesis corresponds to the \rcode{Exam} scores being iid.} Recall that this is $H_0:\beta_1=0$. 
+\bigskip
+
+<<RC-H05-025>>=
+coef(summary(examattend.fit))
+@
+
+<<RC-H05-026, echo=FALSE>>=
+p = summary(examattend.fit)$coef[2,4]
+beta = coef(examattend.fit)
+seBeta = summary(examattend.fit)$coef[,2]
+tstatBeta = summary(examattend.fit)$coef[,3]
+@
+
+The \pval{} for \rcode{AttendYes} is testing the null hypothesis $H_0: \beta_1=0$.
+It is highly statistically significant $p=\Sexpr{signif(p, 3)}$, which is just over 1 in a million.
+We have extremely strong evidence that attendance is related to exam score.
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Inference about Exam marks vs Attendance\ldots}
+\framesubtitle{Calculating confidence intervals for effect size}
+We can get confidence intervals for $\beta_1$ (and $\beta_0$ if need be) by:
+<<RC-H05-028, echo=1>>=
+confint(examattend.fit)
+ci=confint(examattend.fit)[2,]
+@
+
+\medskip
+Here we can say that, on average,  regular attenders will obtain an increased exam mark of between  \Sexpr{round(ci[1], 1)} to \Sexpr{round(ci[2], 1)} compared to non-attenders.
+
+\medskip
+Alternative wording would be: the expected exam mark of a student who regularly attends class is \Sexpr{round(ci[1], 1)} to \Sexpr{round(ci[2], 1)} marks higher than that of a non-attendee.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Inference about Exam marks vs Attendance\ldots}
+\framesubtitle{Calculating confidence and prediction intervals}
+
+We might also want to estimate and/or predict exam marks based on attendance status.
+
+\medskip
+
+Recall that we need to make a new dataframe containing the values of the explanatory
+variable to be used for the prediction. In this case, that is just "No" and "Yes".
+
+<<RC-H05-029, echo=1:5, tidy=FALSE>>=
+## Create data frame of values of interest: Attend=="Yes" and "No"
+## Make sure that the names of vars are exactly the same as in the data frame
+preds.df = data.frame(Attend = c("No", "Yes"))
+predict(examattend.fit, preds.df, interval = "confidence")
+predict(examattend.fit, preds.df, interval = "prediction")
+p1 = predict(examattend.fit, preds.df, interval = "confidence")
+p2 = predict(examattend.fit, preds.df, interval = "prediction")
+@ 
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Inference about Exam marks vs Attendance\ldots}
+\framesubtitle{Confidence and prediction intervals}
+
+Here, we estimate the exam mark for non-regular attenders is between \Sexpr{round(p1[1,2], 1)} and \Sexpr{round(p1[1,3], 1)} on average, whereas for those who regularly attend it is between \Sexpr{round(p1[2,2], 1)} and \Sexpr{round(p1[2,3], 1)}.
+
+\medskip
+
+For any individual student, if they are a non-regular attender then we predict their
+exam mark to be between \Sexpr{round(p2[1,2], 1)} and \Sexpr{round(p2[1,3], 1)}, or between \Sexpr{round(p2[2,2], 1)} and \Sexpr{round(p2[2,3], 1)} if they do attend regularly.
+
+\medskip
+
+The prediction intervals are very wide -- which is not surprising as regular attendance only explains \Sexpr{100*round(summary(examattend.fit)$r.squared, 2)}\%  of the variation in exam score, and there is plenty of variability
+between individual students.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Inference about Exam marks vs Attendance\ldots}
+\framesubtitle{Confidence and prediction intervals}
+
+Here is what the confidence (red)/prediction intervals (blue) look like:
+<<RC-H05-030, echo=FALSE>>=
+sortAttend=sort(Stats20x.df$Attend)
+
+predsall.df = predict20x(examattend.fit,data.frame(Attend=sortAttend), print=FALSE)
+
+trimPlot(Exam ~ Attend,
+         col = "light grey",
+         data = Stats20x.df,
+         fileName = "figure/RC-H05-030.pdf",
+         y.lab = "Exam",
+         x.lab = "Attendance",
+         ylim = range(predsall.df$frame[,2:5]),
+         cex = 0.7,
+         plotCommand = boxplot,
+         fig.height = 2.5,
+         fig.width = 3.5,
+         .at = c(1, 2),
+         .labels = c("No", "Yes"),
+         addElements = list(
+            abline(h=c(0,100), lty=3),
+            lines(1+(sortAttend=="Yes"),predsall.df$frame[,2], lty=2, col="red"),
+            lines(1+(sortAttend=="Yes"),predsall.df$frame[,3], lty=2, col="red"),
+            lines(1+(sortAttend=="Yes"),predsall.df$frame[,4], lty=2, col="blue"),
+            lines(1+(sortAttend=="Yes"),predsall.df$frame[,5], lty=2, col="blue")
+         ) )
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H05-030}
+\end{figure}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Putting the two-sample \ttest{} into the linear model framework}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[fragile]
+\frametitle{A recipe for subsequent analyses}
+\frametitle{Two-sample \ttest{} in disguise}
+
+We have just done an analysis to see if two groups (attendees and non-attendees) differ
+in expected value.
+You have encountered this scenario previously -- the two-sample \ttest{}.
+
+\medskip
+
+By default, the \rcode{t.test} function in \rcode{R} relaxes the equality of variance assumption,
+so we have to explicitly tell it not to (using the \rcode{var.equal=TRUE} argument) 
+if we want to reproduce our \rcode{lm} results exactly.
+
+<<RC-H05-031>>=
+t.test(Exam~ Attend, var.equal=TRUE, data = Stats20x.df)
+@
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam marks vs Attendance\ldots}
+\framesubtitle{Two-sample \ttest{}}
+
+The two-sample \ttest{} has a variant which relaxes the EOV assumption.
+This is known as the \textbf{Welch} form of the \ttest{}, 
+and is the default in the \rcode{t.test} function.  
+
+<<RC-H05-032, eval=FALSE>>=
+t.test(Exam~ Attend, var.equal=FALSE, data = Stats20x.df)
+@
+or just
+<<RC-H05-033>>=
+t.test(Exam~ Attend, data = Stats20x.df)
+@
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam marks vs Attendance\ldots}
+\framesubtitle{Two-sample \ttest{}\ldots}
+The Welch form loses some degrees of freedom because it 
+adds more uncertainty as we have to now estimate the variability of the sample in each group (attenders and non-attenders) rather than `pooling' them based on the EOV assumption. 
+
+\bigskip
+
+In this case, there is negligible difference between the standard and \textbf{Welch} forms of
+the two-sample \ttest{}.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Summary}
+
+We have now seen that \rcode{lm} can be used when the explanatory variable is numeric
+(e.g., \rcode{Test} or \rcode{Assign}), 
+and also when the explanatory variable is categorical (e.g., \rcode{Attend}).
+
+\bigskip
+
+When the explanatory variable is categorical, 
+\rcode{lm} automatically creates numeric indicator variables to use in the model formula.
+The indicator variables indicate the category level (relative to the baseline level) 
+and take the value 0 or 1 -- for this reason they are sometimes referred to as indicator variables.
+
+\bigskip
+The natural question to ask here is: 
+can we use \rcode{Test} and \rcode{Attend} {\em together} to explain exam score?
+
+\bigskip
+Stay tuned\ldots
+\end{frame}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{\rcode{R} tips and relevant code}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}[fragile]
+\frametitle{\rcode{R} tips and tricks}
+\framesubtitle{Use of \rcode{-1} in model formulae}
+
+In some situations it is useful to fit the model without a baseline level for the intercept.
+
+\smallskip
+
+This is easy, just add \rcode{-1} to the model formula.
+
+<<RC-H05-034, results='hide'>>=
+NoBaseline.fit=lm(Exam~ Attend-1, data = Stats20x.df)
+summary(NoBaseline.fit)
+@
+
+<<RC-H05-035, echo=2>>=
+slimSummary(NoBaseline.fit)
+confint(NoBaseline.fit)
+@
+Note: $R^2$ has no meaning when there is no intercept term in the model.
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Most of the \rcode{R}-code you need for this chapter}
+
+You do not need to create indicator variables as \rcode{R} does this for you. It will choose the baseline for you, so be careful.  You can change this if needed -- you will see an example of this soon. 
+\medskip
+
+<<RC-H02-036, eval=F, comment=NA>>= 
+examattend.fit = lm(Exam~ Attend, data = Stats20x.df)
+@
+
+This is equivalent to 
+<<RC-H02-037, eval=F, comment=NA>>= 
+t.test(Exam~ Attend, var.equal=TRUE, data = Stats20x.df)
+@
+\bigskip
+
+If it is clear that the two groups have massively different variances then one approach would be to abandon the use of a linear model and use the modified t-test without the equality of variance assumption\footnote{The modified t-test approach will {\bf never} be used in this class.}  
+<<RC-H02-038, eval=F, comment=NA>>= 
+t.test(Exam~ Attend, var.equal=FALSE, data = Stats20x.df)
+@
+\medskip
+
+{\bf However}, in most cases the technique shown in the next Chapter is a better way to cope with inequality of variance.
+
+
+\end{frame}
+
+
+\end{document}
+
+
+
+

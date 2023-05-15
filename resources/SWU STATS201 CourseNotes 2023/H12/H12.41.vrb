@@ -1,0 +1,23 @@
+\frametitle{Alternative parameterizations of two-way ANOVA}
+\framesubtitle{The reference cell model}
+
+Recall the reference cell model we used to represent \rcode{Exam} score:
+
+\vspace{-5mm}
+
+\begin{align*}
+\rcode{Exam} &= \beta_0 + \beta_1 \times \rcode{Attend}_{\rcode{Yes}} + \beta_2 \times \rcode{Pass.test}_{\rcode{pass}}\mbox{ } + \\ &\phantom{=}\mbox{ }\beta_3 \times \rcode{Attend}_{\rcode{Yes}} \times \rcode{Pass.test}_{\rcode{pass}} + \varepsilon,
+\end{align*}
+
+\vspace{-5mm}
+
+where $\varepsilon \iid N(0, \sigma^2)$.
+
+\medskip
+
+The parameter $\beta_0$ denotes the overall true baseline mean exam score. Notice that neither the \rcode{no} level of \rcode{Attend} nor the \rcode{nopass} level of \rcode{Pass.test} appear as subscripts in the above model. This tells us that these are the baseline levels, i.e. $\beta_0$ denotes the mean over \rcode{Exam} scores from students who neither regularly attended lectures nor passed the test.
+
+\medskip
+
+So, what do the parameters $\beta_1,\beta_2,\text{ and }\beta_3$ represent? To help us answer this question we consider the means model\footnote{We first encountered the means model for the single factor male fruitflies study in Chapter 11.} formulation for \rcode{Exam} score.
+

@@ -1,0 +1,16 @@
+\begin{frame}[fragile]
+\frametitle{The generalised linear model in \rcode{R}}
+% \framesubtitle{via  --  \rcode{glm}}
+The previous analysis with \rcode{lm} is {\bf NOT} the best way to analyse the CRAN data.
+
+\begin{itemize}
+\item ``If you only have a hammer, you tend to see every problem as a nail." -- Abraham Maslow [Replace ``hammer" with ``linear model", and ``a nail" with ``normally distributed"]
+\item The high Cook's Distance of observations 2 and 3 was purely an artefact of logging the counts. There was nothing wrong with these data points and therefore there was no valid reason for removing them.
+\item What would have happened had there been any years with 0 submissions -- how would you deal with log(0)?
+\end{itemize}
+
+\end{frame}
+
+
+
+

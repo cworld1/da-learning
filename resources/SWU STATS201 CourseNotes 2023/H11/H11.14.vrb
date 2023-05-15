@@ -1,0 +1,32 @@
+\frametitle{Fruit fly\ldots}
+\framesubtitle{Interpretation}
+Now we know that the variable \rcode{group} helps explain longevity,
+what can we say about these groups? Let us investigate.
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{summary}\hlstd{(Fruitfly.fit)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{verbatim}
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)
+(Intercept)   63.560      2.962  21.461  < 2e-16 ***
+groupG2        1.240      4.188   0.296    0.768
+groupG3       -0.200      4.188  -0.048    0.962
+groupG4       -6.800      4.188  -1.624    0.107
+groupG5      -24.840      4.188  -5.931 2.98e-08 ***
+---
+Residual standard error: 14.81 on 120 degrees of freedom
+Multiple R-squared:  0.3121,	Adjusted R-squared:  0.2892
+F-statistic: 13.61 on 4 and 120 DF,  p-value: 3.516e-09
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+Our fitted model only gives the pairwise difference between the baseline group \rcode{G1} and the other four groups, and so is only providing partial information. What else can we do?

@@ -1,0 +1,14 @@
+\documentclass[a4paper]{article}    % Specify paper size here
+\usepackage{graphicx}
+\usepackage{grffile}                % Quality of life package to deal with periods in filenames
+\usepackage{pdfpages}               % What allows us to include pdfs nicely
+\usepackage[margin=0.57in]{geometry} % Specied margins to get the page number showing on each page.
+
+\DeclareGraphicsExtensions{.pdf} % Strict enforcement(?) to ensure \includepdf imports pdf files.
+
+\begin{document}
+
+\includepdf[scale=0.975, pages=1-last, nup=1x2, landscape=true, 
+    frame=true]{../H00/H0_R}
+
+\end{document}

@@ -1,0 +1,40 @@
+\frametitle{Alternative parameterizations of the linear model}
+\framesubtitle{The effects model}
+
+\small
+
+Another parameterization is to set the overall mean longevity, $\mu$, as the reference and then define the {\em effect}, $\tau_i$, on longevity due to being in \rcode{Group} $i$ as the difference between the  \rcode{Group} $i$ mean and the overall mean, i.e. $ \tau_i = \mu_i - \mu $.
+
+\medskip
+
+\begin{center}
+\footnotesize
+\renewcommand{\arraystretch}{1.15}
+   \begin{tabular}{ccccccrr}
+      \hline
+      &&& \multicolumn{5}{c}{parameterization} \\
+      \cline{4-8}
+      Group & Data && Means & Estimate &&
+         Effects & Estimate\footnote{See overall mean (57.44 days) and deviations of group means from overall means on slide~\ref{group_means}.} \\
+      \hline
+      \rcode{G1} & $40,37,\ldots,44$ && $\mu_1$ & 63.56 && $\tau_1 = \mu_1 - \mu$ & 6.12 \\
+      \rcode{G2} & $46,42,\ldots,92$ && $\mu_2$ & 64.80 && $\tau_2 = \mu_2 - \mu$ & 7.36 \\
+      \rcode{G3} & $35,37,\ldots,77$ && $\mu_3$ & 63.36 && $\tau_3 = \mu_3 - \mu$ & 5.92  \\
+      \rcode{G4} & $21,40,\ldots,68$ && $\mu_4$ & 56.76 && $\tau_4 = \mu_4 - \mu$ & $-0.68$ \\
+      \rcode{G5} & $16,19,\ldots,44$ && $\mu_5$ & 38.72 && $\tau_5 = \mu_5 - \mu$ & $-18.72$  \\
+      \hline
+   \end{tabular}
+\end{center}
+
+\medskip
+
+The linear {\em effects} model for the longevity of the $j$th ($j=1,2,\ldots,25$) male fruitfly in \rcode{Group} $i$ ($i=1,2,\ldots,5$) may therefore be written as
+
+\vspace{-4mm}
+
+\[ days_{ij} = \mu + \tau_i + \epsilon_{ij} \]
+
+\vspace{-5mm}
+
+where, again, $\epsilon_{ij} \iid N(0, \sigma^2)$.
+

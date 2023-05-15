@@ -1,0 +1,5 @@
+\beamer@sectionintoc {1}{Example with a 5-level explanatory factor variable }{3}{0}{1}
+\beamer@sectionintoc {2}{Interpreting the output}{13}{0}{2}
+\beamer@sectionintoc {3}{The multiple comparisons problem}{18}{0}{3}
+\beamer@sectionintoc {4}{Closing remarks and relevant {\color {darkgreen}\texttt {R}}-code}{26}{0}{4}
+\beamer@sectionintoc {5}{Alternative parameterizations of the 1-way ANOVA model \\ \nobreakspace {} \\ (This is an optional Section: \\ - your lecturer will advise whether it is examinable)}{29}{0}{5}

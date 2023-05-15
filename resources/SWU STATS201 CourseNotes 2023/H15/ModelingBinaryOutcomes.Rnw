@@ -1,0 +1,784 @@
+\documentclass{beamer}
+\usepackage{graphicx}
+\input{s20xPreamble.tex}
+
+\DeclareMathOperator{\E}{{E}}
+\DeclareMathOperator{\Var}{{Var}}
+\DeclareMathOperator{\logit}{{logit}}
+
+
+%% Sets the document title 
+\title{Handout 15}
+\institute{University of Auckland}
+
+%\setlength{\topsep}{0mm} %Remove space before R output
+
+\begin{document}
+<<R0, echo=FALSE, warning=FALSE,message=FALSE>>=
+  ## these are global knitr options and settings for the 
+  ## whole document
+  library(knitr)
+## comment = NA removes ## from all output lines
+## prompt = TRUE means the console input prompt > is displayed
+opts_chunk$set(comment = NA, prompt = TRUE, size="footnotesize", tidy = TRUE) #Size now fixed
+library(s20x)
+source("s20xNotesHelper.R")
+@
+
+
+\begin{frame}
+\begin{center}
+{\huge Modeling when the response is binary}
+\end{center}
+\end{frame}
+
+
+
+\begin{frame}[t]
+\frametitle{Binary (Bernoulli) data}
+\begin{enumerate}[-]\setlength{\itemsep}{5mm}
+\item Here we are considering the situation where the response can only take \textbf{two} possible values.
+\item It might be in the form of zeros and ones. 
+\item It might be recorded \rcode{TRUE} and \rcode{FALSE}. 
+\item It might be \rcode{Y} and \rcode{N} - basically anywhere were there are only two possible outcomes.
+\item This is called a binary response and can be modeled with a \textbf{Bernoulli} random variable. 
+\item We will explain what this is in a moment, but this is really just a special case of \textbf{Binomial} data where we are counting the number of ``successes'' (say) out of a number
+fixed of trials.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
+\frametitle{Bernoulli random variables}
+If $Y$ is a Bernoulli random variable with parameter $p$, then $Y$ will take the value 1 with probablity $p$, and the value 0 with probability $1-p$, i.e.
+\[
+\Pr(Y = y) = \begin{cases}
+p &y = 1 \\
+1 - p &, y=0\\
+\end{cases}
+\]
+This is the same as \textbf{zero} or \textbf{one} \emph{success} out of \textbf{one} trial. It is easy to show that the mean of a Bernoulli random variable is
+\[
+\E[Y]=p
+\]
+Wouldn't it be cool if we could find some function $g()$ that allowed us to relate $\E[Y]$ to a linear function of some explanatory variables? I.e. so that
+\[
+g(E[Y]) = \beta_0 + \beta_1X_1+\beta_2X_2 + \cdots + \beta_pX_p \]
+\end{frame}
+
+\begin{frame}
+\frametitle{The Logit Function}
+We have already seen it!
+\[
+Odds = \frac{probability~event~occurs}{probability ~event~does~not~occur}~=~\frac{\Pr(Y=1)}{\Pr(y=0)}~ = ~\frac{p}{1-p}
+\]
+Then the logarithm of the odds (the log-odds for short) is
+\[
+\log\left(\frac{p}{1-p}\right)
+\]
+This function has a special name in statistics - the \emph{logit} functions. It also turns out that its inverse is well known. If the $\logit(p) = x$ then
+\[
+\frac{\exp(x)}{1 + \exp(x)} = p
+\]
+This is called the \emph{logistic} function, and is well-known in mathematics as a function which maps the interval $[0,1]$ to $(-\infty,+\infty)$.
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Logistic regression}
+\begin{enumerate}[-]\setlength{\itemsep}{6mm}
+\item The logistic function gives its name to the procedure for modelling this type of data -- \emph{Logistic} regression. 
+\item However, technically it is just a binomial GLM. 
+\item At the moment we are going to use it to model binary data --
+\item But it can be used to model data in the form of $x$ success out of $n$ trials
+\item And it can also be used to model data in the form of $\hat{p} = x/n$, i.e. proportions - as long as we know $n$. 
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Example -- Basketball}
+In 2012 the lecturer of the STATS 340 class played basketball in class. In this experiment I:
+\begin{enumerate}[-]
+\item had ten groups of two people, one female and one male
+\item had each shooter in each group shoot at the basket from 1 m, 2 m or 3 m from the basket
+\item The shooting distance was randomly choosen, but each person took one shot from each distance
+\item He recorded a \rcode{1} the shot was successful, and a \rcode{0} if the shot was missed
+\end{enumerate}
+\vspace{5 mm}
+\textbf{Questions}\\
+\begin{enumerate}[1.]
+\item What do \textbf{you} think is the most important factor affecting the probability of making the shot in this experiment?
+\item What do you think will happen if...?
+\end{enumerate}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Inspect the data}
+<<R1>>=
+bb.df = read.csv("Data/basketball.csv")
+head(bb.df, 10)
+@
+\end{frame}
+
+
+
+\begin{frame}[containsverbatim]
+\frametitle{Plot the data}
+In general, because the responses are zeros and ones, it is hard to plot this kind of data. However we can look at the frequency\footnote{Also called a cross table and referred to in \rcode{R} and \rcode{xtab}.} table
+<<R2>>=
+success.tbl = xtabs(basket~distance+gender, data = bb.df)
+success.tbl
+@
+The findings should be kind of obvious from the table in this example, even without the model fitting.
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Fit the model}
+The model we want to fit is
+\[
+\logit(\E[Y_i]) = \beta_0 + \beta_1 distance_i + \beta_2 gender_i + \beta_3 (gender_i \times distance_i)
+\]
+where $gender_i$ is a dummy variable which is 0 if the shooter is female, and 1 if the shooter is male. We tell R that this is a binomial GLM by setting \rcode{family = binomial}
+<<R3, tidy = FALSE>>=
+bb.fit = glm(basket ~ distance * gender, 
+                     family = binomial, data = bb.df)
+@
+Notice, as with the Poisson, we \textbf{do not} transform the responses - setting \rcode{family = binomial} takes care of this for us.
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Check the model}
+Our model checks are the same as for the Poisson GLM. 
+<<R4, fig.height=4>>=
+plot(bb.fit, which = 1)
+@
+The plot of the residuals versus the fitted values is a little less informative for this situation, and it can looked quite patterned and still be meaningless.
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Check the model}
+Our model checks are the same as for the Poisson GLM. 
+<<R5, echo=1, size="tiny">>=
+anova(bb.fit, test = "Chisq")
+resid.dev = round(summary(bb.fit)$deviance, 1)
+resid.df = summary(bb.fit)$df.resid
+@
+The residual deviance is \Sexpr{resid.dev}, which is slightly lower than the residual deviance degrees of freedom (\Sexpr{resid.df}), so the data is a little under-dispersed. This is probably due to the small number of successes at the largest distance. 
+\end{frame}
+
+\begin{frame}[t,containsverbatim]
+\frametitle{Check the model}
+Our model checks are the same as for the Poisson GLM. 
+<<R6>>=
+1 - pchisq(46.2, 56)
+@
+However, the model adequacy test says there is nothing to worry about.\\
+\vspace{5mm}
+We could have guessed this without calculating it since the standard deviation of a $\chi^2_{56}$ is $\sqrt{2\times 56}\approx 10.6$.\\
+\vspace{5mm}
+Our Analysis of Deviance table says that there is no evidence of either an interaction with gender and distance (both genders are equally bad at shooting baskets at any distance) and that there is no evidence of a gender effect -- Quelle Surprise!. Therefore, we should simplify our model so that it is just a function of distance.
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Simplify the model}
+<<R7, size="scriptsize">>=
+bb.fit1 = glm(basket ~ distance, family = binomial, data = bb.df)
+summary(bb.fit1)
+@
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Understanding the model}
+<<R8, size="scriptsize">>=
+summary(bb.fit1)$coefficients[2,]
+b1 = coef(bb.fit1)[2]
+@
+The estimate of coefficient on distance, $\hat\beta_1$ is \Sexpr{round(b1, 2)}. This says that the \emph{log-odds of success} decrease by a factor of \Sexpr{round(b1, 2)} for every 1 metre increase of the shooter from the goal. 
+<<R9, echo = 1, size="scriptsize">>=
+exp(b1)
+pct.chg = round(100 * (1 - exp(b1)), 3)
+@
+\textbf{Note:} we can exponentiate the coefficients and make a statement about the multiplicative effect on the odds. So a 1 metre increase in the distance results in a $100\times(1-\Sexpr{round(exp(b1), 3)})\% = \Sexpr{pct.chg}\%$ reduction in the odds. 
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Prediction}
+We are quite interested in prediction. R makes predictions on the logit scale, so we must back-transform if we want values on the probability scale.
+<<R10, size="scriptsize">>=
+# take row means as only distance is important
+observed.prob = rowMeans(success.tbl/10) 
+bb.logit.pred = predict(bb.fit1, newdata = data.frame(distance = c(1, 2, 3)))
+bb.pred = exp(bb.logit.pred) / (1 + exp(bb.logit.pred))
+observed.prob
+# predicted prob
+round(bb.pred, 2)
+@
+So our predictions are a little conservative, especially around the very small proportions and the very high proportions. This is fairly typical for logistic regression models, and it kind of fits with our intuition that we do not expect probabilities to be exactly 0 or 1.
+\end{frame}
+
+
+
+\begin{frame}[containsverbatim]
+\frametitle{Confidence Intervals for Prediction}
+We can also get confidence intervals for our predictions by asking R to return the standard errors for the predictions. It is a little messy but it works.
+<<R11, size="scriptsize", tidy = FALSE>>=
+bb.logit.pred = predict(bb.fit1, newdata = data.frame(distance = c(1, 2, 3)),
+                        se = TRUE)
+LB = bb.logit.pred$fit - 1.96 * bb.logit.pred$se
+UB = bb.logit.pred$fit + 1.96 * bb.logit.pred$se
+bb.logit.ci = cbind(LB, UB)
+bb.ci = exp(bb.logit.ci) / (1 + exp(bb.logit.ci))
+bb.ci
+@
+\textbf{Note:} Sick of typing \verb|exp(x) / (1 + exp(x))|? For reasons I won't explain the function \verb|plogis| in R does the same thing. Similarly \verb|qlogis| is the logit function.
+
+\end{frame}
+
+
+
+\begin{frame}
+\begin{center}
+{\huge Alternatively, we can use the table to do the above analysis}
+\end{center}
+\end{frame}
+
+
+\begin{frame}[containsverbatim]
+\frametitle{Plot the data}
+
+Frequently, people will give you their data in a collapsed tabular form. 
+
+In the following we will invetsigate how to analyse data like this by re-producing the analysis of basketball data via a table of binomial counts.This is data where we have counts of the number of successes out a fixed number of trials ($n=10$).  
+
+
+  Recall our table of successes
+<<>>=
+success.tbl = xtabs(basket~distance+gender, data = bb.df)
+success.tbl
+@
+
+\end{frame}
+
+
+
+\begin{frame}[containsverbatim]
+\frametitle{Create a  data frame from this table}
+We noted earlier that logistic regression actually extends to binomial data.
+This is data where we have counts of the number of successes out a fixed
+number of trials. As a simple example, we can treat the data in the
+basketball example in this way. Recall our table of successes
+<<>>=
+bb2.df = data.frame(
+  success = as.vector(success.tbl),
+fail = 10 - as.vector(success.tbl),
+gender = factor(rep(c("F", "M"), c(3, 3))),
+distance = rep(1:3, 2)
+)
+bb2.df
+@
+\end{frame}
+
+
+\begin{frame}[containsverbatim]
+\frametitle{Plot the data}
+We can reorganize this into a data frame
+<<size="scriptsize">>=
+bb2.df = data.frame(success = as.vector(success.tbl),
+                    fail = 10 - as.vector(success.tbl),
+                    gender = factor(rep(c("F", "M"), c(3, 3))),
+                    distance = rep(1:3, 2))
+bb2.df
+@
+In this data set, our data is the number of successful shots at goal from
+different distances, and diferent genders. The number of successes follow
+a binomial distribution\footnote{making certain modelling assumptions}, because they are the sums of a fixed number
+($n = 10$) of Bernoulli trials.
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}[containsverbatim]
+\frametitle{Plot the data}
+We can analyse data in this form in R with a binomial GLM
+<<size="scriptsize">>=
+bb2.fit = glm(cbind(success, fail) ~ distance * gender,
+              family = binomial, data = bb2.df)
+anova(bb2.fit, test="Chisq")
+@
+\end{frame}
+
+
+
+
+\begin{frame}[containsverbatim]
+\frametitle{Some comments on differences}
+
+The analysis table gives slightly different because we have lost some information
+about the individual throws. We also implicitly assume in this model that
+given distance and gender, the probability of success is constant, and
+independent from throw-to-throw. 
+
+That is, the individual abilities of each student is not taken into account.
+
+
+However, the findings are not
+substantially different. 
+
+
+
+\medskip 
+We would proceed to the final model, as above, by getting rid of any interaction  of gender and distance and then gender effects --- exactly as we did in the above analysis using the original data. 
+
+\medskip 
+We won't for the sake of brevity. This was to let you know that tables of data can be modelled using logistic regression and how to go about doing so.
+
+\end{frame}
+
+\begin{frame}
+\begin{center}
+{\huge Alternatively, we can regard the response variable as a proportion}
+\end{center}
+\end{frame}
+
+
+\begin{frame}[containsverbatim]
+\frametitle{When the response variable is a proportion}
+
+
+Examples:
+  \begin{itemize}
+\item The number of heads out of ten coin tosses.
+\item The number of green lights out of the total number of traffic lights
+on your regular commute to work.
+\item The number of patients who survive an experimental procedure, 
+out of the number that underwent that procedure.
+\item The number of O-rings that fail when a space shuttle is launched, 
+out of the total of six O-rings on the solid fuel rockets.
+\end{itemize}
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Space shuttle {\em Challenger} accident}
+A sad story showing what can happen if standard linear models are
+applied to proportion data...
+
+\bigskip
+The space shuttle {\em Challenger} broke up during launch on the 
+cold morning of 28 January 1986. 
+Most of the crew survived the initial break-up, 
+but are believed to have been killed when the crew capsule hit the ocean
+at high speed.
+
+At the time, it was the most expensive human accident that had ever occurred
+(approx. US\$ 6 billion in today's terms.)\footnote{Unfortunately, 
+  an even more deadly and expensive accident occurred just months later.}
+
+It was particularly traumatic for the American people,
+because the shuttle was carrying the first civilian astronaut, Christa McAuliffe,
+who was a high-school social studies teacher.
+Approximately 17\% of Americans were watching the launch live.
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Space shuttle {\em Challenger} accident}
+\begin{columns}
+\begin{column}{0.6\textwidth}
+
+Subsequent investigation found that O-ring failures were the cause of the disaster. \\[3mm]
+
+The temperature at the launch site was a chilly $31^{\circ}F$.
+The risk of O-ring failure in cold weather had been grossly underestimated due to 
+using a linear model on proportion data.
+\end{column}
+
+\begin{column}{0.4\textwidth}
+\includegraphics[width=1.8in]{Figures/ShuttleSketch}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Space shuttle {\em Challenger} accident}
+The space shuttle solid-fuel rockets have a total of 6 O-rings.
+It was suspected that O-ring reliability was influenced by temperature.
+
+The rockets retrieved from previous launches were examined for O-ring distress, 
+and the proportion of distressed O-rings was plotted against temperature and
+a simple linear regression was fitted:
+  \begin{center}
+\includegraphics[width=2.5in]{Figures/AllOringsLM}
+\end{center}
+The simple linear regression predicts a negative proportion of O-ring distresses for
+temperatures above about $79^{\circ}F$!?!
+  \end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Space shuttle {\em Challenger} accident}
+\begin{columns}
+\begin{column}{0.6\textwidth}
+To fix the problem with the negative predicted proportions,
+they decided to remove all the zero data values.
+since they felt that the zero values
+contained no information about the probability of O-ring distress.
+\end{column}
+\begin{column}{0.4\textwidth}
+\includegraphics[width=1.8in]{Figures/HomerSimpson.jpg}
+\end{column}
+\end{columns}
+
+This kind of stupidity occurs even today.
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Space shuttle {\em Challenger} accident}
+With the zero values removed there is no evidence of a relationship between
+temperature and O-ring distress,
+\begin{center}
+\includegraphics[width=2.5in]{Figures/NonZeroOringsLM}
+\end{center}
+and so it was decided to approve the launch on that $31^{\circ} F$ morning.
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Space shuttle {\em Challenger} accident}
+73 seconds after lift-off the shuttle blew apart: \\[10mm]
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\includegraphics[width=1.8in]{Figures/ShuttleLiftOff.jpg}
+\end{column}
+\begin{column}{0.5\textwidth}
+\includegraphics[width=1.8in]{Figures/ShuttleExplosion.jpg}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Space shuttle {\em Challenger} accident}
+Very soon, we'll see how these data should have been anlaysed
+using a generalized form of the linear model 
+that is appropriate for proportion data.
+
+The fit of this generalized linear model to the O-ring data looks like:
+\begin{center}
+\includegraphics[width=2.5in]{Figures/AllOringsGLM}
+\end{center}
+
+This model predicts that the probability of an O-ring experiencing distress
+at $31^{\circ}F$ is 0.818. 
+This corresponds to expecting $6 \times 0.818 = 4.91$ distressed O-rings.
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Fishing example:}
+
+The experiment consisted of
+observing the number of fish (at given fork lengths) entering a trawl codend, 
+and the number of those retained by it.
+
+In dataframe \rcode{Haddock.df}, 
+\rcode{codend} is the number in the codend and
+\rcode{cover} is the number that escape the codend and are retained in the cover.
+The total number of haddock is therefore \rcode{codend + cover}.
+
+\begin{center}
+\includegraphics[width=4in]{Figures/CoveredCodendFig.pdf}
+\end{center}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Fishing example:}
+<<size="scriptsize">>=
+Haddock.df=read.table("Data/Haddock.dat",head=T)
+Haddock.df=within(Haddock.df,{n=codend+cover; propn=codend/n})
+head(Haddock.df,17)
+@
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Fishing example:}
+<<size="scriptsize">>=
+tail(Haddock.df,20)
+@
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Fishing example:}
+<<echo=FALSE>>=
+par(mar=c(4,4,0,4))
+@
+<<fig.height=3.5>>=
+plot(propn~forklen,data=Haddock.df,xlab="Fork length (cm)",las=1)
+@
+Note that the proportions seem to follow an ``S'' shape.
+\end{frame}
+
+
+
+
+
+\begin{frame}
+\frametitle{Modeling log-odds}
+When the response variable was Poisson count data,
+we saw that it made sense to work on the multiplicative scale:
+\[ \log( E[Y] ) = {\rm linear~model} \]
+or equivalently
+\[ E[Y] = \exp ({\rm linear~model}) \]
+
+\bigskip
+The idea of working on a different scale can also be applied to proportion data.
+In fact, when our response variable is a proportion
+we use a linear model for the log-odds.
+
+\[ \log( {\rm Odds} ) = {\rm linear~model}  \]
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Modeling log-odds}
+\framesubtitle{With a single continuous explanatory variable}
+When we have just a single explanatory variable $x$ that is continuous 
+(i.e., not a factor) then the linear model for log-odds is:
+\[ \log( {\rm Odds} ) = \beta_0 + \beta_1 x \]
+
+In other words,
+\[ \log \left( \frac{p}{1-p} \right) = \beta_0 + \beta_1 x  \]
+where $p$ is the probability of ``success'' for a subject with explanatory variable $x$.
+
+This can be re-arranged in the form
+\[ p= \frac{\exp(\beta_0 + \beta_1 x)}{1+exp(\beta_0 + \beta_1 x)} \]
+This equation forms an ``S'' shaped curve.
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Modeling log-odds}
+\framesubtitle{With a single continuous explanatory variable}
+For example, 
+if $\beta_0=-10$ and $\beta_1=0.3$ then the curve looks like:
+
+\vspace{-11mm}
+<<echo=FALSE,fig.height=3.75>>=
+x=seq(20,50,0.01); beta0=-10; beta1=0.3
+p=exp(beta0+beta1*x)/(1+exp(beta0+beta1*x))
+plot(x,p,type="l",las=1)
+@
+$\triangleright$ The greater the magnitude of $\beta_1$ the steeper the curve.\\
+$\triangleright$ If $\beta_1<0$ the curve is a reverse ``S'' shape.\\
+$\triangleright$ Changing $\beta_0$ changes the horizontal position of the curve.
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Modeling proportion data using log-odds}
+\framesubtitle{Logistic regression using glm}
+To use \rcode{R} function \rcode{glm} to model proportions using an ``S'' shaped curve,
+we simply use \rcode{family=binomial}. 
+
+However, as each proportion is the number of ``successes'' out of a fixed number
+of trials, we also have to tell \rcode{glm} the number of trials.
+This is done using the \rcode{weight} argument.
+
+\bigskip
+<<size="small">>=
+Haddock.glm=glm(propn~forklen,family=binomial,
+weight=n,data=Haddock.df)
+@
+
+In statistical language, the ``S'' shaped curve is called a logistic curve, 
+and this technique is called {\bf logistic regression}.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Modeling proportion data using log-odds}
+%\framesubtitle{Logistic regression using glm}
+<<size="footnotesize">>=
+summary(Haddock.glm)
+@
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Modeling proportion data using log-odds}
+
+As with the Poisson case, we need to check the residual deviance by comparing
+it to a $\chi^2$. 
+The residual deviance is 23.44 on 34 degrees of freedom. 
+The p-value is 
+
+<<>>=
+1-pchisq(23.44,34)
+@
+which indicates no significant problems with the fitted model.
+
+\bigskip
+{\bf NOTE:} 
+If the residual deviance indicated lack of fit then we would have to refit
+using \rcode{family=quasibinomial}.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Modeling proportion data using log-odds}
+Let's check the residual plot
+<<fig.height=3.5>>=
+  plot(Haddock.glm,which=1)
+@
+  Looks good.
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Modeling proportion data using log-odds}
+\framesubtitle{Interpretation}
+<<>>=
+  summary(Haddock.glm)$coef
+@
+  Remember, the linear model is on the log-odds scale.
+So, the value 0.304 corresponds to the estimated increase in log-odds of retention
+for every one unit in \rcode{forklen}.
+
+The 95\% confidence interval is:
+  <<>>=
+  confint.default(Haddock.glm)
+@
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Modeling proportion data using log-odds}
+\framesubtitle{Interpretation}
+Exponentiating the above confidence interval gives:
+  <<>>=
+  exp(confint.default(Haddock.glm))
+@
+  In our {\bf Executive Summary} we could say something like
+``Every 1 cm increase in the fork length of a haddock corresponds to an increase
+in odds of it being retained in the codend of between 29\% and 42\%".
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Fishing example:}
+
+Here is a plot of the data with the fitted ``S" curve overlaid:
+<<echo=FALSE,fig.height=4>>=
+plot(propn~forklen,data=Haddock.df,xlab="Fork length (cm)",las=1)
+x=seq(19,56,0.1)
+predlens=data.frame(forklen=x)
+exp=predict(Haddock.glm,predlens,type="response")
+lines(x,exp,type="l",lty=2)
+@
+\end{frame}
+
+
+\begin{frame}[fragile]
+
+\frametitle{Fishing example:}
+To estimate the probability of retention for haddock of lengths 25, 35 and 45 cm:
+  
+<<eval=FALSE>>=
+preds=data.frame(forklen=c(25,35,45))
+predCI=predictCount(Haddock.glm,preds,print.out=FALSE)
+# turn these into probs
+pred.probs=exp(predCI)/(1+exp(predCI))
+pred.probs
+@
+<<echo=FALSE>>=
+preds=data.frame(forklen=c(25,35,45))
+predCI=predictCount(Haddock.glm,preds,print.out=FALSE)
+pred.probs=exp(predCI)/(1+exp(predCI))
+pred.probs
+@
+  
+The probability that a 25 cm haddock is retained in the codend is
+between 0.026 and 0.079.
+This increases to between 0.44 and 0.56 for 35 cm haddock,
+and between 0.929 and 0.971 for 45 cm haddock.
+
+
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Fishing example:}
+
+Confidence intervals the probability of retention for haddock of lengths 25, 35 and 45 cm---
+the necessary code:
+<<eval=FALSE,fig.height=4, size="scriptsize">>=
+plot(propn~forklen,data=Haddock.df,xlab="Fork length (cm)",las=1)
+x=seq(19,56,0.1)
+
+predlens=data.frame(forklen=x)
+exp=predict(Haddock.glm,predlens,type="response")
+lines(x,exp,type="l",lty=2)
+
+pred=predictCount(Haddock.glm,preds,print.out=FALSE)
+arrows(25,pred.probs[1,2],25,pred.probs[1,3],length=.1,col="blue",code=3)
+arrows(35,pred.probs[2,2],35,pred.probs[2,3],length=.1,col="blue",code=3)
+arrows(45,pred.probs[3,2],45,pred.probs[3,3],length=.1,col="blue",code=3)
+@
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Fishing example:}
+
+Confidence intervals the probability of retention for haddock of lengths 25, 35 and 45 cm --- 
+the resulting picture:
+<<echo=FALSE,fig.height=4>>=
+plot(propn~forklen,data=Haddock.df,xlab="Fork length (cm)",las=1)
+x=seq(19,56,0.1)
+predlens=data.frame(forklen=x)
+exp=predict(Haddock.glm,predlens,type="response")
+lines(x,exp,type="l",lty=2)
+pred=predictCount(Haddock.glm,preds,print.out=FALSE)
+arrows(25,pred.probs[1,2],25,pred.probs[1,3],length=.1,col="blue",code=3)
+arrows(35,pred.probs[2,2],35,pred.probs[2,3],length=.1,col="blue",code=3)
+arrows(45,pred.probs[3,2],45,pred.probs[3,3],length=.1,col="blue",code=3)
+@
+\end{frame}
+
+
+
+
+\end{document}

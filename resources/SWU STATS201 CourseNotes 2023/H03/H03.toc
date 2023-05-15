@@ -1,0 +1,5 @@
+\beamer@sectionintoc {1}{Revisiting the null model}{3}{0}{1}
+\beamer@sectionintoc {2}{Revisiting the $t$-test}{13}{0}{2}
+\beamer@sectionintoc {3}{Inference about $\mu $ using the bootstrap \\ (Non examinable)}{21}{0}{3}
+\beamer@sectionintoc {4}{The paired \emph {t}-test}{28}{0}{4}
+\beamer@sectionintoc {5}{Relevant {\color {darkgreen}\texttt {R}}-code}{38}{0}{5}

@@ -1,0 +1,8 @@
+\beamer@sectionintoc {1}{A motivating example - previous 20x students}{3}{0}{1}
+\beamer@sectionintoc {2}{Getting data into {\color {darkgreen}\texttt {R}} -- creating a dataframe}{6}{0}{2}
+\beamer@sectionintoc {3}{Working with dataframes in {\color {darkgreen}\texttt {R}}}{10}{0}{3}
+\beamer@sectionintoc {4}{How to fit straight lines to your data - a.k.a. the simple linear model}{16}{0}{4}
+\beamer@sectionintoc {5}{How to predict using the fitted model?}{24}{0}{5}
+\beamer@sectionintoc {6}{How good is the fitted model for prediction? -- $R^2$}{34}{0}{6}
+\beamer@sectionintoc {7}{Some technical asides}{43}{0}{7}
+\beamer@sectionintoc {8}{Relevant {\color {darkgreen}\texttt {R}}-code}{46}{0}{8}

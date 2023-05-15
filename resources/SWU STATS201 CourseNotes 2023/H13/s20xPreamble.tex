@@ -1,0 +1,47 @@
+\usepackage{graphicx}
+\usepackage{etoolbox}
+\usepackage{everysel}
+\usepackage{textcomp}
+
+%% This sets the theme of the presentation which controls
+%% the formatting of the slides
+\usetheme{Boadilla}
+
+%% Turn off the navigation symbols
+\setbeamertemplate{navigation symbols}{} 
+
+
+%% Set the author block so STATS 201/8 appears on every
+\author{STATS 201/8}
+
+%% Clear the date block
+\date{}
+
+
+%% This makes all equations blue
+\AtBeginEnvironment{equation*}{\color{blue}}
+\AtBeginEnvironment{align*}{\color{blue}}
+\everymath{\color{blue}}
+
+%% This puts a 6 point space between paragraphs, means we don't need to use vspace, or list environments if 
+%% we don't want to
+\setlength{\parskip}{0pt}
+
+
+%% Russell: removes spaces after R input/output?
+%% \setlength{\topsep}{0mm}
+
+%% Some useful colors
+\definecolor{darkgreen}{rgb}{0.176,0.486,0.031}
+\definecolor{redbrown}{HTML}{950605}
+\definecolor{darkred}{HTML}{d80605}
+
+
+%% nice little macro for changing the font of R code
+\newcommand{\rcode}[1]{{\color{darkgreen}\texttt{#1}}}
+
+%% macro for bold blue italics
+\newcommand{\blueBoldEmph}[1]{{\color{blue}\textbf{\emph{#1}}}}
+
+% ~iid macro
+\newcommand{\iid }{\stackrel{iid}{\sim}}

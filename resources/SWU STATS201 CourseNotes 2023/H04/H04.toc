@@ -1,0 +1,3 @@
+\beamer@sectionintoc {1}{Identifying a curved relationship}{3}{0}{1}
+\beamer@sectionintoc {2}{Fitting a quadratic model}{10}{0}{2}
+\beamer@sectionintoc {3}{Relevant {\color {darkgreen}\texttt {R}}-code}{23}{0}{3}

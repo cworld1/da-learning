@@ -1,0 +1,56 @@
+\frametitle{Most of the \rcode{R}-code you need for this chapter}
+
+Fitting the model with no explanatory variables (i.e. no $x$):
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{exam.fit}\hlkwb{=}\hlkwd{lm}\hlstd{(Exam}\hlopt{~}\hlnum{1}\hlstd{,} \hlkwc{data}\hlstd{=Stats20x.df)}
+\hlstd{> }\hlkwd{confint}\hlstd{(exam.fit)}
+\hlstd{> }\hlstd{exam.fit60}\hlkwb{=}\hlkwd{lm}\hlstd{(}\hlkwd{I}\hlstd{(Exam}\hlopt{-}\hlnum{60}\hlstd{)}\hlopt{~}\hlnum{1}\hlstd{,} \hlkwc{data}\hlstd{=Stats20x.df)}
+\hlstd{> }\hlkwd{coef}\hlstd{(}\hlkwd{summary}\hlstd{(exam.fit60))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+Equivalent output can be obtained from the t-test:
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{t.test}\hlstd{(Stats20x.df}\hlopt{$}\hlstd{Exam,}\hlkwc{mu}\hlstd{=}\hlnum{60}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+For a paired comparison we need to create the difference variable:
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{Stats20x.df}\hlopt{$}\hlstd{Diff} \hlkwb{=} \hlstd{Stats20x.df}\hlopt{$}\hlstd{Test2} \hlopt{-} \hlstd{Stats20x.df}\hlopt{$}\hlstd{Exam} \hlcom{# create differences}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\vspace{-3mm}
+Then either of these will suffice:
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlcom{# confidence interval for fitted value:}
+\hlstd{> }\hlstd{diff.fit}\hlkwb{=}\hlkwd{lm}\hlstd{(Diff}\hlopt{~}\hlnum{1}\hlstd{,} \hlkwc{data} \hlstd{= Stats20x.df)}
+\hlstd{> }\hlkwd{coef}\hlstd{(}\hlkwd{summary}\hlstd{(diff.fit))}
+\hlstd{> }\hlkwd{confint}\hlstd{(diff.fit)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\vspace{-3mm} or equivalently
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{t.test}\hlstd{(Stats20x.df}\hlopt{$}\hlstd{Diff)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+

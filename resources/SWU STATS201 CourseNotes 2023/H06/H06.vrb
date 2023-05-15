@@ -1,0 +1,40 @@
+
+\frametitle{Most of the new \rcode{R}-code you need for this chapter}
+If any of the following hold:
+\begin{itemize}
+\item A multiplicative effect of the explanatory variables seems appropriate
+\item Right skewness of the variability (inspect the residuals to check)
+\item A funnel effect in the plot of residuals vs fitted values
+\end{itemize}
+then a log transformation of the response variable $y$ may be appropriate. The usual steps (fitting a linear model and assumption checking, CIs, etc) are then applied to the logged response.
+
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{Trawl.lmlog}\hlkwb{=}\hlkwd{lm}\hlstd{(}\hlkwd{log}\hlstd{(Bycatch)}\hlopt{~}\hlstd{Trawl,}\hlkwc{data}\hlstd{=Bycatch.df)}
+\hlstd{> }\hlcom{# then check if it's okay}
+\hlstd{> }\hlkwd{plot}\hlstd{(Trawl.lmlog,}\hlkwc{which}\hlstd{=}\hlnum{1}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+Confidence intervals can be back-transformed and interpreted as a multiplicative increases/decreases - in this case relative to baseline:
+
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{exp}\hlstd{(}\hlkwd{confint}\hlstd{(Trawl.lmlog))}
+\end{alltt}
+\begin{verbatim}
+                 2.5 %    97.5 %
+(Intercept)  2.1336329 4.2261691
+TrawlTapered 0.3025531 0.7953873
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+and we interpret this with respect to change in the median value of $y$.
+

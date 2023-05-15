@@ -1,0 +1,26 @@
+\frametitle{Student language score by  teaching method and IQ\ldots}
+\framesubtitle{Model selection using Occam's razor\ldots}
+Let us see if we really do have identical intercepts.  \\
+\medskip
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{anova}\hlstd{(TeachIQmethod.fit2)}
+\end{alltt}
+\begin{verbatim}
+Analysis of Variance Table
+
+Response: lang
+          Df Sum Sq Mean Sq F value    Pr(>F)
+IQ         1 1004.4  1004.4  26.090 2.529e-05 ***
+method     2 2901.8  1450.9  37.688 2.077e-08 ***
+Residuals 26 1001.0    38.5
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\medskip
+The \pval{} associated with the \rcode{method} term is very small, so we conclude that the intercepts are different.\\
+\medskip
+We do have to fit different intercepts for each teaching method. Our instincts were right.

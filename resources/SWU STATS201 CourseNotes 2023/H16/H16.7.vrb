@@ -1,0 +1,29 @@
+\frametitle{Categorical data\ldots}
+\framesubtitle{Attendance/Pass}
+
+It is of interest to examine whether attendance  of STATS 20x lectures had an association with success (pass or fail) in the course. Recall, we have data for the class of 146 students.
+
+\bigskip
+
+The raw format for recording categorical data is the usual rectangular format with rows being the observations on each subject, and columns being the measured factor variables. The first 8 lines of the raw data look like this:
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{AP.df} \hlkwb{=} \hlkwd{read.table}\hlstd{(}\hlstr{"Data/AttendPass.txt"}\hlstd{,}\hlkwc{header}\hlstd{=T)}
+\hlstd{> }\hlkwd{head}\hlstd{(AP.df,} \hlnum{8}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+  Subject Pass     Attend
+1       1 pass     attend
+2       2 pass     attend
+3       3 pass     attend
+4       4 pass     attend
+5       5 pass     attend
+6       6 fail not.attend
+7       7 pass not.attend
+8       8 fail     attend
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+

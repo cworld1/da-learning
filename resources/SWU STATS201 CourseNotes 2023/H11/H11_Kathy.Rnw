@@ -1,0 +1,850 @@
+\documentclass{beamer}
+\usepackage{graphicx}
+\input{../s20xPreamble.tex}
+
+\begin{document}
+
+<<RC-H11-000, echo=FALSE,warning=FALSE>>=
+source("../s20xNotesHelper.R")
+## these are global knitr options and settings for the
+## whole document
+library(knitr)
+library(s20x)
+library(emmeans)
+## comment = NA removes ## from all output lines
+## prompt = TRUE means the console input prompt > is displayed
+## tidy = TRUE means the code is properly spaced and tidied.
+opts_chunk$set(comment = NA, size = "scriptsize", prompt = TRUE, tidy = TRUE)
+#The next line is required for multicomp to work in R4.0.0
+#In future, multicomp may be updated and then this will no longer be required.
+options(stringsAsFactors = TRUE) 
+@
+
+\title{Chapter 11: Linear models with a factor variable with three or more levels}
+
+\institute{University of Auckland}
+
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+\begin{frame}[t]
+\frametitle{Learning Outcomes}
+In this chapter you will learn about:
+\begin{center}
+\vspace{16pt}
+  \begin{itemize}
+  \item Explanatory factor with multiple levels---One-way analysis of variance
+  \item The multiple comparisons problem  
+  \item Relevant \rcode{R}-code.
+  \end{itemize}
+\end{center}
+
+\end{frame}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\begin{center}
+\vspace{16pt}
+
+{\LARGE Explanatory factor with multiple levels \newline (One-way analysis of variance)}
+
+\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+% \begin{frame}
+% \begin{center}
+% {\huge Explanatory factor with multiple levels, \\
+  %  and the multi comparisons problem}
+% \end{center}
+% \end{frame}
+
+
+\begin{frame}[fragile]
+% \frametitle{Explanatory factor with many levels ($>2$)}
+% \framesubtitle{Fruit fly example}
+\frametitle{Example---Fruit fly}
+
+In this case study we look at how the male fruit-fly's longevity is related
+to his reproductive activity.
+
+\begin{center}
+\includegraphics{Pictures/rfly}
+\end{center}
+
+Data from
+\url{http://www.cvgs.k12.va.us:81/digstats/Imain.html}.
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Fruit fly}
+
+Studies have shown that the longevity (life span) of female fruit flies decreases with an increase in reproduction, and this leads to a similar question related to males.
+
+\medskip
+The hypothesis was that the males living alone or with uninterested females would live longer than the males living with the interested females.
+Since there are more than two group means to compare\footnote{If there were only two groups we could use a two sample two-sample \ttest{} discussed in chapter 5}
+an adjustment to how we interpret our model is used to determine if there is a significant difference between these group means.
+
+\medskip
+How does one define ``interest" in fruit-flies?
+
+\medskip
+Here is this study's definition of the question above:
+  
+  \smallskip
+\begin{itemize}
+\item [] Newly inseminated females will not usually mate again for at least two days.
+So, the males in the uninterested females groups were always living
+with newly inseminated females.
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Fruit fly\ldots}
+
+The variable measured was:
+  \medskip
+
+\begin{tabular}{lp{15cm}}
+
+\rcode{days} & the number of days the male fly lived\\
+
+\end{tabular}
+
+\medskip
+The variables that were controlled were:
+  \medskip
+
+\begin{tabular}{lp{15cm}}
+
+\rcode{group} &	the group they were allocated to where:\\
+&\rcode{G1} are males living alone, \\
+&\rcode{G2} are males living with one interested female, \\
+&\rcode{G3} are males living with eight interested females,\\
+&\rcode{G4} are males living with one uninterested female, and \\
+&\rcode{G5} are males living with eight uninterested females.
+\end{tabular}
+\medskip
+
+There were 25 flies in each group, for a total sample size of 125.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Fruit fly\ldots}
+
+Let us take a look at the data:
+  <<RC-H11-001, fig.show = 'hide'>>=
+  Fruitfly.df = read.csv("Data/Fruitfly.csv", header=T)
+boxplot(days ~ group, data = Fruitfly.df)
+@
+  
+  <<RC-H11-002, echo = FALSE>>=
+  trimPlot(days ~ group,
+           data = Fruitfly.df,
+           fileName = "figure/RC-H11-002.pdf",
+           plotCommand = boxplot,
+           .at = c(1, 2, 3, 4, 5),
+           .labels = c("G1", "G2", "G3", "G4", "G5"),
+           fig.height = 2.5,
+           fig.width = 4.5,
+           x.lab = "Group",
+           y.lab = "Longevity (days)")
+@
+  
+  \begin{figure}
+\centering
+\includegraphics{figure/RC-H11-002}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}[fragile, label={frame:refcellModel}]
+\frametitle{Fruit fly\ldots}
+
+It seems male fruit flies do not live as long when they are in the presence of `uninterested' females (\rcode{G5}). A result we were not expecting.
+
+\medskip
+
+For females reproduction came at a cost (shorter lifespan), whereas for males, a lack of reproduction seems to cost them. Let us see if this  effect is `real' (or not).
+\end{frame}
+
+
+\begin{frame}[fragile, label={cnrpt_model}]
+\frametitle{Fruit fly\ldots}
+\framesubtitle{Explanatory factor with many levels ($>2$)}
+
+A suitable model to address these questions is:
+  
+  \[\rcode{days}=\beta_0+\beta_{1}\times\rcode{D2} +\beta_{2}\times\rcode{D3} + \beta_{3}\times\rcode{D4}+  \beta_{4}\times\rcode{D5} + \epsilon\]
+where, as usual $\epsilon \iid N(0, \sigma^2)$.
+
+\medskip
+\begin{itemize}
+\item \rcode{D2} is a dummy variable whereby: \rcode{D2}=1 if the fruit fly is in group 2---otherwise it is 0.
+
+\item \rcode{D3} is a dummy variable whereby: \rcode{D3}=1 if the fruit fly is in group 3---otherwise it is 0.
+
+\item ... And so on.
+\end{itemize}
+
+For example, $\beta_{1}$ and $\beta_{2}$ represent the differences in average longevity (\rcode{days}) when we compare groups 2 and 3, respectively, to group 1 (the baseline).
+
+%Take a look at the design matrix (5 groups of 4 obs each)
+%Grp=rep(c("G1","G2","G3","G4","G5"),c(4,4,4,4,4))
+%y=rnorm(20,60,10)
+%MadeUpDataFrame=data.frame(Grp,y)
+%lmFit=lm(y~Grp,data=MadeUpDataFrame)
+%model.matrix(~Grp,data=MadeUpDataFrame)
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Fruit fly\ldots}
+\framesubtitle{Assumption checks}
+
+% Let us see how this model works out with the usual assumption checks.
+<<RC-H11-003, fig.show = 'hide'>>=
+  Fruitfly.fit = lm(days ~ group, data = Fruitfly.df)
+plot(Fruitfly.fit,which=1)
+@
+  
+  <<RC-H11-004, echo = FALSE>>=
+  trimPlot(Fruitfly.fit,
+           fileName = "figure/RC-H11-004.pdf",
+           which=1,
+           fig.height = 2.25,
+           fig.width = 4.25,
+           cex = 0.7,
+           mai = c(0.5, 0.5, 0.1, 0.1),
+           x.lab = "Fitted values",
+           y.lab = "Residuals")
+@
+  
+  \begin{figure}
+\centering
+\includegraphics{figure/RC-H11-004}
+\end{figure}
+
+The {\bf EOV} assumption seem to be okay.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Fruit fly\ldots}
+\framesubtitle{Assumption checks\ldots}
+
+<<RC-H11-005old, fig.show = 'hide', echo=FALSE, eval=FALSE>>=
+  normcheck(Fruitfly.fit)
+@
+  
+  <<RC-H11-005, fig.show = 'hide', tidy.opts=list(width.cutoff=60)>>=
+  residuals_Fruitflylm <- resid(Fruitfly.fit)
+hist(residuals_Fruitflylm, 
+     main = "", 
+     xlab = "Residuals from Fruitfly.fit", 
+     col = "lightblue",
+     cex.lab = 1.5)
+box()
+@
+  
+  <<RC-H11-006, echo=FALSE, eval=FALSE>>=
+  trimPlot(Fruitfly.fit,
+           fileName = "figure/RC-H11-006.pdf",
+           plotCommand = normcheck,
+           fig.height = 2.1,
+           fig.width = 4.1)
+@
+  
+  \begin{figure}
+\centering
+\includegraphics[scale=0.35, trim={0 0 0 2cm},clip]{figure/RC-H11-005-1}
+\end{figure}
+
+The normality assumption seems to be okay.
+\end{frame}
+
+
+\begin{frame}[fragile]
+
+\frametitle{Fruit fly\ldots}
+\framesubtitle{Assumption checks\ldots}
+
+<<RC-H11-007old, echo=FALSE, eval=FALSE, fig.show = 'hide'>>=
+  cooks20x(Fruitfly.fit)
+@
+  
+  <<RC-H11-008old, echo = FALSE, eval=FALSE, fig.align = 'center', fig.height = 2.5, fig.width = 5>>=
+  trimPlot(Fruitfly.fit,
+           fileName = "figure/RC-H11-008.pdf",
+           plotCommand = cooks20x,
+           fig.height = 2.1,
+           fig.width = 4.1,
+           mai = c(0.5, 0.6, 0.1, 0.1))
+@
+  
+  <<RC-H11-007, fig.show = 'hide'>>=
+  plot(Fruitfly.fit, which=4,
+       caption = "", 
+       sub.caption = "",
+       cex.lab = 1.5)
+@
+  
+  <<RC-H11-008, echo = FALSE, fig.align = 'center'>>=
+  # trimPlot(Fruitfly.fit,
+  #          fileName = "figure/RC-H11-008.pdf",
+  #          plotCommand = cooks20x,
+  #          fig.height = 2.1,
+  #          fig.width = 4.1,
+  #          mai = c(0.5, 0.6, 0.1, 0.1))
+  trimPlot(Fruitfly.fit,
+           fileName = "figure/RC-H11-008.pdf",
+           which=4,
+           fig.height = 2.1,
+           fig.width = 4.1,
+           cex.lab = 1.5,
+           #cex = 5,
+           mai = c(0.5, 0.6, 0.1, 0.1),
+           x.lab = "Obs. number",
+           y.lab = "Cook's distance")
+@
+  
+\begin{figure}
+\centering
+\includegraphics[scale = 1.1]{figure/RC-H11-008}
+\end{figure}
+
+No unduly influential data points.
+
+\end{frame}
+
+
+\begin{frame}[fragile, label={fruitfly_anova}]
+\frametitle{Fruit fly\ldots}
+\framesubtitle{$R^2$ and ANOVA table}
+
+We can trust this output. What is it telling us?
+  
+<<RC-H11-009, echo = 1>>=
+anova(Fruitfly.fit)
+
+anova.table <- anova(Fruitfly.fit)
+groupSS <- sprintf("%5.0f", anova.table$`Sum Sq`[1])
+residualSS <- sprintf("%5.0f", anova.table$`Sum Sq`[2])
+totalSS <- sprintf("%5.0f", anova.table$`Sum Sq`[1] + anova.table$`Sum Sq`[2])
+RSq <- signif(summary(Fruitfly.fit)$r.squared * 100, 2)
+@
+  
+\medskip
+
+This simply allows us to say that there is a clear difference in expected longevity between the
+five groups, which was fairly obvious from the first plot.
+The next step is to see where the differences lie.  
+
+\smallskip
+
+Note that a significant result means you should investigate which groups are different from one another; there is more work to be done.
+
+\smallskip
+
+Now we can investigate whether female `lack of interest' is `killing'
+these wretched male fruit flies.
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Fruit fly\ldots}
+\framesubtitle{One-way analysis of variance}
+Now we know that the variable \rcode{group} helps explain longevity,
+what can we say about these groups? Let us investigate.
+
+\medskip
+
+The \rcode{emmeans} R package contains a function of the same name which we will use to compute the overall\footnote{The overall mean is also often referred to as the `grand' mean.} mean and the group means. We can use these means to calculate the group {\em effects}, i.e. the deviations of the group means from the overall mean.
+
+\end{frame}
+
+
+\begin{frame}[fragile, label={group_means}]
+\frametitle{Fruit fly\ldots}
+\framesubtitle{Overall\footnote{{\scriptsize The argument \rcode{specs = "1"}, or equivalently \rcode{specs = \textasciitilde{}1}, indicates that averaging is over {\em all} observations in the dataset. Setting the argument \rcode{calc = c(n = ".wgt.")} produces the column of sample sizes (n).}} and group means\ldots}
+
+<<RC-H11-010_0, echo=FALSE, eval=FALSE>>=
+#The ANOVA table from slide~\ref{fruitfly_anova}, i.e.
+print(round(as.matrix(anova(Fruitfly.fit)), digits = 2), na.print = "")
+@
+
+<<RC-H11-010_1, eval=FALSE, echo=FALSE>>=
+# this shows the contents of .wgt. parameter, which is simply the sample size of each group
+ref_grid(Fruitfly.fit) @ grid
+@
+
+<<RC-H11-010a, tidy = FALSE, size = "scriptsize">>=
+grandmean.df = as.data.frame(
+  emmeans(Fruitfly.fit, specs = "1", calc = c(n = ".wgt.")))
+grandmean.df[,c("1", "n", "emmean")]
+@
+
+
+<<RC-H11-010b, tidy = FALSE, size = "scriptsize">>=
+groupmeans.df = as.data.frame(
+  emmeans(Fruitfly.fit, specs = "group", calc = c(n = ".wgt.")))
+groupmeans.df[,c("group", "n", "emmean")]
+@
+
+\medskip
+
+{\small Effects (deviations from grand mean):}
+<<RC-H11-010c, size = "scriptsize">>=
+groupmeans.df$emmean - grandmean.df$emmean
+@
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Fruit fly\ldots}
+\framesubtitle{Interpreting the output}
+We see from above that the overall average longevity of the 125 male flies in the study
+is about 57.4 days.
+
+\medskip 
+
+We also see that group \rcode{G5} has markedly lower longevity (18.75 fewer days) compared to the overall mean.
+
+\medskip
+
+Note that if \rcode{group} does not explain any true underlying variation in longevity, then we expect all these group means to differ at most only moderately from the overall mean. This can be hard to judge informally, since we have to take into account the standard error of each group mean and how many groups there are. 
+
+\medskip
+
+That is why we have to rely on the \pval{} from the \rcode{anova} table.
+\end{frame}
+
+
+\begin{frame}[fragile,label={refcell_coeffs}]
+\frametitle{Fruit fly\ldots}
+\framesubtitle{Interpreting the output\ldots}
+
+It is natural to ask which of the groups are different. \\
+Here is our familiar \rcode{summary} output:
+
+<<RC-H11-011, results='hide'>>=
+summary(Fruitfly.fit)
+@
+
+<<RC-H11-012, echo=FALSE>>=
+slimSummary(Fruitfly.fit)
+@
+
+Here we see that we have evidence to believe that $\beta_4$, the parameter for group 5, is different from zero. 
+
+\medskip
+
+We estimate that males with 8 uninterested females die, on average, 25 days earlier than males who are by themselves (our baseline group is \rcode{G1}).
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Fruit fly\ldots}
+\framesubtitle{Interpreting the output\ldots}
+
+In the output above we are restricted to seeing how each of the groups, \rcode{G2-G5}, differs from  the baseline group \rcode{G1}.
+\medskip
+
+If we wish to see how the other groups differed from group \rcode{G4}, for example, then we could achieve this by changing the baseline group to group \rcode{G4} by reordering the levels of the group factor variable.
+
+\medskip
+
+This is very tedious, but here is how we make \rcode{G4} the baseline level in \rcode{R}: 
+
+<<RC-H11-013, tidy = FALSE>>=
+Fruitfly.df$newgroup = factor(Fruitfly.df$group, 
+                              levels = c("G4", "G1", "G2", "G3", "G5"))
+@
+
+\medskip
+
+However, what if we wish to look at all pair-wise comparisons (i.e., \rcode{G1~vs~G2}, \rcode{G2~vs~G3}, \rcode{\ldots})? Do we really have to do this re-ordering a bunch of times in order to find these out?
+
+\medskip
+
+The answer is no: We can get \rcode{R} to do this `heavy lifting' for us.
+  
+  \end{frame}
+  
+  
+  \begin{frame}[fragile]
+  \frametitle{Fruit fly\ldots}
+  \framesubtitle{Multiple comparisons}
+  
+  Note that when we are looking at all pair-wise comparisons of 5 groups,
+  we have a total of 10 different possibilities: \medskip
+  
+  \rcode{G1~vs~G2}, \rcode{G1~vs~G3}, \rcode{G1~vs~G4}, \rcode{G1~vs~G5}, (4 comparisons)
+  
+  \rcode{G2~vs~G3}, \rcode{G2~vs~G4}, \rcode{G2~vs~G5}, (3 comparisons)
+  
+  \rcode{G3~vs~G4}, \rcode{G3~vs~G5}, (2 comparisons)
+  
+  \rcode{G4~vs~G5}, (1 comparisons).
+  
+  \medskip
+  The number 10 comes from $ 4+3+2+1=10$ or in fact $^{5}C_2=10$ ways of choosing 2 objects from  5 (in no particular order).
+  
+  \medskip
+  Here we are asking  10  questions (comparisons) about our data, as we are looking to test 10 null hypotheses. Of all null hypotheses that are true, 5\% are falsely rejected. Of all 95\% confidence intervals, 5\% of them do not contain the true parameter value.
+  
+  \end{frame}
+  
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \begin{frame}
+  \begin{center}
+  \vspace{16pt}
+  
+  {\LARGE The multiple comparisons problem}
+  
+  \end{center}
+  \end{frame}
+  
+  
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  
+  
+  \begin{frame}[fragile]
+  \frametitle{Erroneous evidence of an effect from multiple testing}
+  
+  The following \rcode{R} code fits a simple linear regression model to iid (independent and identically distributed) normal data.  
+  
+  \medskip
+  
+  {\bf NOTE:} The null hypothesis $H_0:$ slope = 0 is {\bf true}. 
+  
+  <<RC-H11-014>>=
+    x = 1:30 ## Our explanatory variable
+  x
+  y = rnorm(30) ## y has NO relationship with x
+  summary(lm(y~x))$coef ## Print only the coefficient table
+  @
+    
+    If this code is run many times over, then approximately 5\% of the time the slope will have \pval{} $<0.05$.\footnote{In fact, it can be shown that the \pval{} is uniformly distributed between 0 and 1 when $H_0$ is true.} \\
+  \smallskip
+  That is, there will be erroneous evidence of an effect of \rcode{x} (i.e., evidence for a non-zero slope) about 1 time in 20!
+    
+    \end{frame}
+  
+  
+  \begin{frame}[fragile]
+  
+  % \frametitle{Fruit fly example\ldots}
+  \frametitle{Erroneous evidence of an effect from multiple testing\ldots}
+  
+  When we do multiple tests (i.e., the 10 paired comparisons in this example) then we greatly increase the probability of obtaining at least one erroneous conclusion\footnote{ Assuming independent comparisons, if we do 10 95\% CIs we have an overall error rate of $1-(1-.05)^{10}=40\%$, which is much higher than our original 5\% error rate per comparison.}.
+  
+  \medskip 
+  
+  This is known as the multiple comparison problem. It essentially says that if you look at enough things you will find something `happening', even when there's nothing going on.
+  
+  \medskip
+  
+  Remember, data always have variability, and if we are not careful we can `discover' false structure that is not really there.
+
+\medskip 
+
+So, when we look at these 10 comparisons we need to adjust so that the overall error rate (the probability of any spurious significance) over all 10 comparison is no more the 5\%. This can be done using a Tukey adjustment.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Example---Fruit fly}
+\framesubtitle{Tukey simultaneous confidence intervals}
+% \framesubtitle{Multiple comparisons\ldots}
+
+{\footnotesize
+Let's get {\em simultaneous} 95\% confidence intervals\footnote{\scriptsize By default \rcode{infer = c(FALSE, TRUE)} which prints the test statistics but not the confidence intervals.} for all 10 comparisons via \rcode{emmeans}'s \rcode{pairs} function.
+
+\smallskip
+
+These confidence intervals are called ``simultaneous'' since we can be 95\% confident that {\bf they all} contain the true group difference simultaneously.}
+
+<<RC-H11-015, size = "tiny">>=
+Fruitfly.emm = emmeans(Fruitfly.fit, specs = "group")
+pairs(Fruitfly.emm, infer = TRUE)
+@
+
+{\footnotesize Here we see that most of these comparisons are not significantly different.}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Fruit fly}
+\framesubtitle{Tukey simultaneous confidence intervals\ldots}
+
+Let's extract the CIs where the Tukey adjusted \pval{} are less than 0.05.
+  
+  <<RC-H11-017>>=
+    mc.fruitfly = summary(pairs(Fruitfly.emm, infer = TRUE))
+  ## Which entries have a P-value less than 0.05?
+  mc.fruitfly[,"p.value"] < 0.05
+  ## Print entries which have a P-value less than 0.05
+  signif.fruitfly = mc.fruitfly[mc.fruitfly[, "p.value"] < 0.05, ]
+  print(signif.fruitfly, digits = 4)
+  @
+    
+    \end{frame}
+  
+  
+  \begin{frame}[fragile]
+  \frametitle{Fruit fly\ldots}
+  % \framesubtitle{Tukey simultaneous confidence intervals\ldots}
+  
+  Some conclusions:
+    \begin{itemize}
+  \item Our model explains 31\% of variability in fruit fly longevity.
+  
+  \item We see that the effect of group 5 (males with 8 uninterested females) seems different from all the others. 
+  
+  \end{itemize}
+  
+  On average, group 5 males live fewer days than:
+    
+    \begin{itemize}
+  
+  \item Group 1 (males living alone) by 13 to 36 fewer days.
+  
+  \item Group 2 (males living with one interested female) by 14 to 38 fewer days.
+  
+  \item Group 3 (males living with eight interested females) by 13 to 36 fewer days.
+  
+  \item Group 4 (males living with one uninterested female) by 6 to 30 fewer days.
+  \end{itemize}
+  
+  \end{frame}
+  
+  
+  \begin{frame}[fragile]
+  \frametitle{Fruit fly\ldots}
+  
+  On a lighter note there is little evidence of a difference in longevity
+  if no females or no more than one uninterested female is about,
+  or if females are there and 'interested' in them ---
+    but in the presence of multiple uninterested females they die earlier
+  (they 'drop like flies').
+  
+  \medskip
+  
+  Recall also that in the original studies it was seen that females did not live as long if
+  they reproduced.
+  
+  \medskip
+  
+  It is tempting to make similar inference about the human species but that may be going too far!
+    \end{frame}
+  
+  
+\begin{frame}[fragile]
+\frametitle{Alternative parametrisations of the linear model}
+\framesubtitle{The reference cell model}
+  
+Recall the linear model\footnote{See slide~\ref{frame:refcellModel}.} we used to represent the longevity, in days, of a male fruitfly, i.e.
+  
+\vspace{-2mm}
+  
+\[\rcode{days}=\beta_0+\beta_{1}\times\rcode{D2} +\beta_{2}\times\rcode{D3} + \beta_{3}\times\rcode{D4}+  \beta_{4}\times\rcode{D5} + \epsilon\]
+  
+\vspace{-5mm}
+  
+The {\em parameters} $\beta_0,\beta_1,\ldots,\beta_4$ denote the true values of some attribute (e.g. longevity) of the population of male fruitflies. Here, $\beta_0$ represents the mean longevity of male fruitflies in group \rcode{G1}. The parameters $\beta_1,\ldots,\beta_4$ represent the deviations in mean longevity of males in groups \rcode{G2,\ldots,G5}, respectively, from the mean longevity of males in group \rcode{G1}. 
+  
+\medskip
+  
+The values in the \rcode{Estimate} column of the regression summary table\footnote{See slide~\ref{refcell_coeffs}; Coefficients rounded to 2 decimal places.} result in the following equation for predicted longevity:
+    
+<<RC-H11-003-1, echo=FALSE>>=
+beta0 = sprintf("%.2f", coef(Fruitfly.fit)[1])
+beta1 = sprintf("%.2f", coef(Fruitfly.fit)[2])
+beta2 = sprintf("%.2f", coef(Fruitfly.fit)[3])
+beta3 = sprintf("%.2f", coef(Fruitfly.fit)[4])
+beta4 = sprintf("%.2f", coef(Fruitfly.fit)[5])
+@
+    
+\medskip
+  
+\begin{center}
+\small
+$ \widehat{\rcode{days}}=\Sexpr{beta0}+\Sexpr{beta1}\times \rcode{D2} + (\Sexpr{beta2})\times \rcode{D3} + (\Sexpr{beta3})\times \rcode{D4} + (\Sexpr{beta4})\times \rcode{D5}$
+\end{center}
+  
+\end{frame}
+  
+
+\begin{frame}[fragile]
+\frametitle{Alternative parametrisations of the linear model}
+\framesubtitle{The reference cell model}
+  
+\small
+
+Each cell within a column in the table below corresponds to a level of the \rcode{Group} factor. One way to `parametrise' these cells is to use means, i.e. $\mu_1,\mu_2,\ldots,\mu_5$. Another is to select one of the cells as a reference cell (here \rcode{Group G1}) and the remaining cells are then parametrised the deviations of the current row's group mean from the reference cell's group mean.
+  
+\medskip
+
+\begin{center}
+\footnotesize
+\renewcommand{\arraystretch}{1.15}
+   \begin{tabular}{ccccccrr}
+      \hline
+      &&& \multicolumn{5}{c}{Parametrisation} \\
+      \cline{4-8}
+      Group & Data && Means & Estimate\footnote{See estimates of \rcode{Group} means on slide~\ref{group_means}} &&
+         Reference cell & Estimate\footnote{See regression coefficients table on slide\ref{refcell_coeffs}} \\
+      \hline
+      \rcode{G1} & $40,37,\ldots,44$ && $\mu_1$ & 63.56 && $\beta_0 = \mu_1$ & 63.56 \\
+      \rcode{G2} & $46,42,\ldots,92$ && $\mu_2$ & 64.80 && $\beta_1 = \mu_2 - \mu_1$ & 1.24 \\
+      \rcode{G3} & $35,37,\ldots,77$ && $\mu_3$ & 63.36 && $\beta_2 = \mu_3 - \mu_1$ & $-0.20$  \\
+      \rcode{G4} & $21,40,\ldots,68$ && $\mu_4$ & 56.76 && $\beta_3 = \mu_4 - \mu_1$ & $-6.80$ \\
+      \rcode{G5} & $16,19,\ldots,44$ && $\mu_5$ & 38.72 && $\beta_4 = \mu_5 - \mu_1$ & $-24.84$  \\
+      \hline
+   \end{tabular}
+\end{center}
+
+\medskip
+
+The parametrisation of the model shown on the previous slide is therefore known as the {\em reference cell} model. 
+
+\end{frame}
+  
+
+\begin{frame}[fragile]
+\frametitle{Alternative parametrisations of the linear model}
+\framesubtitle{The means model}
+  
+From the above table we can see that there is an alternative, but equivalent, {\em means} model parametrisation, i.e. linear model for the longevity of the $j$th ($j=1,2,\ldots,25$) male fruitfly in \rcode{Group} $i$ ($i=1,2,\ldots,5$) may be written as
+
+\medskip
+
+\[ days_{ij} = \mu_i + \epsilon_{ij} \]
+
+where $\mu_i$ denotes the mean longevity, in days, of a male in \rcode{Group} $i$ and, as usual, $\epsilon_{ij} \iid N(0, \sigma^2)$.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Alternative parametrisations of the linear model}
+\framesubtitle{The effects model}
+
+\small
+
+Another parametrisation is to set the overall mean longevity, $\mu$, as the reference and then define the {\em effect}, $\tau_i$, on longevity due to being in \rcode{Group} $i$ as the difference between the  \rcode{Group} $i$ mean and the overall mean, i.e. $ \tau_i = \mu_i - \mu $.
+
+\medskip
+
+\begin{center}
+\footnotesize
+\renewcommand{\arraystretch}{1.15}
+   \begin{tabular}{ccccccrr}
+      \hline
+      &&& \multicolumn{5}{c}{Parametrisation} \\
+      \cline{4-8}
+      Group & Data && Means & Estimate &&
+         Effects & Estimate\footnote{See overall mean (57.44 days) and deviations of group means from overall means on slide~\ref{group_means}.} \\
+      \hline
+      \rcode{G1} & $40,37,\ldots,44$ && $\mu_1$ & 63.56 && $\tau_1 = \mu_1 - \mu$ & 6.12 \\
+      \rcode{G2} & $46,42,\ldots,92$ && $\mu_2$ & 64.80 && $\tau_2 = \mu_2 - \mu$ & 7.36 \\
+      \rcode{G3} & $35,37,\ldots,77$ && $\mu_3$ & 63.36 && $\tau_3 = \mu_3 - \mu$ & 5.92  \\
+      \rcode{G4} & $21,40,\ldots,68$ && $\mu_4$ & 56.76 && $\tau_4 = \mu_4 - \mu$ & $-0.68$ \\
+      \rcode{G5} & $16,19,\ldots,44$ && $\mu_5$ & 38.72 && $\tau_5 = \mu_5 - \mu$ & $-18.72$  \\
+      \hline
+   \end{tabular}
+\end{center}
+
+\medskip
+  
+The linear {\em effects} model for the longevity of the $j$th ($j=1,2,\ldots,25$) male fruitfly in \rcode{Group} $i$ ($i=1,2,\ldots,5$) may therefore be written as
+
+\vspace{-4mm}
+
+\[ days_{ij} = \mu + \tau_i + \epsilon_{ij} \]
+
+\vspace{-5mm}
+
+where, again, $\epsilon_{ij} \iid N(0, \sigma^2)$.
+
+\end{frame}
+  
+
+  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+
+\begin{center}
+\vspace{16pt}
+  
+{\LARGE Relevant \rcode{R}-code}
+  
+\end{center}
+
+\end{frame}
+  
+  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  
+  
+\begin{frame}[fragile]
+\frametitle{Most of the \rcode{R}-code you need for this chapter}
+  
+Note that this code comes with the usual code/checks discussed in chapters 1 and 2.
+  
+\medskip
+
+You do not need to create dummy variables - \rcode{R} does that for you.
+The baseline can be changed if you wish rather than having \rcode{R} choose it for you --- see relevant \rcode{R}-code from chapter 9.  
+  
+\medskip
+  
+Use box plots to inspect the data for each level of the factor.
+  
+<<RC-H11-19, eval=F, comment=NA>>= 
+## Create the pairs plot of the five numeric variables
+boxplot(days ~ group, data = Fruitfly.df)
+@
+
+Fit the model and use the ANOVA table to see if any of the means differ from one another (regardless of the baseline chosen).
+  
+<<RC-H11-20, eval=F, comment=NA>>=
+anova(Fruitfly.fit)
+@
+    
+In order to see measure pair-wise differences between mean levels to adjust for multiple comparisons:
+
+<<RC-H11-21, eval=F, comment=NA>>=
+multipleComp(Fruitfly.fit)
+@
+    
+\end{frame}
+    
+    
+\end{document}

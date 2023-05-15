@@ -1,0 +1,55 @@
+---
+title: "Handout 02"
+author: "James Curran"
+date: "7/25/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(s20x)
+```
+
+```{r}
+Stats20x.df = read.table("Data/STATS20x.txt", header = TRUE)
+```
+
+```{r}
+plot(Exam ~ Test, data = Stats20x.df)
+```
+
+```{r}
+trendscatter(Exam ~ Test, data = Stats20x.df)
+```
+
+
+```{r}
+examtest.fit = lm(Exam ~ Test, data = Stats20x.df)
+```
+
+```{r}
+plot(examtest.fit, which = 1)
+```
+
+```{r}
+normcheck(examtest.fit, which = 1)
+```
+```{r}
+cooks20x(examtest.fit)
+```
+
+
+```{r}
+pred.df = data.frame(Test = c(0, 10, 20))
+predict(examtest.fit, pred.df)
+```
+
+```{r}
+predict(examtest.fit, pred.df, interval = "confidence")
+```
+
+```{r}
+predict(examtest.fit, pred.df, interval = "prediction")
+```
+
+

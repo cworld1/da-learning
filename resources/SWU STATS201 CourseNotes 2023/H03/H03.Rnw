@@ -1,0 +1,698 @@
+\documentclass{beamer}
+\usepackage{graphicx}
+\input{../s20xPreambleRBM.tex}
+
+\setlength{\parskip}{9pt}
+
+\begin{document}
+\newcommand{\thechapter}{3}
+<<RC-H03-000, echo=FALSE>>=
+source("../s20xNotesHelper.R")
+
+## these are global knitr options and settings for the 
+## whole document
+library(knitr)
+library(s20x)
+## comment = NA removes ## from all output lines
+## prompt = TRUE means the console input prompt > is displayed
+## tidy = TRUE means the code is properly spaced and tidied. 
+opts_chunk$set(comment = NA, size="scriptsize", prompt = TRUE, tidy = TRUE)
+@
+
+%%\chapter{Introduction to data analysis}
+
+\title{Chapter 3: \\ Equivalence of the null linear model and the one-sample \ttest{}}
+\institute{University of Auckland}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+\begin{frame}[t]
+\frametitle{Learning outcomes}
+In this chapter you will learn about:
+\begin{center}
+\vspace{16pt}
+\begin{minipage}{0.8\textwidth}
+  \begin{itemize}
+  \item The equivalence of fitting the null model and doing a one-sample \ttest{}.
+  \item The paired \ttest{}
+  \item Relevant \rcode{R}-code.
+  \end{itemize}
+\end{minipage}
+\end{center}
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Revisiting the null model}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}[fragile]
+\frametitle{Null vs simple linear regression fits}
+<<RC-H03-001, echo=FALSE>>=
+Stats20x.df = read.table("Data/STATS20x.txt", header=TRUE)
+examtest.fit=lm(Exam~Test, data=Stats20x.df)
+examnull.fit=lm(Exam~1, data=Stats20x.df)
+
+multiple.R <- sprintf("%.0f", summary(examtest.fit)$r.squared*100)
+Rsq <- sprintf("%.2f", summary(examtest.fit)$r.squared)
+@
+We have already encountered an example of the null model in Chapter 1.
+
+We saw that we could explain approximately \Sexpr{multiple.R}\% of the variation of $Exam$ by fitting a straight line model using $Test$. 
+We calculated  this by comparing the sums-of-squares of the residuals for the simple linear model to the sums-of-squares of the residuals of the null model and noticed it had decreased by \Sexpr{multiple.R}\% (ie., $R^2=$ \Sexpr{Rsq}).
+
+In this chapter we will examine the null model in greater detail and see that it is equivalent to applying the t-distribution for obtaining confidence intervals, and to the  one-sample \ttest{} of the null hypothesis that the population mean is zero.
+
+It is also the model we need to use when we have paired comparisons  --  two repeated measures on the same subject.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Null vs simple linear regression fits...}
+\framesubtitle{Exam vs.\ Test marks}
+If $y=\rcode{Exam}$ and $x=\rcode{Test}$, then here are our fitted null (the {\color{red} red} line) and linear (the {\color{blue} blue} line) models.
+
+% Null model: $Y=\beta_0+\varepsilon$ ({\color{red}red}) versus 
+% $Y=\beta_0+\beta_1 X+\varepsilon$ ({\color{blue}blue}) where $\varepsilon\iid N(0,\sigma^2)$:
+
+<<RC-H03-002, echo=FALSE>>=
+trimPlot(Exam ~ Test,
+         data = Stats20x.df,
+         x.lab = "Test",
+         y.lab = "Exam",
+         fileName = "figure/RC-H03-002.pdf",
+         col="light grey",
+         cex = 0.7,
+         fig.height = 2.5,
+         fig.width = 4.5,
+         addElements = list(
+           abline(h = mean(Stats20x.df$Exam), lty=2, col="red"),
+           text(5,60, expression(hat(y)==hat(beta)[0]),col="red",cex=.8),
+           abline(examtest.fit$coeff, lty=2, col="blue"),
+           text(18,67, expression(hat(y)==hat(beta)[0]+hat(beta)[1]*x),col="blue",cex=.8)
+         ))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H03-002}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{A note on the model formula}
+In linear models, the intercept parameter ($\beta_0$) is fitted by default.
+That is why \rcode{lm(y\textasciitilde x)} fits not just the effect of $x$, but also an intercept.
+In fact, 
+\rcode{lm(y\textasciitilde x)} is a shortened version of \rcode{lm(y\textasciitilde 1+x)}.
+The latter form makes it explicit that the model being fitted is
+\[
+y =1 \times \beta_0 + x \times \beta_1  + \varepsilon,
+\]
+where the $\varepsilon$ are $iid$ $N(0,\sigma^2)$.
+This is why the null or intercept-only model can be can be fitted using \rcode{lm(y\textasciitilde 1)} since this specifies
+\[
+y = 1 \times \beta_0 + \varepsilon.
+\]
+Since the null model is simply just specifying the mean (i.e., expected) value of $y$, it is common practive to relabel $\beta_0$ as $\mu$, in which case we have
+$y = \mu + \varepsilon$. 
+
+This can be abbreviated with the model formula $y \iid N(\mu, \sigma^{2}). $
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Inference about the expected exam mark}
+{\large\bf What do we mean by ``expected exam mark''???}
+(Hint: It is also called the population mean.)
+
+Remember, the data are assumed to be a random sample from a bigger population. 
+
+Every STATS 20x class differs a bit in the difficulty of the test and exam, for the simple reason that there are different questions every semester. The teaching staff also differ each semester......so, it would be naive to regard these data as a random sample from all STATS 20x students that we have or will ever teach.
+
+However, it would be reasonable to assume they are from the hypothetical population of all students who could have taken STATS 20x in that particular semester.
+
+Here we wish to see what we can say about the average, or typical, value a student in this hypothetical population will get in the exam in the absence of any other information about them. 
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Inference about the expected exam mark\dots}
+To save some typing we'll let \rcode{y} be the vector \rcode{Stats20x.df\$Exam} of exam scores.
+
+<<fig.height=3.25,echo=-1>>=
+par(mar=c(4,4,0,4))
+y=Stats20x.df$Exam
+hist(y,breaks=20,main="") #Use main to suppress plot title
+@
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Inference about the expected exam mark\ldots}
+\framesubtitle{Using the null model}
+The histogram could be better (i.e., more normal in shape), but we'll go ahead with using the null model. We're going to be lazy\footnote{Actually, it's more like we are taking a shortcut -- the assumption checks won't tell us anything more than what we already see in the histogram of the exam marks. } and not include the assumption checks! 
+\medskip
+
+<<>>=
+null.fit=lm(y~1)
+coef(summary(null.fit)) #Only give coefficients from summary
+confint(null.fit)
+@
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Inference about the expected exam mark\ldots}
+\framesubtitle{Using the null model\ldots}
+Conclusions
+
+\begin{itemize}
+\item The near zero \rcode{Pr(>|t|)} p-value totally rejects the null hypothesis that $H_0: \mu \equiv \beta_0 =0$.
+\item The 95\% confidence interval for $\mu$ is 49.82 to 55.93.
+\end{itemize}
+\bigskip
+
+The confidence interval is useful... but the p-value for $H_0: \mu =0$ is absolutely useless since we would never be interested in asking whether $\mu=0$.
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Inference about the expected exam mark\ldots}
+\framesubtitle{A more meaningful null hypothesis}
+
+It might be more interesting to test a hypothesis like $H_0: \mu = 60$, say, where we suppose that 60 corresponds to the target expected score when lecturers prepare STATS 20x exams.\footnote{FYI, in recent semesters the average test and exam scores have been around 70.}
+
+Note that the above null hypothesis is $H_0: \E[Y] = 60$ and is equivalent to $H_0: \E[Y-60] = 0$.
+
+So, if we use the response variable $y-60$ instead of $y$ then we can get a \pval{} for this $H_0$ using the \rcode{lm} function, as shown on the next slide.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Inference about the expected exam mark\ldots}
+\framesubtitle{A more meaningful null hypothesis\ldots}
+
+<<Using I()>>=
+null.fit60=lm(I(y-60)~1)
+coef(summary(null.fit60))
+@
+
+Here we have used the inhibit function \rcode{I()} to prevent \rcode{lm} from mis-interpreting the model formula.
+\bigskip
+
+We see that the sample average exam score is about 4.61 standard errors below the target population exam score. The small p-value shows that this is implausible under the null hypothesis.
+\bigskip
+
+%QUESTION
+{\bf Question:} In plain English, how would you state our conclusion?
+
+\end{frame}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Revisiting the $t$-test}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Inference about the population mean\ldots}
+\framesubtitle{Using the $t$-test}
+Recall from STATS 10x that we can use the $t$-distribution to make inference about
+$\mu$ when  $y \iid N(\mu, \sigma^{2})$.
+
+First, we will do it the hard way, by hand.
+
+Then, we'll let R do it for us.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Inference about the population mean\ldots}
+\framesubtitle{Using the $t$-test\ldots}
+It can be shown (in STATS 310) that 
+\[
+T = \frac{\overline{y}-\mu}{\frac{s}{\sqrt{n}}} \sim t_{n-1},
+\]
+where $\overline{y}$ and $s$ are the sample mean and sample standard deviation we calculate from our sample.\footnote{Recall that this is interpretted as being the distribution of $T$ when the experiment is repeated. That is, if other random samples are taken from the population.}
+
+We can use this result to do hypothesis tests and get confidence intervals about the quantity of interest, $\mu$ (the population mean exam mark).\footnote{Recall that $T$ is $t_{n-1}$-distributed rather than normal as we have additional variability from using $s^2$ to estimate $\sigma^2$.} 
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Inference about the population mean\ldots}
+\framesubtitle{Calculating the $t$-value} 
+
+In 10x you were taught how to calculate a 95\%  CI for $\mu$ from your sample of $n$ observations having
+sample mean $\bar{y}$ and sample standard deviation $s$:
+\[
+\bar{y}\pm t_{n-1}^{(0.975)}\frac{s}{\sqrt{n}}
+\]
+where $t_{n-1}^{(0.975)}$ is the $t$-multiplier. For a  95\% CI this multiplier is pretty close to 2 provided that $n>30$.
+\footnote{ In this example, $t_{n-1}^{(0.975)}=t_{145}^{(0.975)}=\Sexpr{round(qt(0.975, 145), 5)}\approx 2.$}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Inference about the population mean\ldots}
+\framesubtitle{Calculating the $t$-value\ldots}
+Let us calculate the t-statistic for the null hypothesis that $\mu=60$.
+This is
+\[
+T = \frac{\bar{y}-60}{\frac{s}{\sqrt{n}}} .
+\]
+
+<<>>=
+n=length(y) #146 students
+tstat=(mean(y)-60)/(sd(y)/sqrt(n))
+tstat
+@
+
+How does this $t$-value compare to the one from \rcode{ coef(summary(null.fit60))} that we saw a few pages earlier?
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Inference about the population mean\ldots}
+\framesubtitle{Calculating the confidence interval} 
+Let us now manually compute a 95\% CI based on the \textit{t}-distribution:
+<<RC-H03-011>>=
+## t-multiplier
+tmult = qt(1-.05/2, df=n-1)  
+## We want the upper 97.5% (or 1-.05/2) bound of the CI
+## NOTE: mean = sample mean; sd = standard deviation; sqrt = square root
+mean(y) - tmult*sd(y)/sqrt(n) 
+
+## Upper bound of CI
+mean(y) + tmult*sd(y)/sqrt(n)
+## Or if we want both the lower and upper bounds of the CI in one statement
+mean(y) + c(-1,1)*tmult*sd(y)/sqrt(n) 
+@
+How does this CI compare to the one from \rcode{confint(null.fit)}?
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Inference about the population mean\ldots}
+\framesubtitle{The \rcode{t.test} function in R} 
+Of course, R has a convenient function to do the \ttest{} calculations for us.
+
+To test $H_0: \mu=60$, we include \rcode{mu=60} in the call of \rcode{t.test}
+
+<<>>= 
+t.test(y,mu=60)
+@
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Inference about the population mean\ldots}
+\framesubtitle{The null model versus the \ttest{}} 
+
+We've seen that we get the same results from using the null model as we do from using the \ttest{}. This is because they are both based on the same statistical theory.
+\medskip
+
+The null model is a special case (in fact, it is the simplest case) of a linear model.\footnote{If you have done some maths courses, you might recall that a linear model is one that has constant derivative with respect to its coefficients} 
+
+\medskip
+For completeness we will also look at using the bootstrap, 
+which you saw in STATS 10x --
+recall that the bootstrap samples {\bf with replacement} from the data.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Inference about $\mu$ using the bootstrap \\ (Non examinable)}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[fragile]
+\frametitle{Inference about the population mean\ldots}
+\framesubtitle{Bootstrapping}
+
+<<RC-H03-005, tidy.opts = list(width = 70)>>=
+## Resampling the exam marks, N times with replacement:
+N=10000 # The number of bootstrap resamples we want
+# The new sample means are stored in ybar
+ybar=rep(NA,N) ## A vector of length N to store our resampled means
+
+## A loop - allows us to do something N (10,000) times
+for (i in 1:N){
+  ## Take the average of this sample (below) from a sample of size n = 146 from y - with replacement
+  ybar[i]=mean( sample(y,n, replace=T) ) 
+} 
+mean(ybar)
+@
+\bigskip
+
+Here is a simpler way of doing the bootstrap, but it requires the \rcode{bootstrap} package to be installed:
+<<RC-H03-006, eval=FALSE>>=
+library(bootstrap)
+ybar = bootstrap(y, 10000, mean)$thetastar
+@
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Inference about the population mean\ldots}
+\framesubtitle{Bootstrapping \ldots}
+\vspace{3mm}
+<<RC-H03-007, fig.show = 'hide'>>=
+## Histogram of these 10,000 bootstrap means
+hist(ybar,xlab="Bootstrapped sample means")
+@
+
+<<RC-H03-008, echo = FALSE>>=
+trimPlot(ybar,
+         plotCommand = hist,
+         main = "",
+         x.lab = "Bootstrapped sample means",
+         y.lab = "Frequency",
+         fileName = "figure/RC-H03-008.pdf",
+         cex = 0.7,
+         mai = c(0.5, 0.6, 0.1, 0.05),
+         fig.height = 2.5,
+         fig.width = 4.5)
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H03-008}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Inference about the population mean\ldots}
+\framesubtitle{Bootstrapping \ldots} 
+
+This looks very 'Normal'. 
+
+\textbf{Note:} the mean value of \rcode{ybar}, \Sexpr{round(summary(ybar)[4], 2)}, is about the same as that of the original sample (\Sexpr{round(summary(Stats20x.df$Exam)[4], 2)}),  
+but the values have less scatter. They have lower quartile of \Sexpr{round(summary(ybar)[2], 1)} (in the original sample it was \Sexpr{summary(Stats20x.df$Exam)[2]}),
+and upper quartile \Sexpr{round(summary(ybar)[5], 1)} (versus \Sexpr{summary(Stats20x.df$Exam)[5]}).
+
+A 95\% bootstrap confidence interval for the expected exam mark is given by the following code:
+<<RC-H03-009>>=
+## 2.5% in the lower tail and 2.5% in the upper tail
+quantile(ybar, c(.025, .975)) 
+@
+
+We say: We are 95\% confident that the expected exam mark 
+is somewhere between \Sexpr{round(quantile(ybar, .025) , 1)} to \Sexpr{round(quantile(ybar, .975) , 1)} marks.\footnote{The magic of the bootstrap is that these
+quantiles of the bootstrapped means give a CI for the population mean -- see STATS 730 for proof of this.} 
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Inference about the population mean\ldots}
+\framesubtitle{Bootstrapping\ldots} 
+Here is the distribution of sample means we bootstrapped, with a density plot (in {\color{blue}blue} -- which can be though of as a `fine-grain' histogram), along with the underlying theoretical Normal based-distribution (in {\color{red}red}):
+<<RC-H03-010, echo=FALSE>>=
+xs = seq(min(ybar),max(ybar),length=1e3) ## gives us bounds on x
+
+trimPlot(ybar,
+         plotCommand = hist,
+         main = "",
+         x.lab = "Bootstrapped sample means",
+         y.lab = "Density",
+         fileName = "figure/RC-H03-010.pdf",
+         cex = 0.7,
+         mai = c(0.5, 0.6, 0.1, 0.05),
+         fig.height = 2.4,
+         fig.width = 4.4,
+         prob = T,
+         addElements = list(
+           lines(density(ybar),lty=2,col="blue"),
+           lines(xs,1/(sd(y)/sqrt(n))*dt((xs-mean(y))/(sd(y)/sqrt(n)),df=n-1), lty=2, col="red")
+         ))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H03-010}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Inference about the population mean\ldots}
+\framesubtitle{Bootstrapping and the \textit{t}-distribution}  
+So what is going on here? 
+Provided we have a large enough sample, 
+we know that the distribution of all possible sample means we could have obtained from repeating the experiment is distributed approximately normally\footnote{There are some other necessary conditions 
+but this holds for most populations.} 
+and hence, these sample means can be described well with a normal distribution.
+
+\medskip
+
+This is known as the \textbf{Central limit effect} or \textbf{theorem}, referred henceforth as the \textbf{CLT}. Both the bootstrap and \textit{t}-distribution follow the CLT.
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Inference about the population mean\ldots}
+\framesubtitle{Bootstrapping and the \textit{t}-distribution\ldots}  
+Let us compare the bootstrap CI to the \textit{t}-distribution CI:
+<<RC-H03-012>>=
+## Bootstrap:
+quantile(ybar, c(.025, .975))
+## t-distribution:
+mean(y) + c(-1,1)*tmult*sd(y)/sqrt(n) 
+@
+
+Very similar.
+
+\textbf{Note:} From now on we will not do any more bootstrapping as it does not generalize easily to more complex models. 
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{The paired \ttest}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}[fragile]
+\frametitle{Paired comparisons $\equiv$ one-sample \ttest{}}
+
+Recall (from STATS 10x) that the paired t-test is just an application of the one-sample t-test
+applied to differences. 
+\bigskip
+
+Here, we demonstrate this by comparing $Test$ and $Exam$ marks.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Comparing $Test$ and $Exam$ marks}
+Suppose we want to know if the midterm test marks and exam marks have the same expected value.
+Note that the test and exam scores are not independent (why?).
+
+The data are paired since we have a test score and exam score from each student\footnote{
+Two measurements on the same student constitutes a paired measure
+and this is an example of a repeated (twice) measures study.}.
+
+For a meaningful comparison, We will need to make them have the same scale, 
+so we multiply the test mark by 5 so that it is also out of 100. 
+This can be done very easily with the following \rcode{R} code:
+
+<<RC-H03-018>>=
+Stats20x.df$Test2 = 5 * Stats20x.df$Test
+## Check that it worked
+Stats20x.df[1:3, c("Exam","Test","Test2")]
+@
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Comparing $Test$ and $Exam$ marks\ldots}
+
+We wish to see how the exam score and scaled test score (out of 100) differ. 
+We might suspect that they have the same expected value $\mu$. 
+
+\medskip 
+
+A student who scores high on the exam would be expected to score high on the test and vice-versa. 
+So these two measurements are not independent of each other. 
+However, when we look at their differences (\rcode{Diff = Test2 - Exam}) these constitute a single
+measurement from each student, and moreover these differences could reasonably be assumed
+to be independent of each other. 
+\medskip 
+
+In effect, we have eliminated the student effect on test and exam scores by
+working with the difference between test and exam for each student.
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Comparing $Test$ and $Exam$ marks\ldots}
+\framesubtitle{Calculating the difference}
+
+Let us name the new variable \rcode{Diff} (and check that we have done it correctly):
+<<RC-H03-019, tidy = FALSE>>=
+Stats20x.df$Diff = Stats20x.df$Test2 - Stats20x.df$Exam
+## Check the first 5 measurements
+Stats20x.df[1:5, c("Test2","Exam","Diff")]
+## Looks good!
+@
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Comparing $Test$ and $Exam$ marks\ldots}
+\framesubtitle{Null hypothesis for the expected difference}
+
+If test and exam scores have the same expected value, then their difference must have an expected value of 0.
+We will denote this $\mu_{diff}=0$. This is our null hypothesis.
+
+\medskip
+
+Before we do the test of $H_0: \mu_{diff}=0$ we should do some assumption checks.
+
+We have independence sorted, and we are necessarily assuming identical distribution.
+Let us produce a histogram to check normality.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Comparing $Test$ and $Exam$ marks\ldots}
+\framesubtitle{Inspecting the differences}
+<<RC-H03-020, fig.show = 'hide'>>=
+hist(Stats20x.df$Diff,xlab="Difference between test and exam scores")
+@
+
+<<RC-H03-021, echo = FALSE>>=
+trimPlot(Stats20x.df$Diff,
+         plotCommand = hist,
+         main = "",
+         x.lab = "Difference between test and exam scores",
+         y.lab = "Frequency",
+         fileName = "figure/RC-H03-021.pdf",
+         cex = 0.7,
+         mai = c(0.5, 0.6, 0.1, 0.05),
+         fig.height = 2.1,
+         fig.width = 4.4)
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H03-021.pdf}
+\end{figure}
+
+Looks very normalish. Let's fit a null linear model (i.e., one-sample t-test) to the differences.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Testing for a significant difference}
+
+<<RC-H03-022>>=
+diff.fit = lm(Diff~1, data=Stats20x.df)
+coef(summary(diff.fit))
+@
+
+<<RC-H03-023, echo=1:2>>=
+confint(diff.fit)
+t.test(Stats20x.df$Diff)
+ci = t.test(Stats20x.df$Diff)$conf.int
+@
+
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Comparing $Test$ and $Exam$ marks\ldots}
+\framesubtitle{Conclusions}
+So it appears that, on average, students do worse in the exam than the term test ($\mbox{\pval{}}\approx 7\times 10^{-6}$).
+
+We estimate this difference to be about \Sexpr{round(ci[1],1)} to \Sexpr{round(ci[2],1)} marks (out of 100).
+\medskip
+
+The exam was considerably harder than the test  --  this is something that lecturers normally try to avoid. It's not a good idea for the test to be easier than the exam, since it may lull students into a false sense of security.
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Comparing $Test$ and $Exam$ marks\ldots}
+\framesubtitle{Closing remarks}
+
+{\bf Some history;} The \rcode{Stats20x.df} data were collected some years ago. Back then, lecturers were able to scale marks as they saw fit, and were also to choose the final grade ranges for awarding the letter grades (A+, A,...etc).
+
+So, lecturers would often deliberately set very challenging tests and exams since they would be able to adjust grades upwards and lower the grade requirement for a letter grade. This would have been the case for the test and exam marks in \rcode{Stats20x.df}. 
+
+Lecturers no longer have as much flexibility, and so these days test and exam (and assignment) marks must now be more representative of the final grade.
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Relevant \rcode{R}-code}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[fragile]
+\frametitle{Most of the \rcode{R}-code you need for this chapter}
+
+Fitting the model with no explanatory variables (i.e. no $x$):
+
+<<RC-H02-023, eval=F, comment=NA>>=
+exam.fit=lm(Exam~1, data=Stats20x.df)
+confint(exam.fit)
+exam.fit60=lm(I(Exam-60)~1, data=Stats20x.df)
+coef(summary(exam.fit60))
+@
+Equivalent output can be obtained from the t-test:
+
+<<RC-H02-024, eval=F, comment=NA>>= 
+t.test(Stats20x.df$Exam,mu=60)
+@
+
+For a paired comparison we need to create the difference variable:
+
+<<RC-H02-025, eval=F, comment=NA>>= 
+Stats20x.df$Diff = Stats20x.df$Test2 - Stats20x.df$Exam # create differences
+@
+\vspace{-3mm}
+Then either of these will suffice:
+<<RC-H02-026, eval=F, comment=NA>>= 
+# confidence interval for fitted value:
+diff.fit=lm(Diff~1, data = Stats20x.df)
+coef(summary(diff.fit))
+confint(diff.fit)
+@
+\vspace{-3mm} or equivalently
+<<RC-H02-027, eval=F, comment=NA>>= 
+t.test(Stats20x.df$Diff)
+@
+
+
+
+\end{frame}
+
+
+\end{document}
+

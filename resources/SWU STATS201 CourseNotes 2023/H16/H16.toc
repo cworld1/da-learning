@@ -1,0 +1,7 @@
+\beamer@sectionintoc {1}{Introduction}{3}{0}{1}
+\beamer@sectionintoc {2}{The binomial approach to contingency table analysis}{17}{0}{2}
+\beamer@sectionintoc {3}{The Poisson approach to contingency table analysis}{21}{0}{3}
+\beamer@sectionintoc {4}{Equivalence of the binomial and Poisson approaches}{25}{0}{4}
+\beamer@sectionintoc {5}{Closing remarks}{30}{0}{5}
+\beamer@sectionintoc {6}{Odds ratios \\ \nobreakspace {} \\ (This is an optional Section \\ - your lecturer will advise if it is examinable)}{33}{0}{6}
+\beamer@sectionintoc {7}{Analysing Attendance/Pass using STATS 10x methods \\ 1) difference in proportions \\ 2) chi-squared test for association \\ \nobreakspace {} \\ (This is an optional Section \\ - your lecturer will advise if it is examinable) }{38}{0}{7}

@@ -1,0 +1,56 @@
+\frametitle{Most of the \rcode{R}-code you need for this chapter}
+
+
+Creating a data frame by importing the text file \rcode{Data/STATS20x.txt} from the subfolder \rcode{Data}:
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{Stats20x.df} \hlkwb{=} \hlkwd{read.table}\hlstd{(}\hlstr{"Data/STATS20x.txt"}\hlstd{,} \hlkwc{header}\hlstd{=}\hlnum{TRUE}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+Plotting a scatter plot of y (Exam) vs. x  (Test):
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{plot}\hlstd{(Exam}\hlopt{~}\hlstd{Test,} \hlkwc{data}\hlstd{=Stats20x.df)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+and/or a trend-scatter-plot:
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{trendscatter}\hlstd{(Exam} \hlopt{~}\hlstd{Test,} \hlkwc{data} \hlstd{= Stats20x.df)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+Fitting a linear (straight line) model and getting the estimated values:
+
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{examtest.fit}\hlkwb{=}\hlkwd{lm}\hlstd{(Exam}\hlopt{~}\hlstd{Test,} \hlkwc{data}\hlstd{=Stats20x.df)}
+\hlstd{> }\hlkwd{summary}\hlstd{(examtest.fit)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+Adding your fitted/predicted blue-dashed line to the scatter-plot created above:
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{abline}\hlstd{(examtest.fit,} \hlkwc{lty} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{col} \hlstd{=} \hlstr{"blue"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+

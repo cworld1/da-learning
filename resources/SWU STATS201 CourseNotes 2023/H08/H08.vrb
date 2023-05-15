@@ -1,0 +1,28 @@
+\frametitle{Most of the \rcode{R}-code you need for this chapter}
+
+As always, your code requires the usual code (data exploration, etc) and model checks discussed in chapters 1 and 2.\footnote{That is, until we reach Chapter 13.}
+
+\medskip
+When $y$ can be explained by a categorical (i.e., factor) variable and also a numeric (i.e., continuous) variable then you can use both.
+\medskip
+
+You do not need to create indicator variables as \rcode{R} does this for you. It will choose the baseline for you, so be careful.  You can change this if needed, using the \rcode{relevel} function.
+\medskip
+
+
+Fit as follows:
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{TestAttend.fit2}\hlkwb{=}\hlkwd{lm}\hlstd{(Exam} \hlopt{~}\hlstd{Test}\hlopt{*}\hlstd{Attend,} \hlkwc{data}\hlstd{=Stats20x.df)}
+\hlstd{> }\hlcom{#check to see it's okay}
+\hlstd{> }\hlkwd{plot}\hlstd{(TestAttend.fit2,} \hlkwc{which}\hlstd{=}\hlnum{1}\hlstd{)} \hlcom{#followed by normcheck and cooks20x}
+\hlstd{> }\hlcom{# then see if you need a separate slope for each level of your factor var.}
+\hlstd{> }\hlkwd{summary}\hlstd{(TestAttend.fit2)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+Interpret accordingly. In particular, if the interaction term is not significant then proceed to the next Chapter.
+

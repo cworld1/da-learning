@@ -1,0 +1,7 @@
+\beamer@sectionintoc {1}{Example: Using test success and attendance to explain exam score \\ \nobreakspace {} \\ Two-way ANOVA with interaction}{3}{0}{1}
+\beamer@sectionintoc {2}{Interaction plots }{7}{0}{2}
+\beamer@sectionintoc {3}{Fitting the interaction model}{12}{0}{3}
+\beamer@sectionintoc {4}{Interpretting the output using pairwise differences}{21}{0}{4}
+\beamer@sectionintoc {5}{Example 2: Using gender and attendance to explain exam score \\ \nobreakspace {} \\ Two-way ANOVA without interaction}{27}{0}{5}
+\beamer@sectionintoc {6}{Relevant {\color {darkgreen}\texttt {R}}-code}{36}{0}{6}
+\beamer@sectionintoc {7}{Alternative parameterizations of the two-way ANOVA model \\ \nobreakspace {} \\ (This is an optional Section \\ - your lecturer will advise if it is examinable)}{39}{0}{7}

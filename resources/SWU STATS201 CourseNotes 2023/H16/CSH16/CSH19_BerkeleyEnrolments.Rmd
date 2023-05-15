@@ -1,0 +1,82 @@
+---
+title: 'Case Study 19.1: Gender bias in admissions to Berkeley '
+output: pdf_document
+author: 'Tou Ohone Andate - staff number 1234567'
+---
+```{r, include=FALSE}
+## Do not delete this!
+## It loads the s20x library for you. If you delete it 
+## your document may not compile it.
+require(s20x)
+```
+
+# Problem
+The University of California, Berkeley, was sued for gender bias against women based on the enrolment decisions given to 4526 students who applied for entry into the graduate program in 1973. 
+
+The variables of interest were:
+
+* `Dept`: Six-level categorical variable with levels 'A', 'B', 'C', 'D', and 'E'.
+* `Gender`: Two-level categorical variable with levels 'F' and 'M'.
+* `Outcome`: Two-level categorical variable with levels 'In' and Out'.
+* `Freq`: A count variable which corresponds to the observed combination of `Dept`, `Gender`, and `Outcome`.
+
+## Question of Interest
+We want to see if the association between gender and admission outcome changes if we look at the data broken down by the individual departments.
+
+## Read in and Inspect the Data
+```{r}
+Berk.df = read.table("BerkeleyEnrolments.txt", header = TRUE)
+head(Berk.df)
+(Berk.tbl = xtabs(Freq ~ Gender + Outcome, data = Berk.df))
+(BerkByDept = xtabs(Freq ~ Gender + Outcome + Dept, data = Berk.df))
+```
+
+At first glance, this is looking like an open and shut case of gender discrimination (the `Berk.tbl` output). However, when we break it down by department we suspect that the gender discrimination is dependent on the department (the `BerkByDept` output).
+
+## Model Building and Check Assumptions
+```{r, out.width = "75%", fig.align = 'center'}
+Berk.gfit = glm(Freq ~ Dept * Gender + Dept * Outcome + Gender * Outcome,
+    family = poisson, data = Berk.df)
+plot(Berk.gfit, which = 1)
+# The next two calls are to reduce the amount of output produced by `anova'
+Berk.gfit.anova = anova(Berk.gfit, test = "Chisq")
+Berk.gfit.anova[, names(Berk.gfit.anova)]
+summary(Berk.gfit)
+1 - pchisq(20.204, 5)
+Berk.quasigfit = glm(Freq ~ Dept * Gender + Dept * Outcome + Gender * Outcome,                 
+    family = quasipoisson, data = Berk.df)
+# The next two calls are to reduce the amount of output produced by `anova'
+Berk.quasigfit.anova = anova(Berk.quasigfit, test = "F")
+Berk.quasigfit.anova[, names(Berk.quasigfit.anova)]
+summary(Berk.quasigfit)
+```
+
+## Produce the Additional Output Required
+```{r}
+# Before adjusting for individual departments
+chisq.test(Berk.tbl, correct = FALSE)
+# After adjusting for individual departments
+Berk.summ = coef(summary(Berk.quasigfit))
+Berk.summ[nrow(Berk.summ), ]
+c(exp(Berk.summ[nrow(Berk.summ), 1]), exp(confint(Berk.quasigfit)[nrow(Berk.summ), ]))
+```
+
+# Method and Assumption Checks
+Our response variable is a count broken down by three explanatory factors, gender, outcome, and department. So we fitted a generalised linear model to describe the contingency tables created by these three explanatory factors. After looking at the data by department is was clear that all second-order interaction terms need to be added to our working generalised linear model.
+
+The residual plot shows no strong trends. The check of residual deviance has p-value 0.001 and the model was refitted as quasipoisson.
+
+# Executive Summary
+We want to see if the association between gender and admission outcome changes if we look at the data broken down by the individual departments.
+
+The estimated effect is that for every female declined, 1.11 males are declined, once we adjust for the confounding effect of department. [NOTE: This is equivalent to saying that the odds of a male being declined are estimated to be 1.11 compared to females.] That is, on average about 11\% more males are declined than females after adjustment for department. The confidence interval for the ratio of odds is 0.81 to 1.51.
+
+We had evidence that the association between gender and admission outcome was significant before adjusting for individual departments (_P-value_ $\approx$ 0). However, once we adjusted for individual departments, there is insufficient evidence to say that the true ratio is different from 1 (_P-value_ = 0.55).
+
+#Lecturer Comment
+What is happening here is that females are tending to apply more for the departments that have lower admission rates (perhaps law and medicine). Male are tending to apply more for the departments with higher admission rates (perhaps statistics!!). The association between gender and admission outcome is genuine, but is not caused by gender, but rather the difference in departmental preferences between genders.
+
+Lastly, this is a 3-way ANOVA of count data - see STATS 330 for more examples like this.
+
+
+

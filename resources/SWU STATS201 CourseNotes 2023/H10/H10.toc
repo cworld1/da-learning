@@ -1,0 +1,5 @@
+\beamer@sectionintoc {1}{Example: Modelling birth weights using several explanatory variables}{3}{0}{1}
+\beamer@sectionintoc {2}{Exploring relationships between the variables}{6}{0}{2}
+\beamer@sectionintoc {3}{Fitting the initial model}{22}{0}{3}
+\beamer@sectionintoc {4}{Multiple linear regression model: \\ Adding more terms to the model and the peril of multi-collinearity}{33}{0}{4}
+\beamer@sectionintoc {5}{Closing remarks and relevant {\color {darkgreen}\texttt {R}}-code}{49}{0}{5}

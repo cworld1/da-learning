@@ -1,0 +1,4 @@
+\beamer@sectionintoc {1}{Example: Using both IQ and teaching method to explain increase in language proficiency}{3}{0}{1}
+\beamer@sectionintoc {2}{Model selection using Occam's razor}{14}{0}{2}
+\beamer@sectionintoc {3}{Changing the reference level of teaching method}{27}{0}{3}
+\beamer@sectionintoc {4}{Closing remarks and relevant {\color {darkgreen}\texttt {R}}-code.}{33}{0}{4}

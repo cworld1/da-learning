@@ -1,0 +1,38 @@
+\frametitle{Attendance/Pass\ldots}
+
+The expected values can be obtained by saving the result of \rcode{chisq.test} as an \rcode{R} object,
+and printing the \rcode{\$expected} component of it.
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{AP.chisq} \hlkwb{=} \hlkwd{chisq.test}\hlstd{(AP.tbl,} \hlkwc{correct}\hlstd{=}\hlnum{FALSE}\hlstd{)}
+\hlstd{> }\hlstd{AP.chisq}\hlopt{$}\hlstd{expected}
+\end{alltt}
+\begin{verbatim}
+            Pass
+Attend        fail  pass
+  attend     30.14 69.86
+  not.attend 13.86 32.14
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\medskip
+
+The actual counts for comparison:
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{AP.tbl}
+\end{alltt}
+\begin{verbatim}
+            Pass
+Attend       fail pass
+  attend       17   83
+  not.attend   27   19
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+

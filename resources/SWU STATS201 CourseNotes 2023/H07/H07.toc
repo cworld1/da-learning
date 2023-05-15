@@ -1,0 +1,3 @@
+\beamer@sectionintoc {1}{Power law model example}{3}{0}{1}
+\beamer@sectionintoc {2}{Power law curves and their interpretation}{22}{0}{2}
+\beamer@sectionintoc {3}{Relevant {\color {darkgreen}\texttt {R}}-code}{27}{0}{3}

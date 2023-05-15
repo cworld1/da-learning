@@ -1,0 +1,36 @@
+\frametitle{Fruit fly\ldots}
+\framesubtitle{The group means}
+To obtain the estimated individual group means we can refit the one-way ANOVA model, but with the baseline level removed. Recall that the baseline is the intercept term, and this is removed by adding \rcode{-1} to the right-hand side of the model formula:
+\bigskip
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{Fruitfly.fit2} \hlkwb{=} \hlkwd{lm}\hlstd{(days} \hlopt{~} \hlstd{group}\hlopt{-}\hlnum{1}\hlstd{,} \hlkwc{data} \hlstd{= Fruitfly.df)}
+\hlstd{> }\hlkwd{coef}\hlstd{(}\hlkwd{summary}\hlstd{(Fruitfly.fit2))}
+\end{alltt}
+\begin{verbatim}
+        Estimate Std. Error  t value     Pr(>|t|)
+groupG1    63.56   2.961617 21.46125 6.756350e-43
+groupG2    64.80   2.961617 21.87994 1.061842e-43
+groupG3    63.36   2.961617 21.39372 9.124384e-43
+groupG4    56.76   2.961617 19.16521 2.537979e-38
+groupG5    38.72   2.961617 13.07394 7.910735e-25
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\bigskip
+
+The deviations of the group means from the grand mean are known as the group {\bf effects}. To 2 decimal places, our estimated group effects are
+
+\medskip
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{round}\hlstd{(} \hlkwd{coef}\hlstd{(Fruitfly.fit2)}\hlopt{-}\hlkwd{coef}\hlstd{(Fruitfly.iidfit),}\hlnum{2} \hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{Error in coef(Fruitfly.iidfit): object 'Fruitfly.iidfit' not found}}\end{kframe}
+\end{knitrout}

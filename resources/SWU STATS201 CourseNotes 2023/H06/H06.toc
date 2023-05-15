@@ -1,0 +1,6 @@
+\beamer@sectionintoc {1}{Mean versus median -- which to use?}{3}{0}{1}
+\beamer@sectionintoc {2}{Transforming the response variable using the log function}{12}{0}{2}
+\beamer@sectionintoc {3}{The log function turns multiplicative effects in to additive effects}{22}{0}{3}
+\beamer@sectionintoc {4}{Example 1: Multiplicative simple linear regression model}{27}{0}{4}
+\beamer@sectionintoc {5}{Example 2: Multiplicative model with categorical explanatory variable}{50}{0}{5}
+\beamer@sectionintoc {6}{Closing remarks and relevant {\color {darkgreen}\texttt {R}}-code}{61}{0}{6}

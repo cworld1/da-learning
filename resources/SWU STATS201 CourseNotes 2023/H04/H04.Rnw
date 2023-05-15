@@ -1,0 +1,586 @@
+\documentclass{beamer}
+\usepackage{graphicx}
+\input{../s20xPreambleRBM.tex}
+
+\begin{document}
+\newcommand{\thechapter}{4}
+<<RC-H04-000, echo=FALSE>>=
+source("../s20xNotesHelper.R")
+
+## these are global knitr options and settings for the
+## whole document
+library(knitr)
+library(s20x)
+## comment = NA removes ## from all output lines
+## prompt = TRUE means the console input prompt > is displayed
+## tidy = TRUE means the code is properly spaced and tidied. 
+opts_chunk$set(comment = NA, size = "scriptsize", prompt = TRUE, tidy = TRUE)
+@
+
+\title{Chapter 4: \\ Fitting curves with the linear model}
+\institute{University of Auckland}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+\begin{frame}[t]
+\frametitle{Learning outcomes}
+In this chapter you will learn about:
+\begin{center}
+\vspace{16pt}
+\begin{minipage}{0.8\textwidth}
+  \begin{itemize}
+    \item Identifying a curved relationship between $x$ and $y$
+    \item Fitting a quadratic curve using a linear model
+    \item Relevant \rcode{R}-code.
+  \end{itemize}
+\end{minipage}
+\end{center}
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Identifying a curved relationship}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{New Example  --  Exam vs.\ assignment marks}
+
+We'll continue working with the STATS 20x data, but now we are interested to see if assignment mark is associated with exam mark.
+
+\bigskip 
+Again, we are pretty sure we know what the answer is, but we need to formally confirm our suspicions. Also, we want to use assignment mark to help explain (i.e., make inference about) exam mark.
+\bigskip \bigskip
+
+The variables of interest are:
+
+\begin{tabular}{lp{15cm}}
+\rcode{Exam} &  the student's exam mark (out of 100) \\
+\rcode{Assign} & the student's assignment mark (out of 20).
+\end{tabular}
+
+\bigskip
+
+
+Once again, \rcode{Exam} is the (numeric) response variable, and now \rcode{Assign}
+is the (numeric) explanatory variable.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ assignment marks\ldots}
+\framesubtitle{Setting things up}
+% note code get's rid of white space by pretending to submit but doing it on the sly later
+<<RC-H04-001, fig.show='hide'>>=
+## Load the s20x library into our R session
+library(s20x)
+## Importing data into R
+Stats20x.df = read.table("Data/STATS20x.txt", header=T)
+## Examine the data
+plot(Exam ~ Assign, data = Stats20x.df,xlab="Assignment")
+@
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ assignment marks\ldots}
+\framesubtitle{Scatterplot of the data}
+<<RC-H04-002, echo=FALSE>>=
+trimPlot(Exam ~ Assign,
+         data = Stats20x.df,
+         fileName = "figure/RC-H04-002.pdf",
+         plotCommand = plot,
+         x.lab = "Assignment",
+         y.lab = "Exam",
+         cex = 0.7,
+         fig.height = 2.5,
+         fig.width = 4.5)
+@ 
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H04-002}
+\end{figure}
+
+Hmmm, not quite a straight line -- could be some curvature. \\
+Maybe \rcode{trendscatter} will paint a clearer picture.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ assignment marks\ldots}
+\framesubtitle{Scatterplot with trend line}
+
+<<RC-H04-003, fig.show='hide'>>=
+trendscatter(Exam ~ Assign, data = Stats20x.df,xlab="Assignment")
+@ 
+
+<<RC-H04-004, echo = FALSE>>=
+trimPlot(Exam ~ Assign,
+         data = Stats20x.df,
+         fileName = "figure/RC-H04-004.pdf",
+         plotCommand = trendscatter,
+         x.lab = "Assignment",
+         y.lab = "Exam",
+         main = "",
+         cex = 0.7,
+         mai = c(0.5, 0.5, 0.1, 0.1),
+         fig.height = 2.25,
+         fig.width = 4.25)
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H04-004}
+\end{figure}
+
+Sure looks like some curvature, but, at least the scatter looks fairly constant around this curve.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ assignment marks\ldots}
+\framesubtitle{Simple linear model}
+Let's fit a simple linear model to these data and see if it works out or not.
+<<RC-H04-005, fig.show='hide'>>=
+examassign.fit=lm(Exam~ Assign,data = Stats20x.df)
+plot(examassign.fit,which=1)
+@ 
+
+
+<<RC-H04-008, echo=FALSE>>=
+trimPlot(examassign.fit,
+         fileName = "figure/RC-H04-008.pdf",
+         which = 1,
+         cex = 0.7,
+         cex.main = 0.7,
+         fig.height = 2.25,
+         fig.width = 4.25,
+         x.lab = "Fitted values",
+         y.lab = "Residuals"
+         )
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H04-008}
+\end{figure}
+
+Not surprisingly, we still have a curved relationship.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ assignment marks\ldots}
+\framesubtitle{Dealing with curvature}
+The assumption of identical distribution with expected value of 0 looks to be questionable here.
+There tend to be more negative residuals in the middle, but more positive residuals at the extremes of the fitted values.
+
+\bigskip
+
+Potential solution -- add a quadratic (squared term) for \rcode{Assign}.
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Fitting a quadratic model}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]
+\frametitle{The quadratic curve} 
+The standard notation for a quadratic curve is\footnote{If you have done a bit of 
+calculus, then you might recall that the roots (the values of $x$ that give $y=0$) of a 
+quadratic are $\frac{-b \pm \sqrt{b^2-4ac}}{2a}$. }
+\[ 
+y = a x^2 + b x + c 
+\]
+Here we will use different notation: 
+$\beta_0 \equiv c$, $\beta_1=b$ and $\beta_2=a$ and use the quadratic curve to
+describe the expected value of our dependent variable $y$.
+That is,
+\[ 
+\E[Y|x] = \beta_0 + \beta_1 x + \beta_2 x^2 
+\]
+This is a linear model with explanatory terms $x$ and $x^2$ -- remember, the intercept $\beta_0$ is implicitly included.
+\end{frame}
+
+
+\begin{frame}[ fragile]
+\frametitle{The quadratic curve\ldots}
+If $\beta_2>0$, then the quadratic has slope that increases with increasing $x$:
+<<RC-H04-009, echo=F,fig.height=1.95>>=
+par(mfrow=c(1,3),mar=c(4,4,4,4),mai=c(0.35, 0.35, 0.22, 0.1))
+x=seq(-5,20,0.1)
+quad=function(x,betas) betas[1]+x*betas[2]+x^2*betas[3]
+
+betas=c(0,0,0.25); Betas=as.character(betas)
+plot(x,quad(x,betas),type="l",ylim=c(0,100), axes=FALSE,xlab="", ylab="")
+  axis(1, mgp = c(3, 0.3, 0), cex.axis = 0.7)
+  axis(2, mgp = c(3, 0.6, 0), cex.axis = 0.7, las = 1)
+  box()
+  title(main=expression( (list(beta[0],beta[1],beta[2])) == (list(0,0,0.25)) ))
+  title(xlab = "x", cex.lab = 0.7, line = 1.2)
+  title(ylab = "E[Y|x]", cex.lab = 0.7, line = 1.8)
+  
+betas=c(10,0,0.25); Betas=as.character(betas)
+plot(x,quad(x,betas),type="l",ylim=c(0,100), axes=FALSE,xlab="", ylab="")
+  axis(1, mgp = c(3, 0.3, 0), cex.axis = 0.7)
+  axis(2, mgp = c(3, 0.6, 0), cex.axis = 0.7, las = 1)
+  box()
+  title(main=expression( (list(beta[0],beta[1],beta[2])) == (list(10,0,0.25)) ))
+  title(xlab = "x", cex.lab = 0.7, line = 1.2)
+  title(ylab = "E[Y|x]", cex.lab = 0.7, line = 1.8)
+
+betas=c(20,2,0.075); Betas=as.character(betas)
+plot(x,quad(x,betas),type="l",ylim=c(0,100), axes=FALSE,xlab="", ylab="")
+  axis(1, mgp = c(3, 0.3, 0), cex.axis = 0.7)
+  axis(2, mgp = c(3, 0.6, 0), cex.axis = 0.7, las = 1)
+  box()
+  title(main=expression( (list(beta[0],beta[1],beta[2])) == (list(20,2,0.075)) ))
+  title(xlab = "x", cex.lab = 0.7, line = 1.2)
+  title(ylab = "E[Y|x]", cex.lab = 0.7, line = 1.8)
+@ 
+
+If $\beta_2<0$, then the quadratic has slope that decreases with increasing $x$:
+<<RC-H04-010, echo=F,fig.height=1.95>>=
+par(mfrow=c(1,3),mar=c(4,4,4,4),mai=c(0.35, 0.35, 0.22, 0.1))
+x=seq(-5,20,0.1)
+quad=function(x,betas) betas[1]+x*betas[2]+x^2*betas[3]
+
+betas=c(100,0,-0.25); Betas=as.character(betas)
+plot(x,quad(x,betas),type="l",ylim=c(0,100), axes=FALSE,xlab="", ylab="")
+  title(main=expression( (list(beta[0],beta[1],beta[2])) == (list(100,0,-0.25)) ))
+  title(xlab = "x", cex.lab = 0.7, line = 1.2)
+  title(ylab = "E[Y|x]", cex.lab = 0.7, line = 1.8)
+  axis(1, mgp = c(3, 0.3, 0), cex.axis = 0.7)
+  axis(2, mgp = c(3, 0.6, 0), cex.axis = 0.7, las = 1)
+  box()
+      
+betas=c(90,0,-0.25); Betas=as.character(betas)
+plot(x,quad(x,betas),type="l",ylim=c(0,100), axes=FALSE,xlab="", ylab="")
+  title(main=expression( (list(beta[0],beta[1],beta[2])) == (list(90,0,-0.25)) ))
+  title(xlab = "x", cex.lab = 0.7, line = 1.2)
+  title(ylab = "E[Y|x]", cex.lab = 0.7, line = 1.8)
+  axis(1, mgp = c(3, 0.3, 0), cex.axis = 0.7)
+  axis(2, mgp = c(3, 0.6, 0), cex.axis = 0.7, las = 1)
+  box()
+
+betas=c(20,2,-0.075); Betas=as.character(betas)
+plot(x,quad(x,betas),type="l",ylim=c(0,100), axes=FALSE,xlab="", ylab="")
+  title(main=expression( (list(beta[0],beta[1],beta[2])) == (list(20,2,-0.075)) ))
+  title(xlab = "x", cex.lab = 0.7, line = 1.2)
+  title(ylab = "E[Y|x]", cex.lab = 0.7, line = 1.8)
+  axis(1, mgp = c(3, 0.3, 0), cex.axis = 0.7)
+  axis(2, mgp = c(3, 0.6, 0), cex.axis = 0.7, las = 1)
+  box()
+@ 
+\end{frame}
+
+
+\begin{frame}[ fragile]
+\frametitle{How can a quadratic be a linear model?}
+\framesubtitle{(Non-examinable)}
+Throughout this course, when we use the term ``linear model'' we mean a model that is linear with respect to the $\beta$ coefficients. 
+\medskip
+
+This mean that the derivative of the linear model with respect to any $\beta$ coefficient is a constant.
+\medskip
+
+The quadratic curve model
+\[ 
+\E[Y|x] = \beta_0 + \beta_1 x + \beta_2 x^2 
+\]
+is a quadratic model for $x$.
+\medskip
+
+The derivatives of this quadratic with respect to $\beta_0$, $\beta_1$ and $\beta_2$ are 1, $x$ and $x^2$, respectively. These derivatives are all considered ``constants'' because they do not depend on any $\beta$ coefficient. 
+\medskip
+
+That is, the quadratic (in $x$) model is linear in $\beta_0$, $\beta_1$ and $\beta_2$.
+\end{frame}
+
+
+
+\begin{frame}[ fragile]
+\frametitle{Exam vs.\ assignment marks\ldots}
+\framesubtitle{Adding a squared term}
+
+Add a squared term for \rcode{Assign} via \rcode{I(Assign\string^2)}, like this:\footnote{
+\textbf{NOTE:} In the \rcode{lm} formula it is necessary to enclose the \rcode{Assign\string^2} term
+inside \rcode{I()} so that \rcode{lm} can make sense of it.}
+
+<<RC-H04-011, fig.show='hide'>>=
+examassign.fit2=lm(Exam~ Assign + I(Assign^2), data = Stats20x.df)
+plot(examassign.fit2,which=1) 
+@
+
+<<RC-H04-012, echo=FALSE>>=
+trimPlot(examassign.fit2,
+         fileName = "figure/RC-H04-012.pdf",
+         which = 1,
+         cex = 0.7,
+         cex.main = 0.7,
+         fig.height = 2,
+         fig.width = 4,
+         x.lab = "Fitted values",
+         y.lab = "Residuals"
+         )
+@
+\vspace{-3mm}
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H04-012}
+\end{figure}
+
+\vspace{-3mm}
+That is looking much better.
+\end{frame}
+
+
+\begin{frame}[ fragile]
+\frametitle{Exam vs.\ assignment marks\ldots}
+\framesubtitle{Normality check of the quadratic model}
+<<RC-H04-013, fig.show='hide'>>=
+normcheck(examassign.fit2)
+@ 
+
+<<RC-H04-014, echo=FALSE>>=
+trimPlot(examassign.fit2,
+         fileName = "figure/RC-H04-014.pdf",
+         plotCommand = normcheck,
+         fig.height = 2.1,
+         fig.width = 4.1
+         )
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.5]{figure/RC-H04-014}
+\end{figure}
+ 
+Looking good. There is one potential outlier. Let us check if it is influential.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ assignment marks\ldots}
+\framesubtitle{Influence check of the quadratic model}
+
+<<RC-H04-015, fig.show='hide'>>=
+cooks20x(examassign.fit2)
+@ 
+
+<<RC-H04-016, echo=FALSE>>=
+trimPlot(examassign.fit2,
+         fileName = "figure/RC-H04-016.pdf",
+         plotCommand = cooks20x,
+         fig.height = 2.1,
+         fig.width = 4.1,
+         mai = c(0.5, 0.6, 0.1, 0.1)
+         )
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.5]{figure/RC-H04-016}
+\end{figure}
+
+No high influence points.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ assignment marks\ldots}
+\framesubtitle{The fitted models}
+
+We have fitted a quadratic to see if we can add the `curviness' in the relationship between test score and exam mark into our model.
+\medskip
+
+Let us compare the two models visually -- model 1 (linear) in {\color{red}red} and  model 2 (quadratic) in {\color{blue}blue}.
+
+<<RC-H04-017, fig.show='hide'>>=
+plot(Exam~ Assign, data = Stats20x.df, xlab="Assignment")
+x=0:20 #Assignment values at which to predict exam mark
+## Plot model 1
+lines(x, predict(examassign.fit,data.frame(Assign=x)), col="red")
+## Plot model 2
+lines(x, predict(examassign.fit2,data.frame(Assign=x)), col="blue")
+@
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ assignment marks\ldots}
+\framesubtitle{The fitted models\ldots}
+
+<<RC-H04-018, echo=FALSE>>=
+trimPlot(Exam ~ Assign,
+         data = Stats20x.df,
+         fileName = "figure/RC-H04-018.pdf",
+         plotCommand = plot,
+         x.lab = "Assignment",
+         y.lab = "Exam",
+         main = "",
+         cex = 0.7,
+         col="light grey",
+         mai = c(0.5, 0.5, 0.1, 0.1),
+         fig.height = 2.5,
+         fig.width = 4.5,
+         addElements = list(
+           lines(x, predict(examassign.fit,data.frame(Assign=x)), col="red"),
+           lines(x, predict(examassign.fit2,data.frame(Assign=x)), col="blue")
+         ))
+@ 
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H04-018}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ assignment marks\ldots}
+\framesubtitle{The fitted quadratic model}
+
+To plot the quadratic over a wider range of \rcode{x} (\rcode{=Assign}) values we can use the following code:
+
+<<RC-H04-019, fig.show = 'hide'>>=
+x=seq(-15, 25,by =.10) #Sequence of from -15 to 25, in steps of 0.1
+
+y=predict(examassign.fit2,newdata = data.frame(Assign=x))
+plot(y~x, type="l",lty=2)
+
+## The bits we want,  0<=x<=20 - N.B. Here & (ampersand) = AND
+lines(x[x>=0&x<=20],y[x>=0&x<=20],col="blue")
+
+## The range of assign & exam respectively
+abline(v=range(Stats20x.df$Assign),lty=2, col="grey")
+abline(h=c(0,100),lty=2, col="grey")
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ assignment marks\ldots}
+\framesubtitle{The fitted quadratic model\ldots}
+<<RC-H04-020, echo = FALSE>>=
+tempDf <- data.frame(x = x, y = y)
+trimPlot(y ~ x,
+         data = tempDf,
+         type = "l",
+         lty = 2,
+         fileName = "figure/RC-H04-020.pdf",
+         plotCommand = plot,
+         x.lab = "x",
+         y.lab = "y",
+         main = "",
+         cex = 0.7,
+         mai = c(0.5, 0.5, 0.1, 0.1),
+         fig.height = 2.5,
+         fig.width = 4.5,
+         addElements = list(
+           lines(tempDf$x[tempDf$x>=0&tempDf$x<=20],tempDf$y[tempDf$x>=0&tempDf$x<=20],col="blue"),
+           abline(v=range(Stats20x.df$Assign),lty=2, col="grey"),
+           abline(h=c(0,100),lty=2, col="grey")
+         ))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H04-020}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}[ fragile]
+\frametitle{Exam vs.\ assignment marks\ldots}
+\framesubtitle{Comparison of straight line and quadratic models}
+
+\begin{small}
+<<RC-H04-021, results='hide'>>=
+summary(examassign.fit)   ## Straight line model
+@
+
+<<RC-H04-022, echo=FALSE>>=
+slimSummary(examassign.fit)
+@
+
+<<RC-H04-024, results = 'hide'>>=
+summary(examassign.fit2)  ## Model with quadratic term
+@
+
+<<RC-H04-025, echo=FALSE>>=
+slimSummary(examassign.fit2)
+p = summary(examassign.fit2)$coef[3,4]
+@
+\end{small}
+\end{frame}
+
+\begin{frame}[ fragile]
+\frametitle{Exam vs.\ assignment marks\ldots}
+\framesubtitle{Comparison of straight line and quadratic models\ldots}
+
+The small \pval{} $(=\Sexpr{format(round(p, 6), scientific = FALSE)}$) for testing $H_0: \beta_2=0$ tells us that that the quadratic term is statistically significant. 
+Our model went from:
+
+\medskip
+$ Exam_i =\beta_0+\beta_1\times Assign_i +\varepsilon_i$  ~where~ $\varepsilon_i \iid N(0,\sigma^2)$ to
+
+\medskip 
+
+$ Exam_i =\beta_0+\beta_1\times Assign_i +\beta_2\times Assign_i^2 + \varepsilon_i$ ~where~ $\varepsilon_i \iid N(0,\sigma^2)$.
+
+\medskip 
+Note that the coefficient $\beta_2>0$ associated with the \rcode{I(Assign)\string^2} term
+results in an improvement in expected exam score that `accelerates' as \rcode{Assign} increases.
+
+\medskip 
+We could consider removing the non-significant `straight line' \rcode{Assign} term. 
+\textbf{What would you do?}
+
+\medskip 
+
+We have done a better job of modelling this data by adding this extra term, and the $R^2$ explained another 4\% of the total variation.
+
+\medskip 
+\textbf{MORAL:} If it looks like a curve  then  fit a curve  --  \underline{provided} the scatter about the curve is constant (\textbf{EOV}).
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Relevant \rcode{R}-code}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}[fragile]
+\frametitle{Most of the \rcode{R}-code you need for this chapter}
+
+If you suspect the relationship between your $x$ and $y$ variables follows a curve rather than a straight line (as revealed in the plot of residuals vs fitted values), and the scatter remains constant around this curve, then fit a quadratic:
+\bigskip
+
+<<RC-H02-026, eval=F, comment=NA>>= 
+examassign.fit2=lm(Exam~ Assign + I(Assign^2), data = Stats20x.df)
+#Check the residual plot again - hopefully the curvature is gone.
+plot(examassign.fit2,which=1) 
+@
+\bigskip
+
+{\bf NOTE:} If the null hypothesis $H_0: \beta_2=0$ is {\bf not} rejected (i.e, \pval{}$>0.05$), then our preferred model would be the simple linear regression model.
+\end{frame}
+
+
+
+
+\end{document}

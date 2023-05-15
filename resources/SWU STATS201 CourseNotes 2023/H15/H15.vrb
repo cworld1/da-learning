@@ -1,0 +1,40 @@
+\frametitle{Most of the \rcode{R}-code you need for this chapter\ldots}
+Confidence intervals can be calculated for the parameters and back-transformed and interpreted as a  multiplicative effect on the odds (or as a \% change if you prefer).
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{(bb.ci2} \hlkwb{=} \hlkwd{confint}\hlstd{(bb.fit2))}
+\hlstd{> }\hlkwd{exp}\hlstd{(bb.ci2)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\bigskip
+
+Confidence intervals for probabilities take a bit more effort since they
+require calcuating a confidence interval on the logit scale (i.e., for log-odds) and then backtransforming using the logistic function.
+\medskip
+
+Fortunately, we can use \rcode{predictGLM}.
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{bb.pred.intervals} \hlkwb{=} \hlkwd{predictGLM}\hlstd{(bb.fit2,}
+\hlstd{+ }                            \hlkwc{newdata} \hlstd{=} \hlkwd{data.frame}\hlstd{(}\hlkwc{distance} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{3}\hlstd{)),}
+\hlstd{+ }                            \hlkwc{type}\hlstd{=}\hlstr{"response"}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{***Estimates and CIs are on the response scale***}}\begin{alltt}
+\hlstd{> }\hlstd{bb.pred.intervals}
+\end{alltt}
+\begin{verbatim}
+        fit        lwr       upr
+1 0.9595708 0.82769294 0.9915450
+2 0.6308584 0.44733881 0.7829992
+3 0.1095708 0.03370437 0.3027108
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+

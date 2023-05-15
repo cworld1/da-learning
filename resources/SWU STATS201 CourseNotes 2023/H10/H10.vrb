@@ -1,0 +1,40 @@
+\frametitle{Most of the \rcode{R}-code you need for this chapter}
+
+Note that this code comes with the usual code/checks discussed in chapters 1 and 2.
+\medskip
+
+Useful tools for inspecting many relationships are:
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlcom{## Create the pairs plot of the five numeric variables}
+\hlstd{> }\hlkwd{pairs20x}\hlstd{(Babies.df[,}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{,}\hlnum{4}\hlstd{,}\hlnum{5}\hlstd{,}\hlnum{6}\hlstd{)])}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+and for the factor variables:
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{pairs20x}\hlstd{(Babies.df[,}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{3}\hlstd{,}\hlnum{7}\hlstd{)])}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\medskip
+
+Then it is a process of repeatedly updating the model and using Occam's razor to determine a preferred model. E.g.,
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{model2}\hlkwb{=}\hlkwd{update}\hlstd{(model1,} \hlopt{~}\hlstd{.} \hlopt{+} \hlstd{xvariable2)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+This requires constant vigilance to avoid multi-collinearity
+\bigskip
+
+Also note that some times several different models may be selected that all make sense and are acceptable.

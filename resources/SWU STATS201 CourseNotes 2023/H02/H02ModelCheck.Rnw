@@ -1,0 +1,1349 @@
+\documentclass{beamer}
+\usepackage{graphicx}
+\input{../s20xPreambleRBM.tex}
+
+\setlength{\parskip}{9pt}
+
+\begin{document}
+\newcommand{\thechapter}{2}
+
+<<RC-H02-000, echo=FALSE>>=
+source("../s20xNotesHelper.R")
+
+## these are global knitr options and settings for the 
+## whole document
+library(knitr)
+library(s20x)
+## comment = NA removes ## from all output lines
+## prompt = TRUE means the console input prompt > is displayed
+## tidy = TRUE means the code is properly spaced and tidied. 
+##RBM
+opts_chunk$set(comment = NA, size="scriptsize", prompt = TRUE, tidy = TRUE)
+
+ModelCheck=function(Fit,which=1:3,mar=c(3,4,1.5,4)) {
+  k=1 #Value of next plot
+  M=matrix(NA,length(which),2)
+  if(1 %in% which) { M[1,]=c(1,1); k=k+1}
+  if(2 %in% which) { M[k,]=c(k,k+1); k=k+2}
+  if(3 %in% which) M[length(which),]=c(k,k)
+  layout(M)
+  par(mar=mar,mgp=c(2,1,0))
+  if(1 %in% which) plot(Fit,which=1)
+  if(2 %in% which) {
+    plot(Fit,which=2) 
+    hist(resid(Fit),main="Histogram of residuals") }
+  if(3 %in% which) plot(Fit,which=4)
+}
+@
+
+
+\title{Chapter 2: \\ The basics of simple linear regression}
+\institute{University of Auckland}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}[t]
+\frametitle{Learning outcomes}
+In this chapter you will learn about:
+\begin{center}
+\vspace{6pt}
+\begin{minipage}{0.9\textwidth}
+  \begin{itemize}
+  \item Fitting the linear model by minimizing the sum of the squared residuals
+  \item The standard assumptions of the linear model
+  \item Model checks of these assumptions  --  independence, EOV and normality
+  \item Checking for points of undue influence using \rcode{cooks20x}
+  \item Making inference from your model (provided the assumptions check out)
+  \item Confidence intervals for population-level inference
+  \item Prediction intervals for individual-level inference
+  \item A recipe for subsequent analyses and relevant \rcode{R}-code.
+  \end{itemize}
+\end{minipage}
+\end{center}
+\end{frame}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Fitting the linear model by minimizing the sum of the squared residuals}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}[fragile,t]
+\frametitle{The fitted model}
+\framesubtitle{Fitted values and residuals}
+Recall, our simple linear model is $y_i=\beta_0+\beta_1 x_i+\varepsilon_i$, where $\beta_0$, $\beta_1$ and $\varepsilon_i$ are all unknown. After we fit this model to data, we can write
+\begin{align*}
+y_i &=\hat{y_i} + r_i \\
+&= \left(\hat{\beta}_0+\hat{\beta}_1x_i\right)+r_i
+\end{align*}
+The two components in the above formulation are: 
+\begin{itemize}
+\item The fitted (or predicted) value, $\hat{y}_i=\hat{\beta}_0+\hat{\beta}_1 x_i$. 
+This is the estimated value of $E[Y_i|x_i]=\beta_0+\beta_1 x_i$.
+\item And what is left over, the {\bf residual}, $r_i$, the estimated value of $\varepsilon_i$. 
+\end{itemize}
+
+A natural question is: How are $\hat{\beta}_0$ and $\hat{\beta}_1$ estimated from the data???
+
+We will answer this question in the next few slides in the context of our exam vs test mark example.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{Fitted values and residuals\ldots}
+
+First, let us examine one student in particular -- student (observation) number $i=21$.
+<<RC-H02-001>>=
+## Student # 21
+Stats20x.df = read.table("Data/STATS20x.txt", header=TRUE)
+Stats20x.df[21,]
+examtest.fit = lm(Exam ~ Test, data = Stats20x.df)
+@
+<<RC-H02-002, echo=FALSE>>=
+ob.21.Test <- Stats20x.df$Test[21]
+ob.21.Exam <- Stats20x.df$Exam[21]
+
+beta0 <- sprintf("%.2f", coef(examtest.fit)[1])
+beta1 <- sprintf("%.2f", coef(examtest.fit)[2])
+
+ob.21.ExamHat <- sprintf("%.4f", fitted(examtest.fit)[21])
+ob.21.Residual <- sprintf("%.4f", resid(examtest.fit)[21])
+@
+She got \Sexpr{ob.21.Test} out of 20 for the \rcode{Test} and \Sexpr{Stats20x.df$Exam[21]} for an exam mark.
+Again if we say $y=\rcode{Exam}$ and $x=\rcode{Test}$ then for her: 
+$y_{21}=\Sexpr{ob.21.Exam}$  and $x_{21} = \Sexpr{ob.21.Test}$.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{Fitted values and residuals\ldots}
+
+According to the fitted model her fitted/predicted value is
+\[
+\hat{y}_{21}=\hat{\beta}_0+\hat{\beta}_1x_{21} =\Sexpr{beta0}+\Sexpr{beta1}\times \Sexpr{ob.21.Test}=\Sexpr{ob.21.ExamHat}
+\]
+so she seems to have done better than predicted!
+The residual value for her is:
+\[
+r_{21}={y}_{21}-\hat{y}_{21}=\Sexpr{ob.21.Exam}-\Sexpr{ob.21.ExamHat}=\Sexpr{ob.21.Residual}.
+\]
+These calculations are done for all $i=1,2,\ldots, n=146$ students.
+
+\rcode{R} did these calculations when we created the \rcode{lm} object \rcode{examtest.fit}.
+Here is how to extract this information for student $i=21$:
+<<RC-H02-003>>=
+resid(examtest.fit)[21]
+fitted(examtest.fit)[21]
+@
+
+\end{frame}
+
+%Page 22
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{Fitted values and residuals\ldots}
+Here is her observed value $y_{21}$  - ({\color{red}red} point) and her associated fitted\footnote{We frequently use these expressions ``fitted" values and ``predicted" values interchangeably -- with some exceptions -- more later!}  value $\hat{y}_{21}$ marked ({\color{blue}blue} point).
+<<RC-H02-004, echo=FALSE, fig.show='hide'>>=
+plot(Exam ~ Test, col="light grey",data = Stats20x.df)
+## Add the lm estimated line to this  plot  where a=intercept, b=slope
+points(Stats20x.df$Test[21],fitted(examtest.fit)[21], col="blue", pch=19)
+## Observed value student 21
+points(Stats20x.df$Test[21],Stats20x.df$Exam[21], col="red", pch=19)
+@
+
+<<RC-H02-005, echo=FALSE>>=
+trimPlot(Exam ~ Test, 
+         fileName = "figure/RC-H02-005.pdf",
+         data = Stats20x.df,
+         x.lab = "Test",
+         y.lab = "Exam",
+         mai = c(0.4, 0.5, 0.01, 0.01),
+         col = "light grey",
+         cex = 0.7,
+         cex.main = 0.7,
+         fig.height = 2.1,
+         fig.width = 4.4,
+         addElements = list(
+           points(Stats20x.df$Test[21],fitted(examtest.fit)[21], col="blue", pch=19, cex=0.7),
+           points(Stats20x.df$Test[21],Stats20x.df$Exam[21], col="red", pch=19, cex=0.7)
+         ))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H02-005}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{Fitted values and residuals\ldots}
+
+In greater detail:
+<<RC-H02-006, echo=FALSE, fig.show='hide'>>=
+plot(Exam ~ Test,type="n",data = Stats20x.df)
+abline(examtest.fit,lty=2,col="blue") 
+## Fitted value student 21
+points(Stats20x.df$Test[21],fitted(examtest.fit)[21], col="blue", pch=19)
+## Observed value student 21
+points(Stats20x.df$Test[21],Stats20x.df$Exam[21], col="red", pch=19)
+text(3.55,Stats20x.df$Exam[21], cex=.8,expression(y[21]))
+text(3.55,fitted(examtest.fit)[21], cex=.8,expression(hat(y)[21]))
+text(Stats20x.df$Test[21],14, cex=.8,expression(x[21]))
+text(14,(fitted(examtest.fit)[21]+Stats20x.df$Exam[21])/2, cex=.8,expression(r[21]))
+abline(v=Stats20x.df$Test[21], lty=2, col="light grey")
+abline(h=c(fitted(examtest.fit)[21],Stats20x.df$Exam[21]), lty=2, col="light grey")
+## Added parentheses
+lines(matrix(c(
+  12.9,fitted(examtest.fit)[21],
+  13.3,fitted(examtest.fit)[21],
+  13.3,(fitted(examtest.fit)[21]+Stats20x.df$Exam[21])/2,
+  13.5,(fitted(examtest.fit)[21]+Stats20x.df$Exam[21])/2,
+  13.3,(fitted(examtest.fit)[21]+Stats20x.df$Exam[21])/2,
+  13.3,Stats20x.df$Exam[21],
+  12.9,Stats20x.df$Exam[21]), byrow=T,nc=2),lty=3, col="blue")
+@ 
+
+<<RC-H02-007, echo=FALSE>>=
+trimPlot(Exam ~ Test, 
+         fileName = "figure/RC-H02-007.pdf",
+         data = Stats20x.df,
+         x.lab = "Test",
+         y.lab = "Exam",
+         type = "n",
+         mai = c(0.4, 0.5, 0.01, 0.01),
+         col = "light grey",
+         cex = 0.7,
+         cex.main = 0.7,
+         fig.height = 2.1,
+         fig.width = 4.4,
+         addElements = list(
+           abline(examtest.fit,lty=2,col="blue"),
+           abline(v=Stats20x.df$Test[21], lty=2, col="light grey"),
+           abline(h=c(fitted(examtest.fit)[21],Stats20x.df$Exam[21]), lty=2, col="light grey"),
+           points(Stats20x.df$Test[21],fitted(examtest.fit)[21], col="blue", pch=19, cex=0.7),
+           points(Stats20x.df$Test[21],Stats20x.df$Exam[21], col="red", pch=19, cex=0.7),
+           lines(matrix(c(
+              12.9,fitted(examtest.fit)[21],
+              13.3,fitted(examtest.fit)[21],
+              13.3,(fitted(examtest.fit)[21]+Stats20x.df$Exam[21])/2,
+              13.5,(fitted(examtest.fit)[21]+Stats20x.df$Exam[21])/2,
+              13.3,(fitted(examtest.fit)[21]+Stats20x.df$Exam[21])/2,
+              13.3,Stats20x.df$Exam[21],
+              12.9,Stats20x.df$Exam[21]), byrow=T,nc=2), col="blue"),
+           text(3.55,Stats20x.df$Exam[21], cex=.7,expression(y[21])),
+           text(3.55,fitted(examtest.fit)[21], cex=.7,expression(hat(y)[21])),
+           text(Stats20x.df$Test[21],14, cex=.7,expression(x[21])),
+           text(14,(fitted(examtest.fit)[21]+Stats20x.df$Exam[21])/2, cex=.7,expression(r[21]))
+         ))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H02-007}
+\end{figure}
+
+The residual is the vertical distance between the observed exam mark and the predicted exam mark.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Calculating $\hat{\beta}_0$ and $\hat{\beta}_1$}
+\framesubtitle{Least squares}
+The estimates, $\hat{\beta}_{0}$ and  $\hat{\beta}_{1}$, are obtained as the values
+of $\beta_0$ and $\beta_1$ that minimise the least squares equation:
+\[
+\sum_{i=1}^{n}\varepsilon_{i}^2=\sum_{i=1}^{n}(y_i-\beta_0-\beta_1 x_i )^2.
+\]
+
+This minimized value is
+\[
+\sum_{i=1}^{n}(y_i-\hat{\beta}_0-\hat{\beta}_1 x_i )^2 = \sum_{i=1}^{n}r_{i}^2.
+\]
+
+In  effect this minimises the sum (over all observations) of the squared residuals.
+Hence the name \textbf{``least squares"}.
+
+\medskip This can be solved using a bit of calculus and/or linear algebra taught in, say, MATHS 208. A bit more detail is also given in STATS 330.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{Residual sum of squares and $R^2$.}
+Recall that we've already seen the sum of the squared residuals from the fitted model,
+$\sum_{i=1}^{n}r_{i}^2$. It is the residual sum of squares (RSS). 
+It can be calculated using the \rcode{R} code
+
+<<RC-H02-007.5>>=
+sum(resid(examtest.fit)^2)
+@
+\medskip
+
+Similarly, the RSS of the null model is the total sum of squares,
+<<RC-H02-007.6>>=
+sum(resid(lm(Exam~1,data=Stats20x.df))^2)
+@
+\medskip
+
+Note that, compared to the null model, 
+the RSS is reduced by 59\% when test score is in the model.
+That is, the $R^2$ of \rcode{examtest.fit} is $0.59$.
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{The standard assumptions of the linear model}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{General assumptions of all linear models}
+
+In this chapter we will discuss the set of assumptions we make when using linear models for inference. 
+
+\medskip
+
+We will show how these assumptions relate specifically to the simple linear model we have seen so far.
+
+\medskip
+
+However, whatever we learn here is also applicable to the other types of linear models that we will encounter.
+
+\medskip
+
+In later chapters we will encounter situations where these assumptions cannot hold. However, we will find appropriate ways to still use a linear model.
+
+\end{frame}
+
+
+\begin{frame}[fragile,t]
+\frametitle{General assumptions of all linear models\ldots}
+\framesubtitle{The underlying assumptions}
+Let us state and examine our model a little more carefully.
+
+Our simple linear regression model is
+\[
+y_i=\beta_0+\beta_1 x_i+\varepsilon_i, \ \ \varepsilon_i \iid N(0, \sigma^2)
+\]
+where each observation is indexed\footnote{The indexing variable $i$ is simply a labelling device. So, in out test vs exam example where $y=\rcode{Exam}$ and $x=\rcode{Test}$ we are saying that each student (observation) has a label associated with them from $i=1, 2, 3\ldots, n=146$.} with a subscript $i$ and $iid$ stands for  \textbf{i}ndependently and \textbf{i}dentically \textbf{d}istributed.
+
+The above model formula is saying that
+\[
+\varepsilon_i = y_i - \beta_0+\beta_1 x_i 
+\]
+is distributed according to
+\[
+\varepsilon_i \iid N(0, \sigma^2)
+\]
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{General assumptions of all linear models\ldots}
+\framesubtitle{The underlying assumptions\ldots}
+The model assumptions are with regard to the random variability component
+\[
+\varepsilon_i \iid N(0, \sigma^2)
+\]
+\vspace{-2em}
+
+\begin{enumerate}
+\item \textbf{Independent:} We require every observation to be independent of every other observation.\footnote{If the $y_i$ are independent then so too are the $\varepsilon_i$.} This requires that the data are collected in an appropriate manner, such as a simple random sample. In practice, achieving truely independent data can be challenging.
+\smallskip
+
+\item \textbf{Identically} distributed: The $\varepsilon_i$ must all come from the same distribution, and this distribution must have mean of 0. All $\varepsilon_i$ must necessarily have the same variance, which we refer to as the equality of variance, (\textbf{EOV}), assumption. 
+\smallskip
+
+\item \textbf{Distributed} normally: The $\varepsilon_i$ must be from a normal distribution, at least approximately.
+\end{enumerate}
+
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Model assumptions}
+\framesubtitle{Exam vs.\ Test marks}
+Let's consider the underlying assumptions about $\varepsilon_i \iid N(0,\sigma^2)$ in the context of our ongoing example.  
+
+In decreasing order of importance:
+
+\begin{itemize}
+\item \textbf{Independent:} It was an invigilated exam so the variabilities in the exam scores of students should all be independent. 
+
+\item \textbf{Identically} distributed: If the {\bf linear} relationship is reasonable then
+\begin{itemize} 
+\item  The residuals\footnote{Recall, the residuals $r_i$ are our estimates of $\varepsilon_i$} will be randomly scattered around 0.
+\item The residuals should have roughly constant scatter, i.e., satisfy the equality Of Variance (EOV) requirement.
+\end{itemize}
+
+\item \textbf{Distributed} normally: The residuals should be (at least roughly) normally distributed -- only check this if the first two assumptions are validated.
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Very important aside!}
+\begin{Large}
+If the linear model assumptions do not hold, it \textbf{does not} mean we cannot do anything. 
+\end{Large}
+\bigskip
+
+When assumptions are not satisfied there are often techniques that we can use to transform our data and/or model so that the assumptions {\bf will} be satisfied.  We will see some of these techniques later in this course.
+\bigskip
+
+There are also other techniques that can ``free up'' some of the assumptions. For example, lack of independence in time series data is covered later in this course, and other techniques are seen in more advanced courses. 
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Checks of model assumptions  --  independence, EOV and normality}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[fragile]
+\frametitle{EOV check: Plotting residuals vs fitted values}
+
+Let us check the \textbf{EOV} assumption. 
+We are assuming that what cannot be explained has random constant scatter about zero 
+regardless of the fitted value. 
+
+
+That is, for each fitted (or predicted) value we have a similar distribution for what cannot be explained. We can check this by looking at each fitted (predicted) value versus its associated residual value. 
+
+Our fitted model is:
+\[
+y_i=\hat{y_i} + r_i= \left(\hat{\beta}_0+\hat{\beta}_1x_i\right)+r_i.
+\]
+
+It is useful to draw a scatter plot with $\hat{y_i}$ on the horizontal axis and $r_i$ on the vertical axis.
+
+
+This is more generally known as a {\it residuals vs fitted values} plot.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{EOV check: Plotting residuals vs fitted values\ldots}
+Producing a scatter plot of residuals versus fitted values is easy\footnote{You can also use
+the \rcode{s20x} function \rcode{eovcheck}, i.e., \rcode{eovcheck(exam.fit)}}. 
+
+%<<RC-H02-008, fig.show='hide'>>=
+<<MC, fig.height=2.1, fig.width=4.4>>=
+par(las=1)
+ModelCheck(examtest.fit,1) #plot(examtest.fit, which=1)
+@
+
+<<RC-H02-009, echo=FALSE, fig.show='hide'>>=
+trimPlot(examtest.fit,
+         fileName = "figure/RC-H02-009.pdf",
+         which = 1,
+         cex = 0.7,
+         cex.main = 0.7,
+         fig.height = 2.1,
+         fig.width = 4.4,
+         x.lab = "Fitted values",
+         y.lab = "Residuals"
+         )
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H02-009}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{EOV check: Plotting residuals vs fitted values\ldots}
+The above residual plot exhibits a patternless band of random points - this is to be expected since
+the original scatter plot of the data had a straight line trend and
+reasonably constant scatter: 
+
+<<RC-H02-010, fig.show='hide'>>=
+trendscatter(Exam~Test, data =Stats20x.df)
+@
+
+<<RC-H02-011, echo=FALSE>>=
+trimPlot(Exam ~ Test,
+         data = Stats20x.df,
+         fileName = "figure/RC-H02-011.pdf",
+         plotCommand = trendscatter,
+         main = "Plot of Exam vs.\ Test (lowess+/-sd)",
+         x.lab = "Test",
+         y.lab = "Exam",
+         cex = 0.7,
+         cex.main = 0.7,
+         mai = c(0.5, 0.5, 0.125, 0.1),
+         fig.height = 2,
+         fig.width = 3.9)
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H02-011}
+\end{figure}
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{EOV check: Plotting residuals vs fitted values\ldots}
+
+The plot of residuals versus fitted values confirms reasonably constant scatter (variance). 
+
+Note that at the high end of exam/test scores there are not that many students (unfortunately!) so the relative lack of spread is not surprising. 
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{Normality of residuals}
+
+Having validated the \textbf{EOV} assumption, let us perform the normality check 
+by examining the residuals.  
+%\textbf{Note } do not check normality if \textbf{EOV} as it is essentially meaningless. 
+We have written a function in \rcode{R} called \rcode{normcheck} to do just that:
+
+<<RC-H02-014, fig.show = 'hide'>>=
+normcheck(examtest.fit)
+@
+
+<<RC-H02-015, echo=FALSE>>=
+trimPlot(examtest.fit,
+         fileName = "figure/RC-H02-015.pdf",
+         plotCommand = normcheck,
+         fig.height = 2.1,
+         fig.width = 4.1
+         )
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.5]{figure/RC-H02-015}
+\end{figure}
+ 
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{Normality of residuals}
+The histogram of the residuals (right plot) tells us we are okay since it closely matches
+a normal bell-shaped curve (shown by the dashed line).
+\medskip
+
+The normal quantile-quantile-plot (\rcode{qqplot}) in the left hand plot gives further insight.  In this example, the 146 theoretical quantile values on the x-axis can be regarded as the values that would give a near perfect bell-shaped histogram (i.e., would best match the dashed bell-shaped curve in the right hand plot). Ideally, our residuals should match these theoretical quantiles and lie approximately on the straight line shown on the \rcode{qqplot}.
+\medskip
+
+It can be difficult to judge if a qq-plot is sufficiently close to a straight line or not. Some intuition can be gained by seeing how the qq-plot looks when the assumptions are satisfied, as shown on the next slide. In comparison, the above qq-plot does look a little atypical, but not enough to cause major concerns.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{qq-plot intuition}
+
+<<RC-H02-015b,echo=-1,fig.height=3.2>>=
+par(mfrow=c(2,3),mar=c(3,4,0,4))
+for(i in 1:6) {
+  y=rnorm(146)
+  qqnorm(resid(lm(y~1)),main=""); abline(0,1) }
+@
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{A further check: Influence}
+
+Before we rush in and conclude that all is well, 
+there is one other concern that we should investigate, namely \emph{influence}.\footnote{This is not a model assumption per se, but is a prudent model check.}
+
+\bigskip
+
+Essentially, we need to check whether the fit is highly influenced by any single
+(or small group of) observation(s).
+
+\end{frame}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Checking for points of undue influence using \rcode{cooks20x}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}[fragile]
+\frametitle{Points of undue influence}
+
+
+The fitted model is based on minimizing the sum of the squared residuals. Because of this, a single observation with a very large residual can have a big influence on the overall fit.
+We can be misled if we assume all is fine when one (or several) data points are unduly influential, and perhaps of questionable validity.
+\bigskip
+
+Moreover, a data point can also be influential on the model fit by having an extreme $x$ value, since it can apply a lot of ``torque'' to the fit.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{Points of undue influence\ldots}
+To illustrate: Imagine a student had mistakenly been awarded 25 out of 20 in their \rcode{Test}, yet obtained just 5 in the final exam.
+\bigskip
+
+Here is some tricky \rcode{R} code to add this incorrect data point to our dataframe:
+<<RC-H02-016, fig.show = 'hide'>>=
+n=nrow(Stats20x.df)
+## Add extra point by repeating last observation, n(=146)
+Stats20xnew.df=Stats20x.df[c(1:n,n),]
+## Replace with new test /Exam #'s
+Stats20xnew.df[n+1,c("Test", "Exam")]=c(25,5)
+## Plot our new dataset
+plot(Exam~ Test, data=Stats20xnew.df)
+## Mark our new observation
+points(25,5,pch=19,col="red")
+@
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{Points of undue influence\ldots}
+<<RC-H02-017, echo=FALSE>>=
+trimPlot(Exam ~ Test,
+         data=Stats20xnew.df,
+         x.lab = "Test",
+         y.lab = "Exam",
+         fileName = "figure/RC-H02-017.pdf",
+         cex = 0.7,
+         fig.height = 2.5,
+         fig.width = 4.5,
+         addElements = list(
+           points(25,5,pch=19,col="red", cex = 0.7)
+         ))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H02-017}
+\end{figure}
+
+The bogus student is shown on the plot as the {\color{red}red} point!
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{Points of undue influence\ldots}
+Here is the new model fitted to the altered data.
+<<RC-H02-018, results = 'hide'>>=
+examtest.fit2=lm(Exam~Test, data=Stats20xnew.df)
+coef(summary(examtest.fit2))
+@
+<<RC-H02-019, echo = FALSE>>=
+coef(summary(examtest.fit2))
+@
+Compare this to the original fit:
+<<RC-H02-019b, echo = T>>=
+coef(summary(examtest.fit))
+@
+<<RC-H02-019c, echo=FALSE>>=
+beta0.fit1 <- sprintf("%.2f", examtest.fit$coef[1])
+beta1.fit1 <- sprintf("%.2f", examtest.fit$coef[2])
+beta1.se1 <- sprintf("%.3f", coef(summary(examtest.fit))[2,2])
+
+beta0.fit2 <- sprintf("%.2f", examtest.fit2$coef[1])
+beta1.fit2 <- sprintf("%.2f", examtest.fit2$coef[2])
+
+predict0 <- sprintf("%.2f", coef(examtest.fit)[1]+coef(examtest.fit)[2]*0)
+predict10 <- sprintf("%.2f", coef(examtest.fit)[1]+coef(examtest.fit)[2]*10)
+predict20 <- sprintf("%.2f", coef(examtest.fit)[1]+coef(examtest.fit)[2]*20)
+
+predict0.fit2 <- sprintf("%.2f", coef(examtest.fit2)[1]+coef(examtest.fit2)[2]*0)
+predict10.fit2 <- sprintf("%.2f", coef(examtest.fit2)[1]+coef(examtest.fit2)[2]*10)
+predict20.fit2 <- sprintf("%.2f", coef(examtest.fit2)[1]+coef(examtest.fit2)[2]*20)
+@
+
+Note how $\hat{\beta_1}$ has changed from \Sexpr{beta1.fit1} to \Sexpr{beta1.fit2}. This is a change of more than two standard errors (here, we are referring to the standard error from the original fit, \Sexpr{beta1.se1}).
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{Points of undue influence\ldots}
+Here is the old model fitted line ({\color{blue}blue}) compared to this new model ({\color{red}red}). \\
+\phantom{A space}
+<<RC-H02-020, echo=FALSE>>=
+trimPlot(Exam ~ Test,
+         data = Stats20xnew.df,
+         x.lab = "Test",
+         y.lab = "Exam",
+         fileName = "figure/RC-H02-020.pdf",
+         col="light grey",
+         cex = 0.7,
+         fig.height = 2.5,
+         fig.width = 4.5,
+         addElements = list(
+           points(25,5,pch=19,col="red", cex = 0.7),
+           abline(coef(examtest.fit), lty=2, lwd = 2, col="blue"),
+           abline(coef(examtest.fit2), lty=2, lwd = 2, col="red")
+         ))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H02-020}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+
+\framesubtitle{Points of undue influence\ldots}
+
+
+How does this change predictions?
+
+In this model we would make a prediction using the following estimates (to 2 d.p.).
+ $\rcode{Exam}= \Sexpr{beta0.fit2} +\Sexpr{beta1.fit2} \times\rcode{Test}$ compared to the old model estimates:
+ $\rcode{Exam}= \Sexpr{beta0} +\Sexpr{beta1} \times\rcode{Test}$
+
+Our new vs.\ previous estimates are now (previous estimate in brackets):
+
+\begin{itemize}
+\item \rcode{Test = \phantom{0}0} then $\rcode{Exam}= \Sexpr{beta0.fit2} +\Sexpr{beta1.fit2}\times\rcode{\phantom{0}0} = \Sexpr{predict0.fit2}$  (\phantom{0}\Sexpr{predict0}),
+\item \rcode{Test = 10} then $\rcode{Exam}= \Sexpr{beta0.fit2} +\Sexpr{beta1.fit2}\times\rcode{10} = \Sexpr{predict10.fit2}$ (\Sexpr{predict10}),
+\item \rcode{Test = 20} then $\rcode{Exam}= \Sexpr{beta0.fit2} +\Sexpr{beta1.fit2}\times\rcode{20} = \Sexpr{predict20.fit2} $ (\Sexpr{predict20}).
+\end{itemize}
+
+Note that this has had a huge change for the extreme \rcode{Test} scores -- for those who got 0 in the \rcode{Test} we predict a higher mark than before and those who got a 20 (out of 20) get a lower predicted mark than before. 
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Identifing points of undue influence}
+
+The addition of student 147 has drastically changed our fitted model and its predictions. This studend is so atypical of the other 146 students that we should exclude them from the analysis. In this case it is clearly a data entry mistake, but in practice it is not always so obvious.
+
+\bigskip \bigskip
+We've seem that to determine whether an observation is influential we need to remove it from the dataset and refit the model. This can be a lot of work when there a lot of observations. The Cook's distance uses linear algebra to avoid this work. 
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Identifing points of undue influence\ldots}
+\framesubtitle{Cook's distance}
+
+The following Cook's distance plot gives the influence of all 147 observations in the altered dataframe. Student 147 dominates this plot and is clearly identified as being highly influential.
+
+<<RC-H02-022, fig.show='hide'>>=
+cooks20x(examtest.fit2)
+@
+
+<<RC-H02-023, echo=FALSE>>=
+trimPlot(examtest.fit2,
+         plotCommand = cooks20x,
+         fileName = "figure/RC-H02-023.pdf",
+         fig.height = 2.1,
+         fig.width = 4.1,
+         mai = c(0.5, 0.6, 0.1, 0.1)
+         )
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.5]{figure/RC-H02-023}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Identifing points of undue influence\ldots}
+
+\medskip
+As a rough ``rule of thumb"\footnote{\textbf{A rule of thumb} is a principle with broad application that is not intended to be strictly accurate or reliable for every situation. It is an easily learned and easily applied procedure for approximately calculating or recalling some value, or for making some determination. Thanks Wikipedia.},
+an observation is deemed to be influential if:
+\begin{itemize}
+\item Removal of the observation changes any estimated parameter value by more than one standard error, or
+\item Its Cook's distance is greater than 0.4.
+\end{itemize}
+
+In STATS 20x we'll use the above Cook's distance threshold of 0.4. (Be aware that other courses or texts may use other thresholds, and the threshold may depend on the number of observations.) 
+
+Let us get back to the original fitted model and see what its Cook's distance plot looks like.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{Identifing points of undue influence\ldots}
+
+<<RC-H02-024, fig.show='hide'>>=
+cooks20x(examtest.fit)
+@
+
+<<RC-H02-025, echo=FALSE>>=
+trimPlot(examtest.fit,
+         plotCommand = cooks20x,
+         fileName = "figure/RC-H02-025.pdf",
+         fig.height = 2.1,
+         fig.width = 4.1,
+         mai = c(0.5, 0.6, 0.1, 0.1)
+         )
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.5]{figure/RC-H02-025}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{Validity of assumptions}
+
+We may now conclude that we can (mostly) trust the output of our analysis as our underlying assumptions seem reasonable and we do not have any unduly influential data points.
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Making inference from your model (provided the assumptions check out)}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}
+\frametitle{Statistical properties of the fitted linear model}
+Provided that {\bf all} of the assumptions of the linear model hold, it can be shown (see STATS 310) that $\hat{\beta}_0$ and $\hat{\beta}_1$ are normally distributed\footnote{That is, under repetition of the experiment that generated the data.} with expected values $\beta_0$ and $\beta_1$, respectively.
+\bigskip
+
+This means that the standard statistical techniques for making inference from normally distributed data can still be used.
+\medskip
+
+In particular, the t-statistic is used for testing hypotheses, and the t-multiplier for constructing confidence and prediction intervals.
+\end{frame}
+  
+
+\begin{frame}[fragile]
+\frametitle{Interpreting the output}
+\framesubtitle{Testing for significant effects}
+
+<<RC-H02-026, results='hide'>>=
+examtest.fit = lm(Exam ~ Test, data = Stats20x.df)
+summary(examtest.fit)
+@
+<<RC-H02-027, echo=FALSE>>=
+slimSummary(examtest.fit)
+@
+
+So here we can see that the \pval{} associated with the \rcode{Test} variable is highly statistically significant \rcode{< 2e-16 ***}.\footnote{\rcode{2e-16} $ = 2\times 10^{-16}$, which is so small that we may just as well call it zero.}
+
+Our underlying belief was that we could describe the relationship between exam mark and test mark using an increasing straight line. This belief has been confirmed.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Interpreting the output\ldots}
+\framesubtitle{Testing for significant effects\ldots}
+
+The null hypothesis is always that there is no effect. 
+In this case, that there is no relationship between test score and exam score, i.e.,
+
+$H_0$: there is no relationship between \rcode{Test} and \rcode{Exam}.
+
+Or equivalently,
+
+$H_0:\beta_1=0$, which is equivalent to saying that the data follow the \rcode{null} model $y=\beta_0+ \varepsilon$. 
+
+
+We will pretend that the null hypothesis is true (i.e., our working model of an increasing linear relationship between test and exam is incorrect), at least until we get evidence to the contrary.
+\medskip
+
+This approach is known as the philosophy of ``falsification''. 
+It is not the natural way we like to do things as humans, 
+but is a great way to ensure we do not come to erroneous conclusions based on wishful thinking.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Interpreting the output\ldots}
+\framesubtitle{Calculating the t value}
+<<RC-H02-028, echo=FALSE>>=
+beta1 = round(coef(examtest.fit)[2], 4)
+seBeta1 = round(summary(examtest.fit)$coefficients[2,2], 4)
+tstatBeta1 = round(coef(examtest.fit)[2] / summary(examtest.fit)$coefficients[2,2], 3)
+@
+
+Under the null hypothesis we assume $\beta_1=0$ and compare this to the estimated value here of $\hat{\beta}_1=\Sexpr{beta1}$.
+As we are statisticians, we need to measure how precise this estimate is -- this is measured by the standard error: $se(\hat{\beta}_1)=\Sexpr{seBeta1}$.
+
+So under the assumption that $\beta_1=0$ we can say that our data tell us that we are 
+\[
+\frac{\Sexpr{beta1}-0}{\Sexpr{seBeta1}} =\Sexpr{tstatBeta1}
+\]
+standard deviations\footnote{The term ``standard error'' is used to refer to the standard deviation of an estimated value -- in this case the standard deviation of the estimated linear effect of \rcode{Test}.}  away from this value. 
+You might recognize this as the $t$-statistic for testing $H_0:\beta_1=0$.
+It is the \rcode{t value} in our output. 
+
+Here, we conclude that our working model was reasonable. That is, it is unreasonable to assume that \rcode{Test} had no effect on \rcode{Exam} as the chances of fluking such a result is $<2\times 10^{-16}$.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Interpreting the output\ldots}
+\framesubtitle{Null vs fitted models}
+
+If $y=\rcode{Exam}$ and $x=\rcode{Test}$, then here are our fitted null (the {\color{red} red} line) and working (the {\color{blue} blue} line) models.
+
+% Null model: $y=\beta_0+\varepsilon$ (red) versus 
+% $y=\beta_0+\beta_1 x+\varepsilon$ (blue) where $\varepsilon\iid N(0,\sigma^2)$:
+
+<<RC-H02-029, echo=FALSE>>=
+trimPlot(Exam ~ Test,
+         data = Stats20x.df,
+         x.lab = "Test",
+         y.lab = "Exam",
+         fileName = "figure/RC-H02-029.pdf",
+         col="light grey",
+         cex = 0.7,
+         fig.height = 2.5,
+         fig.width = 4.5,
+         addElements = list(
+           abline(h = mean(Stats20x.df$Exam), lty=2, col="red"),
+           text(5,60, expression(hat(y)==hat(beta)[0]),col="red",cex=.8),
+           abline(examtest.fit$coeff, lty=2, col="blue"),
+           text(18,67, expression(hat(y)==hat(beta)[0]+hat(beta)[1]*x),col="blue",cex=.8)
+         ))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H02-029}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Statistical inference from our model}
+\framesubtitle{Confidence intervals for effects}
+
+We can also get confidence intervals for $\beta_1$ (and $\beta_0$ if need be) by:
+<<RC-H02-030>>=
+confint(examtest.fit)
+@
+
+Here we can say that, on average,  every increase in a student's test mark of 1 unit (out of 20) results in a \Sexpr{round(confint(examtest.fit)[2, 1], 2)} to \Sexpr{round(confint(examtest.fit)[2, 2], 2)} increase in the student's exam result.
+
+\medskip
+\textbf{Note}: the default setting is 95\% in \rcode{confint} -- but this can be changed with the optional \rcode{level} argument. E.g., a 99\% CI is given by
+<<RC-H02-031>>=
+confint(examtest.fit,level=0.99)
+@
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Using confidence intervals to do hypothesis tests}
+
+We can be confident that the 95\% confidence interval for $\beta_1$ contains the true value of $\beta_1$ because, under repetition of the experiment, 95\% of the calculated confidence intervals will contain the true value of $\beta_1$. That is, we'd have to be pretty unlucky for a confidence interval not to contain what we are trying to estimate.
+\medskip
+
+This means that if a hypothesized value of $\beta_1$ is not in our confidence interval, then we can be confident that it is not the true value of $\beta_1$. For example, if the value $0$ is not in our 95\% confidence for $\beta_1$ then we can reject the null hypothesis $H_0: \beta_1=0$ (at the 5\% level of significance). In fact, in the current example we would reject all values that are less than \Sexpr{round(confint(examtest.fit)[2, 1], 2)} or greater than \Sexpr{round(confint(examtest.fit)[2, 2], 2)}
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Choosing the best model}
+
+In our exam vs test mark example the effect of \rcode{Test} was highly significant. That is, the null hypothesis $H_0:\beta_1=0$ was rejected, and so we used the fitted simple linear regression model \rcode{examtest.fit} for inference.
+\bigskip
+
+However, in situations where the null hypothesis $H_0:\beta_1=0$ is {\bf not} rejected, then we would conclude that there is little evidence of an association between $x$ and $y$. In that case the null model would be our preferred model, and would be used for inference.
+\bigskip
+
+Also, note that we did not do a hypothesis test of the intercept, i.e.,$H_0:\beta_0=0$. 
+This is because the intercept is not an ``explanatory variable'' and so this hypothesis is rarely of interest. We generally leave the intercept term in the model regardless of whether it is significant or not.\footnote{There may be circumstances where it is meaningful to test the statistical significance of the intercept term, but these are very rare.}
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Confidence intervals for coefficients and fitted values, and prediction intervals for individual predictions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}[fragile]
+\frametitle{Estimation of fitted values}
+\framesubtitle{Getting fitted values using \rcode{predict}}
+
+Earlier, we calculated fitted/predicted values for students who got $0,10$, or $20$ in their \rcode{Test}.
+Here is a way to avoid doing this by hand using the \rcode{predict} function.
+
+Before using \rcode{predict} we have to set up a new dataframe that contains 
+the \rcode{Test} values for which we want to predict \rcode{Exam}.
+
+<<RC-H02-032>>=
+## Create data.frame of values of interest: Test = 0, 10, 20:
+## Names of vars must be exactly the same as in the data data.frame
+preds.df=data.frame(Test=c(0,10,20))
+predict(examtest.fit, preds.df)
+@ 
+
+These values are our estimates of the expected \rcode{Exam} scores for 
+students with \rcode{Test} scores of 0, 10 or 20, respectively.
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Estimation of fitted values...}
+\framesubtitle{Confidence intervals for expected values using \rcode{predict}}
+The above fitted values are {\bf point} estimates of the expected \rcode{Exam} score when \rcode{Test} is $0,10$, or $20$.  We would also like to have confidence intervals for these expected scores.
+This is easy: 
+
+<<RC-H02-033>>=
+predict(examtest.fit, preds.df, interval="confidence")
+@ 
+
+Note how the CI is relatively narrow for \rcode{Test = 10} compared to the extreme \rcode{Test} values. Why is this?
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Prediction of new observations}
+\framesubtitle{Prediction intervals for new $y$ values using \rcode{predict}}
+
+It may also be of interest to ask for an interval that predicts the \rcode{Exam} score
+for a single student (rather than an interval for the expected score, as done above).
+This is also easy -- just ask for a prediction interval instead:
+
+<<RC-H02-034>>=
+predict(examtest.fit, preds.df, interval="prediction")
+@
+<<RC-H02-035, echo=FALSE>>=
+abslwr <- sprintf("%.3f", min(predict(examtest.fit, preds.df, interval="prediction")[, 2:3]))
+absupr <- sprintf("%.3f", max(predict(examtest.fit, preds.df, interval="prediction")[, 2:3]))
+
+multiple.R <- sprintf("%.0f", summary(examtest.fit)$r.squared*100)
+@
+ 
+These intervals are much wider as they have to include the variability in individual
+students, and we have seen that this is large.
+In fact, there are some out-of-range results in these predictions -- \rcode{Exam = \Sexpr{abslwr}} and \rcode{Exam = \Sexpr{absupr}}!!
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{Conclusions about predictive ability}
+
+This is telling us that we have reached the limits of this linear model approximation. It does a fairly good job of explaining the trend but falls down as we can only account for \Sexpr{multiple.R}\% of the overall variation from \rcode{Test} and 
+/or the straight line relationship may be a little too naive.
+
+At the top end of exam/test there are fewer students, and there may be a different dynamic at this end of the data due to the constraint that exam mark must be between 0 and 100.
+
+We could not use this to give a student an aegrotat mark based only on their test mark alone.
+
+We would, ideally, like to explain more of the variability in \rcode{Exam} by using additional variables of interest -- this is known as multiple (as opposed to simple) linear regression -- which has the same underlying assumptions -- so stay tuned.  
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs.\ Test marks\ldots}
+\framesubtitle{Conclusions about predictive ability\ldots}
+Here is what the confidence ({\color{red}red}) and prediction intervals ({\color{blue}blue}) look like 
+for these data.
+
+<<RC-H02-036, echo=FALSE>>=
+sortTest=sort(Stats20x.df$Test)
+
+predsall.df=predict20x(examtest.fit,data.frame(Test=sortTest), print=FALSE)
+@
+
+<<RC-H02-037, echo=FALSE>>=
+trimPlot(Exam ~ Test,
+         data = Stats20x.df,
+         x.lab = "Test",
+         y.lab = "Exam",
+         ylim=range(predsall.df$frame[,2:5]),
+         fileName = "figure/RC-H02-037.pdf",
+         col="light grey",
+         cex = 0.7,
+         fig.height = 2.5,
+         fig.width = 4.5,
+         addElements = list(
+           abline(examtest.fit, lty=4),
+           abline(h=c(0,100), lty=3),
+           lines(sortTest,predsall.df$frame[,2], lty=2, col="red"),
+           lines(sortTest,predsall.df$frame[,3], lty=2, col="red"),
+           lines(sortTest,predsall.df$frame[,4], lty=2, col="blue"),
+           lines(sortTest,predsall.df$frame[,5], lty=2, col="blue")
+         ))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H02-037}
+\end{figure}
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{A recipe for subsequent analyses}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}[fragile]
+\frametitle{A recipe for subsequent analyses}
+
+Here is a recipe (algorithm\footnote{In mathematics and computer science, an algorithm  is a self-contained step-by-step set of operations to be performed. Named after the the mathematician, Mohammed ibn-Musa al-Khwarizmi, who was part of the royal court in Baghdad and who lived from about 780 to 850 AD. }) to use for problems like this where we are interested in a numerical \textbf{response} variable $y$ (e.g.: \rcode{Exam})  and its relationship with a possible \textbf{explanatory} variable $x$ (e.g.:\rcode{Test}):
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{A recipe for subsequent analyses\ldots}
+
+\begin{itemize}
+\item Plot the data and see what sort of relation (if any) it suggests (there may also be a statement of research intent to guide you). 
+Propose an appropriate working model. 
+In the above example we decided that 
+$y_i=\beta_0+\beta_1 x_i+\varepsilon_i, \;\;  \varepsilon_i\iid N(0,\sigma^2)$ (where $\beta_1>0$.)
+
+\item Fit the working model using \rcode{lm}.
+
+\item Check the assumptions you are using and validate them. Independence OK? (how were the data collected?), EOV Okay? -- \rcode{plot(examtest.fit, which = 1)}, Normality Okay? -- \rcode{normcheck}. 
+If these are okay then,
+
+\item Remove any non-significant explanatory variables where appropriate (more about this later). If so, check new working model.
+
+\item Make sure that individual points are not having undue influence and, perhaps, eliminate/correct them -- \rcode{cooks20x}. If these are okay then,
+
+\item Make conclusions/predictions, discuss limitations, and answer relevant research questions.
+
+\medskip
+Note in the above do not  go to the next step until you are satisfied with the current step. 
+\end {itemize}
+
+\end{frame}
+
+
+
+%\begin{frame}
+%\frametitle{Chapter 2 Summary}
+
+%More on the simple linear model: $\E[Y|X]=\beta_0+\beta_{1}X$. 
+
+%For a single observation, $y_i$, the simple linear model is:
+
+%$$ y_i = \beta_0+\beta_{1}x_i + \varepsilon_i.$$
+
+%\begin{itemize}
+%  \item The assumptions of 
+%\end{itemize}
+%and how we assess whether they are satisfied by the data.
+
+%The assumptions:
+
+%\begin{itemize}
+  %\item The random errors are iid $N(0, \sigma^2)$. I.e.
+  %\begin{enumerate}
+  %  \item They are pairwise mutually independent (uncorrelated).
+  %  \item They have constant variance, $\sigma^2$, across the all values of the explanatory variable.
+  %  \item They are normally distributed with mean 0 and variance $\sigma^2$.
+  %  \item There are no outliers.
+%  \end{enumerate}
+ % \item The assumptions apply to all of the linear models you will encounter in Chapters 1 - 12. 
+%  \item To fit in \rcode{R}: \rcode{fit = lm(formula)}, where \rcode{formula = y \textasciitilde{} x}.
+%  \item Use \rcode{summary(fit)} to get table of coefficients containing estimates of $\beta_0$ and $\beta_{1}$. 
+%  \item Prediction in \rcode{R}: \rcode{summary(fit)}
+%  \item We use $R^2$ to assess ``goodness'' of prediction
+%\end{itemize}
+
+%\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Relevant \rcode{R}-code}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[fragile]
+\frametitle{Most of the \rcode{R}-code you need for this chapter}
+
+Fitting a linear (straight line) model to these data.
+
+
+<<RC-H02-038, eval=F, comment=NA>>=
+examtest.fit=lm(Exam~Test, data=Stats20x.df)
+@
+
+Note: Independence is evaluated by investigating how the data was collected. Observations are assumed to be acting independently of each other. Much thought must go into making sure this assumption holds.
+
+Checking for EOV
+
+<<RC-H02-039, eval=F, comment=NA>>= 
+plot(examtest.fit.which=1)
+@
+
+Checking approximate normality
+<<RC-H02-039b, eval=F, comment=NA>>= 
+normcheck(examtest.fit)
+@
+
+Checking for points of undue influence:
+
+<<RC-H02-040, eval=F, comment=NA>>= 
+cooks20x(examtest.fit)
+@
+
+
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Most of the \rcode{R} code you need for this chapter...}
+
+Estimated values from the fitted model:
+
+<<RC-H02-041, eval=F, comment=NA>>=
+summary(examtest.fit)
+@
+Confidence intervals for the model parameters (intercept and slope)
+
+<<RC-H02-042, eval=F, comment=NA>>= 
+confint(examtest.fit)
+@
+
+Creating a  data frame of new values (for, say,  Test =0, 10 or 20):
+<<RC-H02-043, eval=F, comment=NA>>= 
+preds.df=data.frame(Test=c(0,10,20))
+@
+Confidence intervals for expected values and prediction intervals for new observations:
+<<RC-H02-044, eval=F, comment=NA>>= 
+# confidence interval for expected value:
+predict(examtest.fit, preds.df, interval="confidence")
+# prediction interval for new observation:
+predict(examtest.fit, preds.df, interval="prediction")
+@
+
+\end{frame}
+
+
+%\end{document}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%Test of ModelCheck%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Model checks}
+\vspace{-1ex}
+
+
+<<Test, echo=F,fig.height=5>>=
+ModelCheck(examtest.fit)
+@
+\end{frame}
+
+\begin{frame}
+\frametitle{Model checks 2}
+\vspace{-1ex}
+<<Test 2, echo=F, fig.width=6, fig.asp=0.7>>=
+modcheck(examtest.fit)
+@
+\end{frame}
+
+\end{document}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CUT BITS%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]
+\frametitle{Plot layout example}
+<<Layout test2, echo=F,fig.height=4.4,fig.width=6>>=
+par(mar=c(4,4,0.5,4),mgp=c(2,1,0))
+layout(matrix(c(1, 1, 2, 3),2,2,byrow=T))
+plot(examtest.fit,which=c(1,2),caption="")
+hist(resid(examtest.fit),main="")
+@
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Model assumptions}
+\framesubtitle{Garbage in  --  garbage out}
+
+
+This machinery of least squares assumes that the `fuel' (data) is of a certain standard.
+The machinery will still  work (i.e. give output) even if the data does not conform to these standards. 
+
+\medskip
+
+It will, however, probably result in, at least, misleading results and, at most, totally useless results.
+
+\medskip
+
+{\bf\ Ass\textbackslash u\textbackslash me}: if you make assumptions without validating them, you will make an \textbf{Ass} out of \textbf{U} and \textbf{me}!!
+
+\end{frame}
+

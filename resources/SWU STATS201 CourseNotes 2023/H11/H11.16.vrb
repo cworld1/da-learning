@@ -1,0 +1,37 @@
+\frametitle{Fruit fly\ldots}
+\framesubtitle{Interpretation of grand and group means}
+The above code groups the data by \rcode{group} and then applies the \rcode{mean} function to the \rcode{days} values within each group.
+\medskip
+
+The estimated group means are
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{Df}\hlopt{$}\hlstd{group.mean}
+\end{alltt}
+\begin{verbatim}
+[1] 63.56 64.80 63.36 56.76 38.72
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+and the estimated group effects are therefore
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{Df}\hlopt{$}\hlstd{group.mean}\hlopt{-}\hlstd{grand.mean}
+\end{alltt}
+\begin{verbatim}
+[1]   6.12   7.36   5.92  -0.68 -18.72
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\medskip
+
+We have seen that the overall average longevity of the 125 male flies in the study
+is about 57.4 days.
+\medskip
+
+We also see that group \rcode{G5} has markedly lower longevity (18.72 fewer days) compared to the overall mean.
+\bigskip
+
+We could test null hypotheses and calculate confidence intervals for the above conclusions, but our focus on this course will be making inference about the differences in group means.

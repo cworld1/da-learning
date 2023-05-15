@@ -1,0 +1,27 @@
+\frametitle{Exam vs test success and attendance}
+\framesubtitle{Pairwise comparisons\ldots}
+
+The second component of \rcode{exam.emm} contains the  {\em simultaneous} confidence intervals for the six\footnote{\rcode{choose(4,2)=6}} possible pairwise comparisons between the four treatment combinations.
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{exam.emm}\hlopt{$}\hlstd{contrasts}
+\end{alltt}
+\begin{verbatim}
+ contrast               estimate   SE  df lower.CL upper.CL t.ratio p.value
+ No nopass - Yes nopass    -3.19 4.56 142    -15.0     8.66  -0.700  0.8969
+ No nopass - No pass      -13.02 4.37 142    -24.4    -1.65  -2.978  0.0178
+ No nopass - Yes pass     -27.81 3.63 142    -37.2   -18.38  -7.669  <.0001
+ Yes nopass - No pass      -9.83 4.37 142    -21.2     1.54  -2.248  0.1155
+ Yes nopass - Yes pass    -24.62 3.63 142    -34.0   -15.19  -6.789  <.0001
+ No pass - Yes pass       -14.79 3.39 142    -23.6    -5.98  -4.364  0.0001
+
+Confidence level used: 0.95
+Conf-level adjustment: tukey method for comparing a family of 4 estimates
+P value adjustment: tukey method for comparing a family of 4 estimates
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\vfill
+

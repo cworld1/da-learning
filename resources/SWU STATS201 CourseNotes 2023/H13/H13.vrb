@@ -1,0 +1,51 @@
+\frametitle{Most of the \rcode{R}-code you need for this chapter...}
+
+To check if the data are consistent with the Poisson model you use
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlnum{1} \hlopt{-} \hlkwd{pchisq}\hlstd{(CRAN.gfit}\hlopt{$}\hlstd{deviance,CRAN.gfit}\hlopt{$}\hlstd{df.residual)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+and if the \pval{} is very small (i.e., less that 0.05) then you can to deal with this
+using the quasi-Poisson model:
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{CRAN.quasigfit} \hlkwb{=} \hlkwd{glm}\hlstd{(Number} \hlopt{~} \hlstd{Year,} \hlkwc{family} \hlstd{= quasipoisson,} \hlkwc{data} \hlstd{= CRAN.df)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\medskip
+
+Once you've chosen your final model you can interpret the effect of the variables as a
+multiplicative change in the {\bf mean} or expected value:
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{exp}\hlstd{(}\hlkwd{confint}\hlstd{(CRAN.quasigfit))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+If you wish to estimate a 95\% CI for an expected value
+use \rcode{predictGLM}, or do it the hard way as follows:
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{pred2017.quasi}\hlkwb{=}\hlkwd{predict}\hlstd{(CRAN.quasigfit, predCRAN.df,}\hlkwc{se.fit}\hlstd{=}\hlnum{TRUE}\hlstd{)}
+\hlstd{> }\hlcom{# CI for log mean}
+\hlstd{> }\hlstd{lower} \hlkwb{=} \hlstd{pred2017.quasi}\hlopt{$}\hlstd{fit}\hlopt{-}\hlnum{1.96}\hlopt{*}\hlstd{pred2017.quasi}\hlopt{$}\hlstd{se.fit}
+\hlstd{> }\hlstd{upper} \hlkwb{=} \hlstd{pred2017.quasi}\hlopt{$}\hlstd{fit}\hlopt{+}\hlnum{1.96}\hlopt{*}\hlstd{pred2017.quasi}\hlopt{$}\hlstd{se.fit}
+\hlstd{> }\hlcom{#CI for mean value}
+\hlstd{> }\hlstd{pred2017.ci.mean}\hlkwb{=}\hlkwd{exp}\hlstd{(}\hlkwd{c}\hlstd{(lower, upper))}
+\hlstd{> }\hlstd{pred2017.ci.mean}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+

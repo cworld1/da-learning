@@ -1,0 +1,128 @@
+---
+title: 'Case Study 16.1: Gender bias in admissions to Berkeley '
+output: pdf_document
+author: 'Tou Ohone Andate - staff number 1234567'
+---
+```{r, include=FALSE}
+## Do not delete this!
+## It loads the s20x library for you. If you delete it 
+## your document may not compile it.
+require(s20x)
+```
+
+# Problem
+The University of California, Berkeley, was sued for gender bias against women based on the enrolment decisions given to 4526 students who applied for entry into the graduate program in 1973. 
+
+The variables of interest were:
+
+* `Dept`: Six-level categorical variable with levels 'A', 'B', 'C', 'D', and 'E'.
+* `Gender`: Two-level categorical variable with levels 'F' and 'M'.
+* `Outcome`: Two-level categorical variable with levels 'In' and Out'.
+* `Freq`: A count variable which corresponds to the observed combination of `Dept`, `Gender`, and `Outcome`.
+
+## Question of Interest
+We want examine the association between gender and admission outcome. 
+
+## Read in and naive analysis
+```{r}
+Berk.df = read.table("BerkeleyEnrolments.txt", header = TRUE)
+head(Berk.df)
+Berk.df=transform(Berk.df,Dept=factor(Dept),Gender=factor(Gender),Outcome=factor(Outcome))
+Berk.tbl = xtabs(Freq ~ Gender + Outcome, data = Berk.df)
+Berk.tbl
+barplot(t(Berk.tbl), main="Berkeley admissions  by gender", col=c("lightblue", "lightgreen"),
+xlab="gender",legend.text=c("In", "Out"))
+```
+
+```{r}
+#Berk.gfit0 = glm(Freq ~ Gender * Outcome,family = poisson, data = Berk.df)
+#The above fit is over-dispersed, so quasi fit used below
+Berk.quasifit0 = glm(Freq ~ Gender * Outcome,family = poisson, data = Berk.df)
+coef(summary(Berk.quasifit0))
+summary(Berk.quasifit0)
+
+exp(confint(Berk.quasifit0))[4,] #Odds ratio for females being kept out of Berkeley!!!
+``` 
+
+This appear to show an open and shut case of strong gender discrimination - the lawyers were rubbing their hands in glee.
+
+However, we need to be careful. In STATS 330 (which follows on from this class) we learn that an association may not be causal. Here, we have a strong association between gender and outcome, but this does **not** in itself establish a causal relationship. 
+
+In STATS 330 we would consider whether there is an indirect causal pathway. Really, we want to ask "If all things else are the same, other than gender, are the odds the same for females and males?". This means that we need to take into consideration department, and compare males and females that are applying to the same department.
+
+Taking department in to account makes the model quite a bit more complicated. Fitting a model with 3-way interactions does not allow for meaningful interpretations, so it was decided fit the model containing all of the two-way interactions: 
+
+## Model Building and Check Assumptions
+```{r, out.width = "75%", fig.align = 'center'}
+Berk.gfit = glm(Freq ~ Dept * Gender + Dept * Outcome + Gender * Outcome,
+    family = poisson, data = Berk.df)
+plot(Berk.gfit, which = 1)
+# The next two calls are to reduce the amount of output produced by `anova'
+Berk.gfit.anova = anova(Berk.gfit, test = "Chisq")
+Berk.gfit.anova[, names(Berk.gfit.anova)]
+summary(Berk.gfit)
+1 - pchisq(20.204, 5)
+Berk.quasigfit = glm(Freq ~ Dept * Gender + Dept * Outcome + Gender * Outcome,                 
+    family = quasipoisson, data = Berk.df)
+# The next two calls are to reduce the amount of output produced by `anova'
+Berk.quasigfit.anova = anova(Berk.quasigfit, test = "F")
+Berk.quasigfit.anova[, names(Berk.quasigfit.anova)]
+summary(Berk.quasigfit)
+```
+
+## Produce the Additional Output Required
+```{r}
+# Before adjusting for individual departments
+chisq.test(Berk.tbl, correct = FALSE)
+# After adjusting for individual departments
+Berk.summ = coef(summary(Berk.quasigfit))
+Berk.summ[nrow(Berk.summ), ]
+c(exp(Berk.summ[nrow(Berk.summ), 1]), exp(confint(Berk.quasigfit)[nrow(Berk.summ), ]))
+```
+
+# Method and Assumption Checks
+Our response variable is a count broken down by three explanatory factors, gender, outcome, and department. Since we want to access the effect of gender, all else being equal, we fitted a generalized linear 3-way ANOVA model that included  all possible two-way interaction terms. From looking at the data by department we stongly anticipate that some of the second-order interaction terms with department will be significant. 
+
+The residual plot shows no strong trends. The check of residual deviance had p-value 0.001 and the model was refitted as quasipoisson.
+
+# Executive Summary
+We want to determine if there was gender bias at the University of Berkeley. A naive analysis of the data strongly suggests there is. However, this analysis does not compare like to like. That is, it does not compare students applying to the same department. We fitted a model that included all department in addition to gender and outcome, and found that there was no significant effect.
+
+For completeness (despite the non-significant effect), we quantify our conclusions below:
+
+The estimated effect is that for every female declined, 1.11 males are declined, once we adjust for the confounding effect of department. [NOTE: This is equivalent to saying that the odds of a male being declined are estimated to be 1.11 compared to females.] That is, on average about 11\% more males are declined than females after adjustment for department. The confidence interval for the ratio of odds is 0.81 to 1.51.
+
+We had evidence that the association between gender and admission outcome was significant before adjusting for individual departments (_P-value_ $\approx$ 0). However, once we adjusted for individual departments, there is insufficient evidence to say that the true ratio is different from 1 (_P-value_ = 0.55).
+
+# Lecturer Comment
+What is happening here is that females are tending to apply more for the departments that have lower admission rates (perhaps law and medicine). Males are tending to apply more for the departments with higher admission rates (perhaps statistics!!). The association between gender and admission outcome is genuine, but is not caused by gender, but rather the difference in departmental preferences between genders.
+
+# Plots for revealing the deparmental preferences:
+
+
+## Gender vs Acceptance
+
+
+```{r,fig.height=4}
+propn.gender=Berk.tbl[,1]/apply(Berk.tbl,1,sum)
+barplot(propn.gender,ylim=c(0,.7), main="Berkeley admission rate by gender", col=c("lightblue", "lightgreen"),
+        xlab="gender",legend.text=c("female", "male"))
+```
+
+## Looking at outcome by department for each gender
+
+```{r,fig.height=4}
+BerkByDept = xtabs(Freq ~ Gender + Outcome + Dept, data = Berk.df)
+
+propn.gender.dept=BerkByDept[,1,]/apply(BerkByDept,c(1,3),sum)
+barplot(propn.gender.dept, ylim=c(0,.85), main="Berkeley admission success by dept and gender", 
+        col=c("lightblue", "lightgreen"),
+        xlab="Department",legend.text=c("female", "male"),beside=T)
+
+total.gender.dept=apply(BerkByDept,c(1,3),sum)
+barplot(total.gender.dept, main="Berkeley applications by dept and gender", 
+        col=c("lightblue", "lightgreen"),
+        xlab="Department",legend.text=c("female", "male"),beside=T)
+```
+
+Females have higher admission rates in 4 of the 6 departments.

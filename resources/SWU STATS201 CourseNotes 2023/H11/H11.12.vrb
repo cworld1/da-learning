@@ -1,0 +1,30 @@
+\frametitle{Fruit fly\ldots}
+\framesubtitle{$R^2$ and ANOVA table}
+We can trust the fitted model. What can we conclude?\footnote{Recall from Chapter 9 that we have to use the \rcode{anova} function to check the significance of a factor variable with more than two levels.}
+\medskip
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{anova}\hlstd{(Fruitfly.fit)}
+\end{alltt}
+\begin{verbatim}
+Analysis of Variance Table
+
+Response: days
+           Df Sum Sq Mean Sq F value    Pr(>F)
+group       4  11939 2984.82  13.612 3.516e-09 ***
+Residuals 120  26314  219.28
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\medskip
+
+This allows us to say that there is very strong evidence of a difference in expected longevity between the five groups, which was fairly obvious from the boxplot.
+\smallskip
+
+A significant result means we should now investigate how the groups differ from one another -- there is more work to be done.
+

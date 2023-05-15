@@ -1,0 +1,1143 @@
+\makeatletter \def\NR@nopatch@beamer{} \makeatother %Temporary due to bug on 17 May
+
+\documentclass{beamer}
+\usepackage{graphicx}
+\input{../s20xPreambleRBM.tex}
+
+\begin{document}
+\newcommand{\thechapter}{12}
+
+
+<<RC-H12-000, echo=FALSE,warning=FALSE>>=
+source("../s20xNotesHelper.R")
+## these are global knitr options and settings for the
+## whole document
+library(knitr)
+library(s20x)
+## comment = NA removes ## from all output lines
+## prompt = TRUE means the console input prompt > is displayed
+## tidy = TRUE means the code is properly spaced and tidied.
+opts_chunk$set(comment = NA, size = "scriptsize", prompt = TRUE, tidy = TRUE)
+opts_knit$set(global.par=F)
+par(mar=c(4,4,2.5,4))
+@
+
+\title{Chapter \thechapter: \\ Linear models with two explanatory factor variables \\ (Two-way analysis of variance)}
+
+
+\institute{University of Auckland}
+
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+
+\begin{frame}[t]
+\frametitle{Learning Outcomes}
+In this chapter you will learn about:
+\begin{center}
+\vspace{16pt}
+  \begin{itemize}
+  \item Fitting a model with two explanatory factors, a.k.a., two-way ANOVA
+  \item Interaction plots
+  \item Interpretting the fitted model
+  \item Pairwise comparisons using \rcode{emmeans}
+  \item Simplifying the model where possible
+  \item Relevant \rcode{R}-code
+  \item Alternative parameterizations of the two-way ANOVA model\footnote{Optional section.}
+  \end{itemize}
+\end{center}
+\end{frame}
+
+
+% \begin{frame}
+% \begin{center}
+% {\huge Two explanatory factors}
+% \end{center}
+% \end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Example: Using test success and attendance to explain exam score \\ ~ \\ Two-way ANOVA with interaction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[fragile]
+\frametitle{Exam score vs test success and attendance}
+
+<<RC-H12-002, echo=FALSE>>=
+Stats20x.df = read.table("Data/STATS20x.txt", header=T)
+ExamTestAttend.fit = lm(Exam ~ Test*Attend, data = Stats20x.df)
+coeffs = ExamTestAttend.fit$coeff # easier to get these terms
+id = (Stats20x.df$Attend == "Yes")
+
+trimPlot(Exam ~ Test,
+         data = Stats20x.df,
+         type = "n",
+         fileName = "figure/RC-H12-002.pdf",
+         fig.height = 2.1,
+         fig.width = 4.1,
+         x.lab = "Test",
+         y.lab = "Exam",
+         addElements = list(
+           # plot "y" for "yes" for regular attenders"
+           text(Stats20x.df$Test[id], Stats20x.df$Exam[id], cex = 0.7, "y"), 
+           # plot "n" for "no" for non-regular attenders(=!id)"
+           text(Stats20x.df$Test[!id], Stats20x.df$Exam[!id], cex = 0.7, "n"),
+           ## red for "No", blue for "Yes".
+           abline(coeffs[1:2], lty = 2, col = "red"),
+           abline(coeffs[1] + coeffs[3], coeffs[2] + coeffs[4], lty = 2, col = "blue")
+         ))
+@
+
+
+In Chapter 8 we investigated whether the effect of a student's test mark on exam score changed depending on whether they regularly attend or not.
+\smallskip
+
+We saw that those who attended regularly ({\color{blue}blue} line and ``y'' for ``yes") got more `return' for each additional test mark than non-attenders.
+\medskip
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H12-002}
+\end{figure}
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Exam score vs test success and attendance\ldots}
+
+Here we will use the same two explanatory variables as in Chapter 8 but are going
+to change the explanatory test score variable so that it only has two states
+ --  passed or did not pass. \medskip
+
+That is, we are going to use the dichotomous factor variable ``test success'',
+rather than the raw numeric test score value. \medskip
+
+We shall also be using attendance as a second explanatory factor.
+\bigskip
+
+For this example we shall use a two-way ANOVA, since there are two explanatory factors.
+\medskip
+
+First, read in the data and change the class of \rcode{Attend} to factor:
+\medskip
+
+<<RC-H12-001>>=
+## Importing data into R
+Stats20x.df = read.table("Data/STATS20x.txt", header=T)
+Stats20x.df$Attend=factor(Stats20x.df$Attend)
+@
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Exam score vs test success and attendance\ldots}
+
+We next transform the numeric \rcode{Test} variable into a factor with two levels, \rcode{pass} and \rcode{nopass}.
+\medskip
+
+Let us create the new factor variable \rcode{Pass.test}:
+\medskip
+
+<<RC-H12-003>>=
+Stats20x.df$Pass.test=with(Stats20x.df,
+                           factor(ifelse(Test>=10,"pass","nopass")))
+## Check to see if the call above does what we expect
+min(Stats20x.df$Test[Stats20x.df$Pass.test=="pass"])
+max(Stats20x.df$Test[Stats20x.df$Pass.test=="nopass"])
+@
+\bigskip
+
+We can now examine whether passing the test results in better exam marks and vice-versa, on average. We can also ask the same question of regular attendance.
+
+\medskip
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Interaction plots }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}
+\frametitle{Exam score vs test success and attendance\ldots}
+\framesubtitle{\rcode{interactionPlots()}}
+
+Let us see how these data explain \rcode{Exam} by using an \rcode{s20x} function \rcode{interactionPlots()}. 
+
+\medskip
+
+This is designed specifically for plotting a continuous $Y$ (in our case \rcode{Exam}) against two factor variables (here they are \rcode{Attend} and the newly created \rcode{Pass.test}).
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs test success and attendance\ldots}
+\framesubtitle{\rcode{interactionPlots()}\ldots}
+
+<<RC-H12-004, fig.show = 'hide'>>=
+interactionPlots(Exam ~ Pass.test + Attend, data = Stats20x.df)
+@
+
+<<RC-H12-005, fig.height = 3, fig.width = 5, echo = FALSE>>=
+par(mar = c(4, 4, 3, 0), oma = rep(0.1, 4), cex = 0.75, las = 1)
+interactionPlots(Exam ~ Pass.test + Attend, data = Stats20x.df)
+@
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs test success and attendance\ldots}
+
+Here we see that `attenders' who pass the test seem to be doing markedly better than most other students. Note that we do not have parallel lines, thereby indicating that there could be an interaction between the two factors.
+\medskip
+
+In other words, the effect on exam score of passing the test may depend on whether a student regularly attended or not.
+\bigskip \bigskip
+
+As shown below, we can rearrange the layout of the interaction plot by reversing the order in which the explanatory variables are given in the right-hand side of the model formula argument.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs test success and attendance\ldots}
+We still conclude the same insights as above. \medskip
+
+<<RC-H12-006, fig.show = 'hide'>>=
+interactionPlots(Exam ~ Attend + Pass.test, data = Stats20x.df)
+@
+
+<<RC-H12-007, fig.height = 2.75, fig.width = 5, echo = FALSE>>=
+par(mar = c(4, 4, 3, 0), oma = rep(0.1, 4), cex = 0.75, las = 1)
+interactionPlots(Exam ~ Attend + Pass.test, data = Stats20x.df)
+@
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Fitting the interaction model}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs test success and attendance\ldots}
+\framesubtitle{Assumption checks}
+Let us fit the model with interaction, and check the assumptions.
+
+<<RC-H12-008, fig.show = 'hide'>>=
+Exam.fit = lm(Exam ~ Attend*Pass.test, data = Stats20x.df)
+plot(Exam.fit, which=1)
+@
+
+<<RC-H12-009, echo = FALSE>>=
+trimPlot(Exam.fit,
+         plotCommand = plot,
+         which = 1,
+         fileName = "figure/RC-H12-009.pdf",
+         cex = 0.7,
+         fig.height = 2.15,
+         fig.width = 4.15,
+         mai = c(0.5, 0.5, 0.1, 0.1),
+         x.lab = "Fitted values",
+         y.lab = "Residuals")
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H12-009}
+\end{figure}
+
+The \textbf{EOV} assumption seems to be okay.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs test success and attendance\ldots}
+\framesubtitle{Assumption checks\ldots}
+<<RC-H12-010, fig.show = 'hide'>>=
+normcheck(Exam.fit)
+@
+
+<<RC-H12-011, echo = FALSE>>=
+trimPlot(Exam.fit,
+         plotCommand = normcheck,
+         fileName = "figure/RC-H12-011.pdf",
+         fig.height = 2.1,
+         fig.width = 4.1)
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale = 0.5]{figure/RC-H12-011}
+\end{figure}
+
+The normality assumption seems to be reasonably good, other than a lack of large negative residuals.
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Exam vs test success and attendance\ldots}
+\framesubtitle{Assumption checks\ldots}
+<<RC-H12-012, eval = FALSE>>=
+cooks20x(Exam.fit)
+@
+
+<<RC-H12-013, echo = FALSE, fig.height = 2.5, fig.width = 5>>=
+trimPlot(Exam.fit,
+         plotCommand = cooks20x,
+         fileName = "figure/RC-H12-013.pdf",
+         fig.height = 2.1,
+         fig.width = 4.1,
+         mai = c(0.5, 0.6, 0.1, 0.1))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale = 0.5]{figure/RC-H12-013}
+\end{figure}
+
+No unduly influential data points.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs test success and attendance\ldots}
+We conclude that we can trust the output. Let us see what it is telling us.
+
+<<RC-H12-014, echo = 1>>=
+anova(Exam.fit)
+
+aovTable = anova(Exam.fit)
+AttendSS = sprintf("%4.0f", aovTable$`Sum Sq`[1])
+Pass.testSS = sprintf("%5.0f", aovTable$`Sum Sq`[2])
+Attend.PassSS = sprintf("%3.0f", aovTable$`Sum Sq`[3])
+ResidualSS = sprintf("%5.0f", aovTable$`Sum Sq`[4])
+@
+\smallskip
+
+The \pval{} of 0.043 is just under 0.05 and so establishes that there is a significant interaction: The effect of passing the test depends on whether the student has regularly attended lectures or not.
+\smallskip
+
+So, we cannot simply state the effect of passing the test, because the size of this effect depends on whether the student attended or not.
+\smallskip
+
+One way to think of this is that we have to consider all 4 (2 $\times$ 2) different test success/attendance possibilities separately.
+\end{frame}
+
+
+%anova output is Type 1 SS (sequential)
+%anova(lm(Exam~Pass.test*Attend,data=Stats20x.df))
+
+\begin{frame}[fragile, label={frame:two-way_refcellcoef}]
+\frametitle{Exam vs test success and attendance\ldots}
+Let us investigate what our model tells us in terms of the estimated parameters:
+
+<<RC-H12-015, results = 'hide'>>=
+summary(Exam.fit)
+@
+
+<<RC-H12-016, echo=FALSE>>=
+slimSummary(Exam.fit)
+rSq <- summary(Exam.fit)$r.squared * 100
+@
+
+The \pval{} for interaction is the same as before.
+
+\medskip
+
+Note also that the $R^2=\Sexpr{round(rSq, 0)}\%$ can be obtained from the ANOVA table above as follows: $R^2 =100\times\left(1-\frac{\Sexpr{ResidualSS}}{\Sexpr{ResidualSS}+ \Sexpr{Attend.PassSS} + \Sexpr{Pass.testSS} + \Sexpr{AttendSS}} \right)$ is the proportion of variability that is explained by our model terms.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs test success and attendance\ldots}
+
+The formula for the above two-way ANOVA can be written as:
+\begin{align*}
+\rcode{Exam} &= \beta_0 + \beta_1 \times \rcode{Attend}_{\rcode{Yes}} + \beta_2 \times \rcode{Pass.test}_{\rcode{pass}}\mbox{ } + \\ &\phantom{=}\mbox{ }\beta_3 \times \rcode{Attend}_{\rcode{Yes}} \times \rcode{Pass.test}_{\rcode{pass}} + \varepsilon 
+\end{align*}
+where $\rcode{Attend}_{\rcode{Yes}}$ and $\rcode{Pass.test}_{\rcode{pass}}$ are indicator variables, and $\varepsilon \iid N(0, \sigma^2)$.
+\bigskip
+
+This model is relative to the baseline levels of \rcode{Attend} and \rcode{Pass.test}.
+These baselines are \rcode{No} and \rcode{nopass}, respectively, since they are the levels with the lowest alphanumeric value.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs test success and attendance\ldots}
+\framesubtitle{Alternative parameterizations: the group means model}
+
+As seen in the previous chapter, another option is to remove the baseline
+with the addition of -1 in the model formula. 
+One other complication is that we have to use \rcode{:} rather than \rcode{*} when specifying the interaction term.
+\bigskip
+
+<<>>=
+Exam.fitNoBaseline=lm(Exam~Attend:Pass.test-1,data=Stats20x.df)
+coef(summary(Exam.fitNoBaseline))
+@
+
+This is the group means model. It is simply giving the estimated group mean for each of the four combinations of attendance and test success.
+\bigskip
+
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs test success and attendance\ldots}
+\framesubtitle{Alternative parameterizations: the means and effects model}
+
+A further alternative is to use the means and effects model formula for the two-way ANOVA:
+\[
+\rcode{Exam}_{ijk} = \mu + \alpha_{i} + \beta_{j} + \gamma_{ij} + \epsilon_{ijk} \mbox{, where } \epsilon_{ijk} \iid N(0, \sigma^2)
+\]
+where: 
+\begin{itemize}
+  \item $\mu$ is the overall mean,
+  \item $\alpha_i$s are the \rcode{Attend} effects relative to the overall mean,
+  \item $\beta_j$s are the \rcode{Pass.test} effects relative to the overall mean,
+  \item $\gamma_{ij}$s are the interaction effects between levels of \rcode{Attend} and \rcode{Pass.test} relative to the overall mean.
+\end{itemize}
+
+This is simply a different parameterization of the two-way ANOVA model. That is, there is no change to the model, but just in the way we choose to write it. 
+\bigskip
+
+In this course for Executive Summaries we will typically be interested in estimating relevant pairwise group differences, for which we will once again use \rcode{emmeans}.
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Interpretting the output using pairwise differences}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs test success and attendance}
+\framesubtitle{Interpreting the output}
+
+In studies in which {\em all} of the explanatory variables are factors, our interest typically lies in making statistical inferences about the sizes of pairwise differences between the means of different treatment combinations. 
+\medskip
+
+We could calculate these pairwise differences from the above output, but what we really need is Tukey-adjusted confidence intervals for the differences. These are needed because of the multi-comparisons problem. Once again, we will use the \rcode{emmeans()} function to perform these calculations for us.
+
+\bigskip
+
+In the field of statistics, pairwise comparisons are often called {\em contrasts}\footnote{ The term {\em contrasts} includes other more complicated forms of comparisons.} because they are comparing (i.e., contrasting) two different means. 
+
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs test success and attendance}
+\framesubtitle{Pairwise comparisons}
+
+<<RC-H12-017b, warning=F>>=
+library(emmeans)
+exam.pairs = pairs(emmeans(Exam.fit, ~ Attend*Pass.test), infer=T)
+exam.pairs
+@
+\bigskip
+
+Typically (and in this course) we are only interested in within-level comparisons. 
+That is, pairwise comparisons in which there is a level in common across the two treatment\footnote{The word {\em treatment} is often used to refer to a level of a factor variable.} combinations being compared.
+
+\end{frame}
+
+
+
+\begin{frame}[fragile, label={frame:refcell_intn_coeffs}]
+\frametitle{Exam vs test success and attendance}
+\framesubtitle{Pairwise comparisons\ldots}
+
+To see only the within-level comparisons we can use the
+\rcode{displayPairs} function from the \rcode{s20x} package.
+\bigskip
+
+<<RC-H12-017c, eval=F, digits=4>>=
+displayPairs(exam.pairs, c("No","Yes"), c("nopass","pass")) 
+@
+
+<<RC-H12-017c2, include=F, digits=4>>=
+#List object
+exam.dP=displayPairs(exam.pairs, c("No","Yes"), c("nopass","pass")) 
+@
+
+<<RC-H12-017c3, echo=F, digits=4>>=
+mydf=as.data.frame(do.call(rbind,exam.dP))
+print(cbind(within=rownames(mydf), data.frame(mydf, row.names=NULL)), row.names=F)
+@
+
+For example, the first row of the above output says that the estimated difference between the means of the two levels of \rcode{Pass.test} conditional on the level of \rcode{Attend} = \rcode{No} is \texttt{-13.02}. So, for students who do not regularly attend lectures, those who pass the test can expect to score 13 points higher in the exam than those who fail.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs test success and attendance\ldots}
+\framesubtitle{Statements for the Executive Summary}
+
+<<RC-H12-018a, echo = FALSE, results = 'hide'>>=
+exam.emm <- emmeans(Exam.fit, specs = pairwise ~ Attend:Pass.test, infer=T)
+multiComp <- confint(exam.emm$contrasts)[-c(3,4),]
+
+yesPass.yesNoPass <- abs(round(multiComp[3, 6:5], 0))
+noPass.noNoPass <- abs(round(multiComp[2, 6:5], 0))
+yesPass.noPass <- abs(round(multiComp[4, 6:5], 0))
+yesNoPass.noNoPass <- abs(round(multiComp[1, 6:5], 0))
+@
+
+We interpret this output as follows (noting that the effect is always conditional on the level of the other factor):
+
+\begin{itemize}
+  \item We estimate that for students who attend regularly, those who pass the test can
+expect to get \Sexpr{yesPass.yesNoPass[1]} to \Sexpr{yesPass.yesNoPass[2]} more marks in the exam than those who do not pass the test.
+
+  \item For students who do not attend regularly, those who pass the test can expect to get
+\Sexpr{noPass.noNoPass[1]} to \Sexpr{noPass.noNoPass[2]} more marks in the exam than those who do not pass the test.
+
+  \item For students who pass the test, those who regularly attend can expect to get between \Sexpr{yesPass.noPass[1]} and \Sexpr{yesPass.noPass[2]} more marks in the exam than those who do not attend regularly.
+
+\item And, for those who do not pass the test, those who regularly attend can expect to get between \Sexpr{yesNoPass.noNoPass[1]} marks less and \Sexpr{yesNoPass.noNoPass[2]} more marks than those who do attend regularly.\footnote{Since this difference is not statistically significant, it should {\bf not} be reported in an Executive Summary.}
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs test success and attendance\ldots}
+\framesubtitle{Closing remarks}
+Recall that the data used in this example are from a single STATS 20x summer school class. 
+The above statements are only relevant to the population of students who could have taken the course that summer.
+\bigskip \bigskip
+
+Moreover, the data were collected pre-covid, so it is certainly the case that attendance at lectures would now not have anywhere near as much effect. 
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Example 2: Using gender and attendance to explain exam score \\ ~ \\ Two-way ANOVA without interaction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]
+\frametitle{Exam score vs gender and attendance}
+
+Let us do another analysis where we will ask whether the effect of gender (on exam score) changes depending on whether the student attends regularly or not.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs gender and attendance}
+
+<<RC-H12-019, eval = FALSE>>=
+interactionPlots(Exam ~ Attend + Gender, data = Stats20x.df)
+@
+
+<<RC-H12-020, fig.height = 2.5, fig.width = 5, echo = FALSE>>=
+par(mar = c(4, 4, 3, 0), oma = rep(0.1, 4), cex = 0.75, las = 1)
+interactionPlots(Exam ~ Attend + Gender, data = Stats20x.df)
+@
+Not so much going on here as our plots are parallel. Looks like there is an effect of attendance (no surprise), and the parallel lines suggests this effect is the same for both genders. There is little difference between genders.
+
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs gender and attendance\ldots}
+\framesubtitle{Assumption checks}
+
+Let us fit an interaction model and check the assumptions.
+
+<<RC-H12-021, fig.show = 'hide'>>=
+Exam.fit2 = lm(Exam ~ Attend*Gender, data = Stats20x.df)
+plot(Exam.fit2, which=1)
+@
+
+<<RC-H12-022, echo = FALSE>>=
+trimPlot(Exam.fit2,
+         plotCommand = plot,
+         which = 1,
+         mai = c(0.5, 0.5, 0.1, 0.1),
+         fig.height = 2.25,
+         fig.width = 4.25,
+         cex = 0.7,
+         x.lab = "Fitted values",
+         y.lab = "Residuals",
+         fileName = "figure/RC-H12-022.pdf")
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H12-022}
+\end{figure}
+
+The EOV assumption seems to be okay.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs gender and attendance\ldots}
+\framesubtitle{Assumption checks\ldots}
+
+<<RC-H12-023, fig.show = 'hide'>>=
+normcheck(Exam.fit2)
+@
+
+<<RC-H12-024, echo = FALSE>>=
+trimPlot(Exam.fit2,
+         plotCommand = normcheck,
+         fig.height = 2.1,
+         fig.width = 4.1,
+         fileName = "figure/RC-H12-024.pdf")
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale = 0.5]{figure/RC-H12-024}
+\end{figure}
+
+The normality assumption seems to be okay.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs gender and attendance\ldots}
+\framesubtitle{Assumption checks\ldots}
+
+<<RC-H12-025, fig.show = 'hide'>>=
+cooks20x(Exam.fit2)
+@
+
+<<RC-H12-026, echo = FALSE>>=
+trimPlot(Exam.fit2,
+         plotCommand = cooks20x,
+         fig.height = 2.1,
+         fig.width = 4.1,
+         mai = c(0.5,0.6,0.1,0.1),
+         fileName = "figure/RC-H12-026.pdf")
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale = 0.5]{figure/RC-H12-026}
+\end{figure}
+
+No unduly influential data points.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs gender and attendance\ldots}
+We can trust the model. Lets see what it is telling us.
+\medskip
+
+<<RC-H12-027>>=
+anova(Exam.fit2)
+@
+\medskip
+
+There is definitely no evidence of an interaction, so we'll apply Occam's razor\footnote{``With all things being equal, the simplest explanation tends to be the right one'', William of Ockham, 1287-1347.} and fit a simpler main-effects model (i.e., no interaction term).
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs gender and attendance\ldots}
+\framesubtitle{The main-effects model}
+Recall that we use \rcode{+} rather that \rcode{*} in the model formula to fit the main-effects model.
+\medskip
+
+<<RC-H12-028>>=
+Exam.fit3 = lm(Exam ~ Attend + Gender, data = Stats20x.df)
+anova(Exam.fit3)
+@
+
+We see that the gender is also not significant here\footnote{If it were significant then we could look at the output from \rcode{pairs(emmeans( Exam.fit3,$\sim$ Attend ), infer=T)} and \rcode{pairs(emmeans( Exam.fit3,$\sim$ Gender ), infer=T)} -- but this is pointless here since the factors only have two levels and there is only one pairwise comparison for each factor and so no multi-comparison issue.}, so we again apply Occam's razor and remove this term.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Exam vs gender and attendance\ldots}
+Removal of the gender term reduces the model to one with just a factor with two levels. This is the two sample t-test scenario of Chapter 5. 
+
+\medskip
+
+<<RC-H12-029, results = 'hide'>>=
+Exam.fit4 = lm(Exam ~ Attend, data = Stats20x.df)
+summary(Exam.fit4)
+@
+
+<<RC-H12-030, echo=FALSE>>=
+slimSummary(Exam.fit4)
+@
+
+<<RC-H12-030b>>=
+confint(Exam.fit4)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Relevant \rcode{R}-code}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Most of the \rcode{R}-code you need for this chapter}
+You do not need to create indicator variables - \rcode{R} does that for you.
+The baseline can be changed if you wish rather than having \rcode{R} choose it for you -- see relevant \rcode{R}-code from Chapter 9.  
+\medskip
+
+Use interaction-plots to inspect the data. Non-parallel lines indicate that interaction may exist.
+<<RC-H12-30, eval=F, comment=NA>>= 
+interactionPlots(Exam ~ Pass.test + Attend, data = Stats20x.df)
+@
+
+Fit the interaction model  (use the \rcode{*} in the model formula)
+<<RC-H12-31, eval=F, comment=NA>>=
+Exam.fit = lm(Exam ~ Attend*Pass.test, data = Stats20x.df)
+@
+and use the ANOVA table to see if there is evidence of interaction.
+
+<<RC-H12-32, eval=F, comment=NA>>=
+anova(ExamTestAttend.fit)
+@
+In the first example we had evidence of interaction (small \pval{} associated with ``\rcode{:}'' part of the ANOVA output) and we inspect the pairwise interactions using \rcode{emmeans} to correct CIs for multi-comparisons:
+
+<<RC-H12-33, eval=F, comment=NA>>=
+exam.pairs = pairs(emmeans(Exam.fit, ~ Attend*Pass.test), infer=T)
+displayPairs(exam.pairs, c("No","Yes"), c("nopass","pass"))
+@
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Most of the \rcode{R}-code you need for this chapter}
+
+If you don't have any evidence of interaction then simplify your model to a main-effects model and then see if the individual terms are significant. 
+\medskip
+
+The main-effects model replaces \rcode{*} with  a \rcode{+} in the model formula. E.g.,
+<<RC-H11-34a, eval=F, comment=NA>>=
+Exam.fit3=lm(Exam ~ Attend+Gender, data = Stats20x.df)
+@
+\bigskip
+
+If both variables are significant in the main-effects model then use that model for inference (this model is referred to here as \rcode{additive.fit}) 
+
+<<RC-H11-34b, eval=F, comment=NA>>=
+pairs(emmeans(additive.fit, ~ variable1), infer=T)
+@
+
+<<RC-H11-3f, eval=F, comment=NA>>=
+pairs(emmeans(additive.fit, ~ variable2), infer=T)
+
+@
+\bigskip
+
+Otherwise, delete non-significant variables until you have the simplest model possible.
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Alternative parameterizations of the two-way ANOVA model \\ ~ \\
+(This is an optional Section \\ - your lecturer will advise if it is examinable)}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[fragile, label={frame:2way_RefCellModel}]
+\frametitle{Alternative parameterizations of two-way ANOVA}
+\framesubtitle{The reference cell model}
+  
+Recall the reference cell model we used to represent \rcode{Exam} score:
+  
+\vspace{-5mm}
+
+\begin{align*}
+\rcode{Exam} &= \beta_0 + \beta_1 \times \rcode{Attend}_{\rcode{Yes}} + \beta_2 \times \rcode{Pass.test}_{\rcode{pass}}\mbox{ } + \\ &\phantom{=}\mbox{ }\beta_3 \times \rcode{Attend}_{\rcode{Yes}} \times \rcode{Pass.test}_{\rcode{pass}} + \varepsilon,
+\end{align*}
+
+\vspace{-5mm}
+
+where $\varepsilon \iid N(0, \sigma^2)$.
+
+\medskip
+
+The parameter $\beta_0$ denotes the overall true baseline mean exam score. Notice that neither the \rcode{no} level of \rcode{Attend} nor the \rcode{nopass} level of \rcode{Pass.test} appear as subscripts in the above model. This tells us that these are the baseline levels, i.e. $\beta_0$ denotes the mean over \rcode{Exam} scores from students who neither regularly attended lectures nor passed the test.
+
+\medskip
+
+So, what do the parameters $\beta_1,\beta_2,\text{ and }\beta_3$ represent? To help us answer this question we consider the means model\footnote{We first encountered the means model for the single factor male fruitflies study in Chapter 11.} formulation for \rcode{Exam} score. 
+  
+\end{frame}  
+
+
+\begin{frame}[fragile]
+\frametitle{Alternative parameterizations of two-way ANOVA}
+\framesubtitle{The means model}
+
+The means model parameterization for exam score is
+
+\vspace{-5mm}
+
+\begin{align*}
+\rcode{Exam}_{ijk} &= \mu_{ij} + \varepsilon_{ijk},
+\end{align*}
+
+\vspace{-5mm}
+
+where $\mu_{ij}$ denotes the true mean exam score of 20x students who are in the $i$th level of \rcode{Attend} and $j$th level of \rcode{Pass.test} ($i=\rcode{no}$ or $\rcode{yes}$; $j=\rcode{nopass}$ or $\rcode{pass}$). The error term $\varepsilon_{ijk} \iid N(0, \sigma^2)$ denotes the deviation of the $k$th student's exam score from the mean exam score, $\mu_{ij}$.
+
+\bigskip
+
+But, how can we use $\mu_{ij}$ to assess whether one or both of \rcode{Attend} and \rcode{Pass.test} have an effect on \rcode{Exam} score? 
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Alternative parameterizations of two-way ANOVA}
+\framesubtitle{Relating the means and reference cell models}
+
+\medskip
+
+We decompose each mean response, $\mu_{ij}$, into four terms:
+
+\medskip
+
+\begin{enumerate}
+\setlength\itemsep{0.55em}
+  \item $\mu_{11}$, the baseline or reference-level mean response;
+  \item $\mu_{i1}-\mu_{11}$, the {\em main effect}\footnote{A main effect is defined as the difference between the mean response when all factors, except the one of interest, are at the baseline level and the reference-level mean.} of the $i$th level of the first factor, where $i$ does not equal the baseline level;
+  \item $\mu_{1j}-\mu_{11}$, the {\em main effect} of the $j$th level of the second factor, where $j$ does not equal the baseline level;
+  \item $\text{Interaction}$, the part of $\mu_{ij}$ that is left over after eliminating the contributing components defined by terms 1--3 above, i.e.
+  \begin{align*}
+    \text{Interaction} &= \mu_{ij} - \mu_{11} - (\mu_{i1}-\mu_{11}) - (\mu_{1j}-\mu_{11}) \\
+                       &= \mu_{ij} - \mu_{i1} - \mu_{1j} + \mu_{11}
+  \end{align*}
+  
+\end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Alternative parameterizations of two-way ANOVA}
+\framesubtitle{Relating the means and reference cell models}
+
+We now have the tools to re-express the mean \rcode{Exam} score in terms of the main effects of the $i$th level of \rcode{Attend} and the $j$th level of \rcode{Pass.test}, and their interaction, i.e.
+
+\vspace{-7.5mm}
+
+\begin{align*}
+   \mu_{ij} &= \mu_{11} + (\mu_{1j}-\mu_{11}) + (\mu_{i1}-\mu_{11})%\\
+            %&\phantom{=}
+            +(\mu_{ij} - \mu_{i1} - \mu_{1j} + \mu_{11}).
+\end{align*}
+
+\vspace{-6mm}
+
+The following two-way table\footnote{\scriptsize More generally, differences in the first row of a two-way reference model decomposition table correspond to the main effects of the column factor. The differences in the first column correspond to the row factor main effects. The terms in each of the of the remaining cells, except the reference cell, correspond to interaction effects.} illustrates how each term in the above decomposition relates to each combination of the levels of \rcode{Attend} and \rcode{Pass.test}:
+
+\bigskip
+
+\begin{center}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.15}
+  \begin{tabular}{|c|c|c|}
+    \hline
+           &\multicolumn{2}{c|}{Pass.test}\\  
+    \cline{2-3}           
+    Attend & \rcode{nopass} & \rcode{pass}\\
+     \hline
+    \rcode{no}  & $\mu_{11}$     & $\mu_{i1}-\mu_{11}$  \\ \hline
+    \rcode{yes} & $ \mu_{1j} - \mu_{11}$ & $ \mu_{ij} - \mu_{11} - (\mu_{i1}-\mu_{11}) - (\mu_{1j}-\mu_{11})$ \\ \hline
+  \end{tabular}
+\end{center}
+
+\medskip
+
+% \medskip
+% 
+% To enable each of the parameters in the above table to have a uniquely determined value, we must set some constraints.\footnote{The details of why and how are beyond the scope of this course.}  
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Alternative parameterizations of two-way ANOVA}
+\framesubtitle{Relating the means and reference cell models}
+
+\begin{center}
+\footnotesize
+\renewcommand{\arraystretch}{1.15}
+{\setlength{\tabcolsep}{2.2pt} 
+\begin{tabular}{cccccclr}
+      \hline
+      \multicolumn{2}{c}{Factors}&& \multicolumn{5}{c}{Parameterization} \\
+      \cline{1-2}\cline{4-8}
+      \rcode{Attend} & \rcode{Pass.test} && Means & Estimate\footnote{See estimates of \rcode{Attend}$\times$\rcode{Pass.test} treatment means on slide~\ref{frame:emmeans}.} &&
+         Reference cell & Estimate\footnote{See regression coefficients table on slide~\ref{frame:two-way_refcellcoef}.} \\
+      \hline
+      \rcode{no}  & \rcode{nopass} && $\mu_{11}$ & 35.1 && $\beta_0 = \mu_{11}$ & 35.1 \\
+      \rcode{yes} & \rcode{nopass} && $\mu_{21}$ & 38.3 && $\beta_1 = \mu_{21} - \mu_{11}$ & $3.2$  \\
+      \rcode{no}  & \rcode{pass}   && $\mu_{12}$ & 48.2 && $\beta_2 = \mu_{12} - \mu_{11}$ & $13.1$ \\
+      \rcode{yes} & \rcode{pass}   && $\mu_{22}$ & 62.9 && $\beta_3 = \mu_{22} - \mu_{21} - \mu_{12} + \mu_{11}$ & $11.5$ \\
+      \hline
+   \end{tabular}}
+\end{center}
+
+\bigskip
+
+From the above table we see that:
+\begin{itemize}
+  \item $\beta_1$ represents the effect of \rcode{Attend = yes} at the reference level of \rcode{Pass.test = nopass}
+  \item $\beta_2$ represents the effect of \rcode{Pass.test = pass} at the reference level of \rcode{Attend = no}
+  \item $\beta_3$ represents the \rcode{Attend} $x$ \rcode{Pass.test} interaction effect when \rcode{Attend = yes} and \rcode{Pass.test = pass}
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Alternative parameterizations of two-way ANOVA}
+\framesubtitle{The reference cell model}
+
+The values in the \rcode{Estimate} column of the regression summary table\footnote{See slide~\ref{frame:two-way_refcellcoef}; Coefficients rounded to 2 decimal places.} result in the following equation for predicted longevity:
+    
+<<RC-H12-Extra01, echo=FALSE>>=
+beta0 = sprintf("%.2f", coef(Exam.fit)[1])
+beta1 = sprintf("%.2f", coef(Exam.fit)[2])
+beta2 = sprintf("%.2f", coef(Exam.fit)[3])
+beta3 = sprintf("%.2f", coef(Exam.fit)[4])
+@
+    
+\medskip
+  
+\begin{align*}
+  \widehat{\rcode{Exam}} &=\Sexpr{beta0}+\Sexpr{beta1}\times \rcode{Attend}_{\rcode{Yes}} + \Sexpr{beta2}\times \rcode{Pass.test}_{\rcode{pass}} \\
+  &\phantom{=}+ \Sexpr{beta3}\times \rcode{Attend}_{\rcode{Yes}} \times \rcode{Pass.test}_{\rcode{pass}}
+\end{align*}
+  
+\end{frame}
+  
+
+
+\begin{frame}[fragile]
+\frametitle{Alternative parameterizations of two-way ANOVA}
+\framesubtitle{Relating the means and effects models}
+
+\medskip
+
+We saw in Chapter 11 that the effects model offers an alternative to the reference model parameterization.\footnote{\scriptsize The effects model is the default parameterization used in the analysis of data from designed experiments and, therefore, in STATS 240 (Design and Structured Data).} To relate the means and effects models we use an alternative decomposition of each mean response, $\mu_{ij}$, into:
+
+\medskip
+
+\begin{enumerate}
+\setlength\itemsep{0.55em}
+  \item $\mu=\mu_{\cdot\cdot}$, the reference overall mean response;
+  \item $\alpha_i = \mu_{i\cdot}-\mu$, the {\em main effect} of the $i$th level of the first factor\footnote{\scriptsize The distance between the mean response of the first (second) factor at the $i$th ($j$th) level and the overall mean.\label{fn:maineffect}};
+  \item $\pi_j = \mu_{\cdot j}-\mu$, the {\em main effect} of the $j$th level of the second factor\footnotemark[\getrefnumber{fn:maineffect}];
+  \item $(\alpha\tau)_{ij}$, the interaction effect reflecting the component of $\mu_{ij}$ left over after eliminating the components corresponding to the terms defined in 1--3 above, i.e. $(\alpha\tau)_{ij} = \mu_{ij} - \mu - \alpha_i - \pi_j$.
+  
+\end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Alternative parameterizations of two-way ANOVA}
+\framesubtitle{The effects model}
+
+It directly follows from point 4 above that we can re-express the mean \rcode{Exam} score, $\mu_{ij}$, in terms of $\alpha_i$, the  effect of the $i$th level of \rcode{Attend}, $\pi_j$, the effect of the $j$th level of \rcode{Pass.test}, and their interaction, $(\alpha\pi)_{ij}$, i.e.
+
+\vspace{-5.5mm}
+
+\begin{align*}
+   \mu_{ij} &= \mu + \alpha_i + \pi_j + (\alpha\pi)_{ij}.
+\end{align*}
+
+\vspace{-5.5mm}
+
+This means that the effects model formula for the two-way ANOVA is
+\[
+\rcode{Exam}_{ijk} = \mu + \alpha_{i} + \pi_{j} + (\alpha\pi)_{ij} + \epsilon_{ijk},
+\]
+
+where $\epsilon_{ijk} \iid N(0, \sigma^2)$.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Alternative parameterizations of two-way ANOVA}
+\framesubtitle{Relating the means and effects models}
+
+The following two-way layout illustrates how the above decomposition of $\mu_{ij}$ relates to each combination of the levels of \rcode{Attend} and \rcode{Pass.test}:
+
+\medskip
+
+\begin{center}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.15}
+  \begin{tabular}{|c|c|c|c|c|}
+    \hline
+           &\multicolumn{2}{c|}{Pass.test} & & \\
+    \cline{2-3}
+    Attend & \rcode{nopass} & \rcode{pass} & Row mean & $\alpha_i$, Row effect \\
+     \hline
+    \rcode{no}  & $\mu_{11}=35.1$ & $\mu_{12}=48.2$ & $\mu_{1\cdot}=41.7$ &  \\ \hline
+    \rcode{yes} & $\mu_{21}=38.3$ & $\mu_{22}=62.9$ & $\mu_{2 \cdot}=50.6$ & \\ \hline
+    Column mean & $\mu_{\cdot 1}=36.7$ & $\mu_{\cdot 2}=55.6$ & $\mu=52.9$ & \\ \hline
+    $\pi_i$, Column effect &  &  & &  \\ \hline
+  \end{tabular}
+\end{center}
+
+\medskip
+
+<<RC-H12-New01, message=F>>=
+emmeans(Exam.fit,~Attend)
+emmeans(Exam.fit,~Pass.test)
+@
+
+% \begin{center}
+%   \footnotesize
+%   \renewcommand{\arraystretch}{1.15}
+%   \begin{tabular}{|c|c|c|c|}
+%     \hline
+%            &\multicolumn{2}{c|}{Pass.test} & \\
+%     \cline{2-3}
+%     Attend & \rcode{nopass} & \rcode{pass} & Row effect \\ \hline
+%      \rcode{no}    & $(\alpha\pi)_{11}$        & $(\alpha\pi)_{12}$         & $\alpha_1=\mu_{1\cdot}-\mu$ \\ \hline
+%      \rcode{yes}   & $(\alpha\pi)_{21}$        & $(\alpha\pi)_{22}$         & $\alpha_2=\mu_{2\cdot}-\mu$ \\ \hline
+%      Column effect & $\pi_1=\mu_{\cdot 1}-\mu$ & $\pi_2=\mu_{\cdot 2}-\mu$  &  \\ \hline
+%   \end{tabular}
+% \end{center}
+
+\end{frame}
+%\end{document}
+
+
+% \begin{frame}[fragile]
+% \frametitle{Alternative parameterizations of the two-factor linear model}
+% \framesubtitle{Relating the means and reference cell models}
+% 
+% For the reference cell model\footnote{Recall from slide~\ref{frame:2way_RefCellModel} that $\beta_0$ represents the mean response when each factor is at its designated reference level.} we set (constrain) $\mu=\beta_0$ and $\alpha_1 = \pi_1 = 0$.  This means that for the 20x exam score study 
+% 
+% $$ \mu = \beta_0 = \mu_{\rcode{no},\rcode{nopass}} \qquad \text{and} \qquad \alpha_\rcode{no} = \pi_\rcode{nopass} = 0.$$
+% 
+% \medskip
+% 
+% \end{frame}
+
+
+
+
+% \begin{frame}[fragile]
+% \frametitle{Alternative parameterizations of the linear model}
+% \framesubtitle{The reference cell model}
+% 
+% For the reference cell model we set $\mu$ to represent the mean response when each factor is at its designated reference level and $\alpha_1 = \pi_1 = 0$. It follows, therefore, that for the exam score study $\mu = \mu_{\rcode{no}, \rcode{nopass}}$ and $\alpha_\rcode{no} = \pi_\rcode{nopass} = 0$.
+% 
+% \medskip
+% 
+% \begin{center}
+%   \footnotesize
+%   \renewcommand{\arraystretch}{1.15}
+%   \begin{tabular}{|c|c|c|c|}
+%     \hline
+%            &\multicolumn{2}{c|}{Pass.test} & \multicolumn{1}{c|}{}\\  
+%     \cline{2-3}           
+%     Attend & \rcode{nopass} & \rcode{pass} & Col 2 $-$ Col 1\\
+%      \hline
+%     \rcode{no}  & $\beta_0=\mu_{\rcode{no},\rcode{nopass}}$  & $\mu_{\rcode{no},\rcode{pass}}$ & $\beta_1$ \\ \hline
+%     \rcode{yes} & $\mu_{\rcode{yes},\rcode{nopass}}$         & $\mu_{\rcode{yes},\rcode{pass}}$ & $-$ \\ \hline
+%     Row 2 $-$ Row 1 & $\beta_2$ & $-$ & $-$ \\ \hline
+%   \end{tabular}
+% \end{center}
+% 
+% \bigskip
+% 
+% From the above table we see that:
+% \begin{itemize}
+%   %\item $\beta_1 = \mu_{\rcode{no},\rcode{pass}}-\mu_{\rcode{no},\rcode{nopass}} =\mu_{\rcode{no},\rcode{pass}}-\beta_0,$
+%   \item $\beta_1 = \mu_{\rcode{no},\rcode{pass}}-\beta_0$, i.e. the effect of \rcode{Pass.test} conditional on \rcode{Attend = no}
+%   %\item $\beta_2 = \mu_{\rcode{no},\rcode{pass}}-\mu_{\rcode{no},\rcode{nopass}} = \mu_{\rcode{yes},\rcode{nopass}}-\beta_0,$
+%   \item $\beta_2 = \mu_{\rcode{yes},\rcode{nopass}}-\beta_0$, i.e. the effect of \rcode{Attend} conditional on \rcode{Pass.test = nopass}
+%   \item $\beta_3=$?
+% \end{itemize}
+% 
+% \end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Alternative parameterizations of two-way ANOVA}
+\framesubtitle{Relating the means and effects models}
+
+\begin{center}
+\footnotesize
+\renewcommand{\arraystretch}{1.15}
+{\setlength{\tabcolsep}{2.2pt} 
+\begin{tabular}{cccccclr}
+      \hline
+      \multicolumn{2}{c}{Factors}&& \multicolumn{5}{c}{Parameterization} \\
+      \cline{1-2}\cline{4-8}
+      \rcode{Attend} & \rcode{Pass.test} && Means & Estimate\footnote{See estimates of \rcode{Attend}$\times$\rcode{Pass.test} treatment means on slide~\ref{frame:emmeans}.} &&
+         Reference cell & Estimate\footnote{See regression coefficients table on slide~\ref{frame:two-way_refcellcoef}.} \\
+      \hline
+      \rcode{no}  & \rcode{nopass} && $\mu_{11}$ & 35.1 && $\beta_0 = \mu_{11}$ & 35.1 \\
+      \rcode{yes} & \rcode{nopass} && $\mu_{21}$ & 38.3 && $\beta_1 = \mu_{21} - \mu_{11}$ & $3.2$  \\
+      \rcode{no}  & \rcode{pass}   && $\mu_{12}$ & 48.2 && $\beta_2 = \mu_{12} - \mu_{11}$ & $13.1$ \\
+      \rcode{yes} & \rcode{pass}   && $\mu_{22}$ & 62.9 && $\beta_3 = \mu_{22} - \mu_{21} - \mu_{12} + \mu_{11}$ & $11.5$ \\
+      \hline
+   \end{tabular}}
+\end{center}
+
+\bigskip
+
+From the above table we see that:
+\begin{itemize}
+  \item $\beta_1$ represents the effect of \rcode{Attend = yes} at the reference level of \rcode{Pass.test = nopass}
+  \item $\beta_2$ represents the effect of \rcode{Pass.test = pass} at the reference level of \rcode{Attend = no}
+  \item $\beta_3$ represents the \rcode{Attend} $x$ \rcode{Pass.test} interaction effect when \rcode{Attend = yes} and \rcode{Pass.test = pass}
+\end{itemize}
+
+\end{frame}
+
+
+\end{document}
+

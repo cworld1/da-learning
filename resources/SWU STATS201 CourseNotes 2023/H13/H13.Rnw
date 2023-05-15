@@ -1,0 +1,1161 @@
+\makeatletter \def\NR@nopatch@beamer{} \makeatother %Temporary due to bug on 17 May
+
+\documentclass{beamer}
+\usepackage{graphicx}
+\input{../s20xPreambleRBM.tex}
+
+%\DeclareMathOperator{\E}{{E}}
+%\DeclareMathOperator{\Var}{{Var}}
+%\DeclareMathOperator{\sd}{{sd}}
+%\DeclareMathOperator{\se}{{se}}
+%\newcommand{\comb}[2]{\mbox{$\big(_{#2}^{#1}\big)$}}
+%\DeclareMathOperator{\Odds}{{Odds}}
+%\DeclareMathOperator{\OR}{{OR}}
+% \newcommand{\vs}{\vspace{2mm}}
+
+% \setlength{\parskip}{7pt}
+% \setlength{\topsep}{0mm} %To reduce line spacing in R output
+
+\begin{document}
+\newcommand{\thechapter}{13}
+\title{Chapter \thechapter: \\ Modelling count data using the Poisson distribution}
+\institute{University of Auckland}
+
+<<RC-H13-000, echo=FALSE, warning=FALSE>>=
+source("../s20xNotesHelper.R")
+## these are global knitr options and settings for the
+## whole document
+library(knitr)
+library(s20x)
+## comment = NA removes ## from all output lines
+## prompt = TRUE means the console input prompt > is displayed
+## tidy = TRUE means the code is properly spaced and tidied.
+opts_chunk$set(comment = NA, size = "scriptsize", prompt = TRUE, tidy = TRUE)
+#source("../predictGLM.R")
+@
+
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+\begin{frame}[t]
+\frametitle{Learning Outcomes}
+In this chapter you will learn about:
+\begin{center}
+\vspace{16pt}
+\begin{minipage}{0.9\textwidth}
+  \begin{itemize}
+  \item The nature of count data
+  \item Example - modelling the number of R packages
+  \item The Poisson Distribution
+  \item The generalized linear model (GLM)
+  \item GLM re-analysis of the example
+  \item The quasi-Poisson correction
+  \item Interpretting the fitted GLM
+  \item Relevant \rcode{R}-code.
+  \end{itemize}
+\end{minipage}
+\end{center}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{The nature of count data}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}[fragile]
+\frametitle{The nature of count data}
+In many studies the {\bf response} variable will be a count.
+\bigskip
+
+A count variable is one where the measurement is the count of the number of times
+some event occurs.
+Obviously, it can only take values that belong to the non-negative integers
+\{0,1,2,3...\}.
+\bigskip
+
+In statistical parlance, a count variable is an example of a {\em discrete} variable,
+since the values it can take are discretely separated.
+\bigskip
+
+(In contrast,
+a variable with a Normal Distribution is an example of a {\em continuous variable},
+since if can take any value on a continuum.)
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{The nature of count data\ldots}
+In this course we shall encounter three types of count data:
+\bigskip
+
+\begin{enumerate}
+  \item Counts of the number of ``events'' occurring, where ideally, the events occur independently of one another and with no specific upper limit on the maximum number.
+  \item Counts of the number of ``successes''\footnote{Here, ``successes'' is used generically. E.g., It could be the number of females in a class of 146.} from a fixed number of trials. E.g., the number of Heads from tossing a coin 10 times. In this case, the response variable $y$ is the proportion of successes (see Chapter 15).
+  \item Counts of the number of items in a category. E.g., The count of A, B, and C grades in the course.
+\end{enumerate}
+\bigskip
+
+In this Chapter we focus on the first of the above types. Some examples are given below.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{The nature of count data\ldots}
+\framesubtitle{Some examples of counting the number of events occurring}
+\begin{itemize}
+\item The success of a marketing campaign can be assessed by analysing the change in
+number of purchases.
+\item In epidemiology, the spread of an infectious disease can be modelled by observing
+the number of those infected each day.
+\item In operations research, a business can run more efficiently by being able to predict the number of customer interactions in a day,
+and hence the number of staff required.
+\item In ecology, the success of habitat restoration can be assessed by gathering counts
+of the number of animals before and after the restoration.
+\item The efficacy of fluoridation can be assessed by counting the number of tooth cavities
+in the mouths of subjects.
+\end{itemize}
+\bigskip
+
+{\bf Question:} For which of the above scenarios would it be reasonable to assume that the events being counted are occurring independently?
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Analysis of count data}
+\framesubtitle{Why do we care?}
+
+In some situations linear regression can be successfully used to analyse count data. In fact, you may have already seen this done in this course. However, these are special cases.\footnote{We will soon see an example where an inappropriate application of a linear regression model to count data was responsible for the most expensive human mistake in history (up to that point in time).}
+\bigskip \bigskip
+
+{\bf Linear regression is not generally applicable to count data.} This is demonstrated in the example below.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Example: Number of R packages submitted to the \\ Comprehensive R Archive Network (CRAN)}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}[fragile]
+\frametitle{Submissions to CRAN}
+In the following example we will model a count variable (number of R packages submitted to the CRAN over the years) using what we know to date: the {\em linear model} via the function \rcode{lm}. 
+\bigskip
+
+We will contrast this to a more general and more appropriate way of modelling counts: the {\em generalized linear model} (GLM) via the function \rcode{glm}.
+\bigskip
+
+Along the way you will be introduced to a new distribution, the Poisson distribution.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Submissions to CRAN\ldots}
+
+As \rcode{R} is an open-source programming environment, people are encouraged to submit software packages used in their research for others to access via the CRAN\footnote{You probably downloaded your R installation from the CRAN.}, which was created in 2005. We would like to understand the nature of its growth. With this in mind, the number of new packages submitted in each year, from 2005 to 2016, has been recorded:
+
+% note well - original CRAN submissons data now called in CRANold.txt has changed dramatically - hence  CRAN.txt (new & revised)
+<<RC-H13-001, size = "scriptsize">>=
+CRAN.df = read.table("Data/CRAN.txt", header=T)
+CRAN.df
+@
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Submissions to CRAN\ldots}
+\framesubtitle{Plotting the data}
+
+<<RC-H13-002, fig.show = 'hide'>>=
+## One-by-two figure layout
+par(mfrow=c(1,2)) 
+## Scatter plot using raw y
+plot(Number ~ Year, data = CRAN.df) 
+## Scatter plot using log y
+plot(log(Number) ~ Year, data = CRAN.df)
+@
+
+<<RC-H13-003, echo = FALSE>>=
+trimPlot(Number ~ Year,
+         data = CRAN.df,
+         fileName = "figure/RC-H13-003A.pdf",
+         cex = 0.7,
+         x.lab = "Year",
+         y.lab = "Number",
+         fig.height = 2.5,
+         fig.width = 2.5)
+
+trimPlot(log(Number) ~ Year,
+         data = CRAN.df,
+         fileName = "figure/RC-H13-003B.pdf",
+         cex = 0.7,
+         x.lab = "Year",
+         y.lab = "log(Number)",
+         fig.height = 2.5,
+         fig.width = 2.5)
+@
+
+\begin{figure}
+   \includegraphics[width=0.475\textwidth]{figure/RC-H13-003A}
+   \hfill
+   \includegraphics[width=0.475\textwidth]{figure/RC-H13-003B}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Submissions to CRAN\ldots}
+\framesubtitle{Analysis via \rcode{lm}}
+\label{pg:CRAN LM}
+The relationship between year and number of submissions looks reasonably linear on the log scale, so we'll fit a linear model to $\log(Y)$.
+\medskip
+
+<<RC-H13-004a,fig.show = 'hide'>>=
+CRAN.fit = lm(log(Number) ~ Year, data = CRAN.df)
+plot(CRAN.fit,which=1)
+@
+
+<<RC-H13-005a, echo = FALSE>>=
+trimPlot(CRAN.fit,
+         fileName = "figure/RC-H13-005a.pdf",
+         plotCommand = plot,
+         which=1,
+         x.lab="Fitted values",
+         y.lab="Residusals",
+         mai = c(0.5, 0.6, 0.1, 0.1),
+         fig.height = 1.75,
+         fig.width = 4)
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale = 0.9]{figure/RC-H13-005a}
+\end{figure}
+
+No concerns.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Submissions to CRAN\ldots}
+\framesubtitle{Analysis via \rcode{lm}}
+\label{pg:LMcooks20x}
+
+<<RC-H13-004b,fig.show = 'hide'>>=
+cooks20x(CRAN.fit)
+@
+
+<<RC-H13-005b, echo = FALSE>>=
+trimPlot(CRAN.fit,
+         fileName = "figure/RC-H13-005b.pdf",
+         plotCommand = cooks20x,
+         mai = c(0.5, 0.6, 0.1, 0.1),
+         fig.height = 1.75,
+         fig.width = 4)
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale = 0.5]{figure/RC-H13-005b}
+\end{figure}
+
+The Cook's distance for observation 3 exceeds our threshold of 0.4. However, with only 12 observations this is perhaps not of great concern.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Submissions to CRAN\ldots}
+\framesubtitle{Analysis via \rcode{lm}\ldots}
+
+<<RC-H13-006, echo = FALSE>>=
+trimPlot(log(Number) ~ Year,
+         data = CRAN.df[-3, ],
+         fileName = "figure/RC-H13-006.pdf",
+         cex = 0.7,
+         x.lab = "Year",
+         y.lab = "log(Number)",
+         fig.height = 2.5,
+         fig.width = 4.5,
+         addElements = list(
+           points(x = CRAN.df[3, 1], y = log(CRAN.df[3, 2]), col = "red", cex = 0.7, pch = 17)
+         ))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H13-006}
+\end{figure}
+
+Indeed, the third observation in {\color{red}red} does not seem to be influential in the exploratory plots. So, we will keep it in the model.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Submissions to CRAN\ldots}
+\framesubtitle{Analysis via \rcode{lm}\ldots}
+
+
+<<RC-H13-007, results = 'hide'>>=
+summary(CRAN.fit)
+@
+
+<<RC-H13-008, echo = FALSE>>=
+slimSummary(CRAN.fit)
+@
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Submissions to CRAN\ldots}
+\framesubtitle{Analysis via \rcode{lm}\ldots}
+Back-transform to get the multiplicative effect of year.
+\bigskip
+
+<<RC-H13-009, echo=1:4>>=
+## Estimated annual multiplier
+exp(CRAN.fit$coef["Year"])
+## Confidence interval
+exp(confint(CRAN.fit))
+
+cis <- sprintf("%3.2f", exp(confint(CRAN.fit))[2, ])
+@
+
+\bigskip
+
+So, the Executive Summary would have said that the median annual number of submissions to CRAN multiplies by between \Sexpr{cis[1]} to \Sexpr{cis[2]} times each year.
+In other words, it increases by between 100\% and 140\% per annum.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Submissions to CRAN\ldots}
+\framesubtitle{Analysis via \rcode{lm}\ldots}
+
+We will use this model to estimate the median of the distribution of the number of submissions in 2017.
+\bigskip
+
+
+<<RC-H13-010>>=
+predCRAN.df = data.frame(Year = 2017)
+pred2017 = predict(CRAN.fit, predCRAN.df, interval = "confidence") 
+
+## Prediction on the log scale
+pred2017 
+## Back-transform for the median of the number of submissions in 2017
+exp(pred2017) 
+@
+
+\medskip
+
+So, the Executive Summary would have said that the median of the number of submissions to CRAN in 2017 is between \Sexpr{signif(exp(pred2017[2]), 3)} and \Sexpr{as.integer(signif(exp(pred2017[3]), 3))}. 
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Submissions to CRAN\ldots}
+\framesubtitle{Comments on the analysis via \rcode{lm}\ldots}
+There is a well known saying:
+\medskip
+
+``If you only have a hammer, you tend to see every problem as a nail." -- Abraham Maslow [Replace ``hammer" with ``linear model", and ``a nail" with ``normally distributed"]
+\bigskip
+
+We were able to do an analysis with \rcode{lm} (our hammer) by working with the logged data (our normally distributed nails). But, was this really a sensible way to analyse the CRAN data?
+\bigskip
+
+Before we answer this question, we'll look at a different methodology that is tailored for the analysis of count data. The first thing we need is a more appropriate type of distribution to replace the normal distribution. One that is tailored for describing the distribution of count data.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{The Poisson Distribution}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}[fragile]
+\frametitle{The Poisson distribution}
+Statisticians often use the Poisson distribution to describe the behaviour of counts of events that occur randomly in space or time, such as:
+\medskip
+
+\begin{itemize}
+\item The number of alcohol related arrivals at a hospital.
+
+\item The number of dolphins in a pod.
+
+\item The number of pods of dolphins sighted during an aerial survey.
+
+\item The annual number of road fatalities.
+
+\item The annual number of fatal road accidents.
+\end{itemize}
+\bigskip
+
+The Poisson is a distribution that takes values on the non-negative integers
+\{0,1,2,3,...\} and it has no upper limit.
+\bigskip
+
+The Poisson distribution is specified by a single parameter, its mean (i.e., expected value).
+We will write, Pois($\mu$) to denote a Poisson distribution with mean of $\mu$.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{The Poisson distribution\ldots}
+The probability that the non-negative integer value $y$ will be observed if generated
+by a Pois($\mu$) distribution is given by the following formula:
+\[
+\Pr(y)=\frac{\exp(-\mu)\mu^y}{y!} \ .
+\]
+where $y!=$ \rcode{factorial(y)} $=1 \times 2 \times ... \times (y-1) \times y$
+(and $0!=1$).
+\bigskip
+
+For $y=12$ and $\mu=9.61$, this could be calculated in \rcode{R} using the code
+
+<<RC-H13-011>>=
+y=12; mu=9.61
+(exp(-mu)*mu^y)/factorial(y)
+@
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{The Poisson distribution\ldots}
+In \rcode{R}, the in-built function \rcode{dpois}(y, $\mu$) calculates these Poisson probabilities.
+E.g., the probability that $y=12$ will be observed from a Pois($9.61$) distribution is
+
+<<RC-H13-012>>=
+dpois(12,9.61)
+@
+\bigskip
+
+You can also generate random Poisson values. E.g., here are 20 random values from a Pois($10$)
+distribution,
+<<RC-H13-013>>=
+rpois(20,10)
+@
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{The Poisson distribution\ldots}
+\framesubtitle{An example}
+Suppose that a hospital {\em expects} to handle 3 victims of alcohol related mis-adventure
+on a Friday night.
+\bigskip
+
+Assuming that the {\em actual} number on any given Friday night can be described by a Poisson distribution with
+a mean of 3 (Pois($3$)), what does the distribution of the number of alchohol victims look like?
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{The Poisson distribution\ldots}
+\framesubtitle{An example\ldots}
+<<RC-H13-014, fig.show = 'hide'>>=
+barplot(dpois(0:12,3),names=0:12)
+@
+
+<<RC-H13-015, echo=FALSE>>=
+trimPlot(dpois(0:12, 3),
+         names = 0:12,
+         plotCommand = barplot,
+         fileName = "figure/RC-H13-015.pdf",
+         fig.height = 1.75,
+         fig.width = 4.5,
+         mai = c(0.4, 0.4, 0.1, 0.1))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H13-015}
+\end{figure}
+
+% Here are the actual probabilities, calculated for number of victims from 0 to 20,
+% and printed to 6 decimal places accuracy:
+
+\medskip
+
+The probabilities for the number of victims from 0 to 20 are:
+<<RC-H13-016>>=
+round(dpois(0:20,3),6)
+@
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{The Poisson distribution\ldots}
+\framesubtitle{More Poisson distributions}
+
+% Plots of the Pois($10$) and Pois($100$) distributions:
+<<RC-H13-017, eval=FALSE>>=
+par(mfrow=c(2,1)) ## Two-by-One figure layout
+barplot(dpois(0:25,10),names=0:25) ## Pois(10)
+barplot(dpois(50:150,100),names=50:150,las=1) ## Pois(100)
+@
+
+<<RC-H13-018, echo=FALSE>>=
+trimPlot(dpois(0:25, 10),
+         names = 0:25,
+         plotCommand = barplot,
+         fileName = "figure/RC-H13-018A.pdf",
+         fig.height = 1.25,
+         fig.width = 4.5,
+         mai = c(0.4, 0.4, 0.1, 0.1))
+
+trimPlot(dpois(50:150, 100),
+         names = 50:150,
+         plotCommand = barplot,
+         fileName = "figure/RC-H13-018B.pdf",
+         fig.height = 1.25,
+         fig.width = 4.5,
+         mai = c(0.4, 0.4, 0.1, 0.1))
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H13-018A}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H13-018B}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{The Poisson distribution\ldots}
+\framesubtitle{Properties of the Poisson distribution}
+\begin{itemize}
+\item Variability increases with the mean $\mu$.
+In fact, the variance of a Pois($\mu$) is also $\mu$.
+That is, if $Y$ is Pois($\mu$) distributed then
+\[\Var(Y) = \E(Y) = \mu\]
+
+\vspace{-1.5em}
+
+\item The Poisson distribution is right-skewed for small values of $\mu$,
+but looks very much like a (discretised) normal distribution for large $\mu$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{The Poisson distribution\ldots}
+\framesubtitle{Properties of the Poisson distribution\ldots}
+The Poisson distribution is a good distribution to describe count data provided
+that the events being counted are independent.
+\begin{itemize}
+\item The number of alcohol related arrivals at a hospital could be described by a Poisson distribution provided that the arrivals occur independently...does this seem reasonable to you???
+
+\item What about the number of dolphins in a pod?
+
+\item What about the number of pods of dolphins sighted during an aerial survey?
+
+\item What about annual number of road fatalities?
+
+\item What about annual number of fatal road accidents?
+\end{itemize}
+
+\bigskip
+
+
+\begin{itemize}
+\item Would it be sensible for an insurance company to assume that the number of earthquake damage claims was Poisson distributed?
+\end{itemize}
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{The generalized linear model (GLM)}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}[fragile]
+\frametitle{The generalized linear model}
+Count data are not normally distributed, so we need to use a model that replaces the normality assumption with something more reasonable, such as assuming the data are Poisson distributed.
+\bigskip
+
+We will use a class of models called generalized linear models. They generalize the standard linear model (for normal data) by making it applicable to other types of data.
+\bigskip
+
+The linear model of Chaps 1-12 is a special case of a GLM.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{The Poisson regression GLM for the CRAN data}
+We will redo this analysis using a \rcode{GLM}. That is, the model will now assume that the number of packages in a given year is a Poisson random variable:
+\vspace{-0.5em}
+\[ Y \sim \text{Poisson}(\mu) \]
+\vspace{-1.5em}
+
+where the Poisson parameter ($\mu=E[Y]$) changes with respect to an $x$ variable as follows:
+\vspace{-1.5em}
+
+\[ \mu = \exp(\beta_0 + \beta_1 x). \]
+\vspace{-1.5em}
+
+Here, $x$ is year and $Y$ is the number of CRAN submissions in that year.
+\medskip 
+
+Since $\beta_0$ and $\beta_1$ can be negative or positive then so can $\beta_0 + \beta_1 x$, but $\mu = \exp(\beta_0 + \beta_1 x) > 0$, as required.
+\medskip
+
+The relationship $\mu = \exp(\beta_0 + \beta_1 x)$ can equivalently be expressed as 
+\[\log(\mu) = \log E[Y|x] = \beta_0 + \beta_1 x \] 
+and so sometimes people call this log-linear modelling.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Fitting a generalized linear model in \rcode{R}}
+\framesubtitle{\rcode{glm} function}
+Fitting a generalized linear model is the easy part. 
+We simply use the \rcode{glm} function instead of \rcode{lm}, 
+and instruct \rcode{glm} that the response variable is Poisson distributed by
+giving it the \rcode{family = poisson} argument.
+
+\medskip \medskip
+{\bf NOTE:} Although only a simple change to the \rcode{R} code is required,
+the methodology ``under the hood'' is very different.
+It is no longer based on sums of squares,
+and instead uses a technique called maximum likelihood.
+\bigskip
+
+Maximum likelihood is the most widely used tool in statistical estimation.
+Linear regression (of normally distributed data) is a special case of 
+maximum likelihood. 
+
+\medskip 
+For more on maximum likelihood, see STATS 310, 330 and 730.
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Submissions to CRAN using Poisson regression}
+\framesubtitle{Analysis via \rcode{glm}}
+<<RC-H13-019, results = 'hide'>>=
+CRAN.gfit = glm(Number ~ Year, family = poisson, data = CRAN.df)
+summary(CRAN.gfit)
+@
+
+<<RC-H13-020,echo = FALSE>>=
+slimSummary(CRAN.gfit)
+@
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+% \frametitle{Submissions to CRAN via  --  \rcode{glm}}
+\frametitle{Submissions to CRAN using Poisson regression\ldots}
+\framesubtitle{Assumption checks}
+
+\smallskip
+
+First, check the residuals to see if they look random.
+
+<<RC-H13-021, fig.show = 'hide'>>=
+plot(CRAN.gfit, which = 1)
+@
+
+
+
+<<RC-H13-022, echo = FALSE>>=
+trimPlot(CRAN.gfit,
+         which = 1,
+         fig.height = 1.9,
+         fig.width = 3.9,
+         cex = 0.7,
+         x.lab = "Fitted values",
+         y.lab = "Residuals",
+         fileName = "figure/RC-H13-022.pdf")
+@
+
+\begin{figure}
+  \centering
+  \includegraphics{figure/RC-H13-022}
+\end{figure}
+
+Hmmm, a strange pattern, though no clear systematic trend in the residuals.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+% \frametitle{Submissions to CRAN via  --  \rcode{glm}}
+\frametitle{Submissions to CRAN using Poisson regression\ldots}
+\framesubtitle{Assumption checks}
+
+It is not as easy to check the assumptions of a GLM compared to a linear model.
+\medskip
+
+In the plot of residuals vs fitted values:
+
+\begin{itemize}
+  \item The fitted values on the x-axis are values of the so-called ``linear predictor''. That is, they are the fitted values $\hat{\beta}_0+\hat{\beta}_1 x$.
+  \item The residuals on the y-axis are not standard residuals. They are ``standardized residuals'' and should be approximately normally distributed with mean of 0 and variance of 1 if the Poisson assumption is satisfied {\bf and} $\mu>5$  --  see STATS 330 for more information. Clearly, the Poisson assumption is not valid here. We shall see a cure for this below.
+\end{itemize}  
+\medskip
+
+STATS 330 covers checking of GLMs in greater detail. In particular, it demonstrates the use of simulations to show us when a model is violating assumptions.
+
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+% \frametitle{Submissions to CRAN via  --  \rcode{glm}}
+\frametitle{Submissions to CRAN using Poisson regression\ldots}
+\framesubtitle{Assumption checks\ldots}
+
+There is another {\bf very important check} that is essential:
+\begin{itemize}
+  \item Checking the Poisson assumption that the variances of the counts are equal to their means.
+\end{itemize}
+\medskip
+
+If the model is correct, then the residual deviance (printed near the bottom of the \rcode{summary} output) is approximately distributed\footnote{Subject to $\mu$ not being too small for most observations.} as chi-squared $\chi_q^2$ where $q$ is the degrees of freedom.\footnote{$q$ is the number of observations minus the number of parameters estimated.}
+\medskip
+
+If the residual deviance is unreasonably large then we have evidence that the model is not valid.
+\medskip 
+
+In this example, the residual deviance is \Sexpr{round(CRAN.gfit$deviance,2)}, with \Sexpr{CRAN.gfit$df.residual} df. The \pval{} is
+
+<<RC-H13-023>>=
+1 - pchisq(402.61,10)
+@
+
+If this \pval{} is small then we conclude that our model is not adequate. That is clearly the case with the CRAN data.
+\medskip
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Submissions to CRAN using Poisson regression\ldots}
+\framesubtitle{quasi-Poisson correction}
+The residual deviance check rejected the Poisson GLM fitted to the CRAN data.
+\medskip
+
+Fortunately there is a very simple fix.
+\medskip
+
+If the model is found to be inadequate, there are two possible reasons:
+
+\begin{itemize}
+\item We do not have the right explanatory terms in the model.
+\item The Poisson assumption is wrong.
+\end{itemize}
+
+\medskip
+
+If the residual plot looks OK, then we can rule out the first possibility. In this example, it looks like we have a problem with the Poisson assumption.
+
+\medskip
+
+The fix is very simple -- we just replace \rcode{family = poisson} with \rcode{family = quasipoisson}.\footnote{Those of you who go on to do more advanced STATS courses will encounter advanced methods to handle count data that do not satisfy the Poisson assumption.}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Submissions to CRAN using Poisson regression\ldots}
+\framesubtitle{quasi-Poisson correction\ldots}
+
+The \rcode{family = quasipoisson} specification is saying that the data have different variance than if they were Poisson distributed.
+
+\medskip
+
+Recall, if $Y$ is Poisson then $\Var(Y) = \E(Y)$. If $Y$ is quasi-Poisson then we assume
+
+\vspace{-1em}
+
+\begin{align}
+  \Var(Y) &\propto \E(Y), \text{or} \nonumber \\
+  \Var(Y) &= k \E(Y) \nonumber
+\end{align}
+
+When the data have more variance than we would expect under a Poisson assumption, the consequence of using \rcode{family = quasipoisson} is that the standard errors of the estimated coefficients are increased, compared to using \rcode{family = poisson}.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Submissions to CRAN using Poisson regression\ldots}
+\framesubtitle{Without quasi-Poisson correction}
+Recall:
+
+<<RC-H13-024, results = 'hide'>>=
+CRAN.gfit= glm(Number~Year,family=poisson,data=CRAN.df)
+summary(CRAN.gfit)
+@
+
+<<RC-H13-025, echo = FALSE>>=
+slimSummary(CRAN.gfit)
+@
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Submissions to CRAN using Poisson regression\ldots}
+\framesubtitle{With quasi-Poisson correction}
+Compare with:
+
+<<RC-H13-026, results = 'hide'>>=
+CRAN.quasigfit = glm(Number ~ Year, family = quasipoisson, data = CRAN.df)
+summary(CRAN.quasigfit)
+@
+
+<<RC-H13-027, echo = FALSE>>=
+slimSummary(CRAN.quasigfit)
+@
+
+The estimated coefficients are not changed. But, the z-values\footnote{In the quasi-Poisson output the z-values are renamed t-values due to it using an estimated variance.} in the \rcode{summary} output will decrease in magnitude, and the \pval{} will increase.
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Submissions to CRAN using Poisson regression\ldots}
+\framesubtitle{Influence}
+Let's check the influence of the observations. 
+
+<<RC-H13-021c, fig.show = 'hide'>>=
+plot(CRAN.quasigfit, which = 4)
+@
+
+<<RC-H13-022c, echo = FALSE>>=
+trimPlot(CRAN.quasigfit,
+         which = 4,
+         fig.height = 1.9,
+         fig.width = 3.9,
+         cex = 0.7,
+         x.lab = "Obs. number",
+         y.lab = "Cook's distance",
+         fileName = "figure/RC-H13-022c.pdf")
+@
+
+\begin{figure}
+  \centering
+  \includegraphics[scale = 0.8]{figure/RC-H13-022c}
+\end{figure}
+
+We see that Observations 8 and 12 exceed our 0.4 threshold. However, this has to be interpretted with caution. Unlike the normal linear regression, in a Poisson regression the observations with higher values of $\mu$ are expected to have higher influence than those with lower values of $\mu$.
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Interpretting the GLM output}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[fragile]
+\frametitle{Submissions to CRAN using Poisson regression\ldots}
+\framesubtitle{Inference}
+Let's look at the estimated rate of annual increase in submissions of R packages to the CRAN.
+\bigskip
+
+Recall that our model for the expected number of submissions to the CRAN is 
+\[ \mu = \exp(\beta_0+\beta_1 \times Year) = \exp(\beta_0) \times \exp(\beta_1)^{Year} \] 
+so we need to exponentiate our estimate and its confidence interval.
+\bigskip
+
+The annual multiplicative effect on $\mu$ is $\exp(\beta_1)$, and our estimated value of this effect is  $\exp(\hat{\beta}_1)$:
+<<RC-H13-028>>=
+## The estimated annual multiplier
+exp(CRAN.quasigfit$coef["Year"])
+@
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Submissions to CRAN using Poisson regression\ldots}
+\framesubtitle{Confidence intervals for effects}
+
+We can still use the function \rcode{confint()} to get confidence intervals for the parameters.  
+\medskip
+
+<<RC-H13-029>>=
+exp(confint(CRAN.quasigfit))
+@
+<<RC-H13-029b, include=F>>=
+cis2 <- sprintf("%3.2f", exp(confint(CRAN.quasigfit))[2, ])
+@
+\bigskip
+
+Sometimes you might see \rcode{confint.default()} used instead.
+
+<<RC-H13-030, echo=1>>=
+exp(confint.default(CRAN.quasigfit))
+@
+
+They are doing slightly different things, based on two different approximations. In most cases they give very similar results.
+\bigskip
+
+It is generally best to use \rcode{confint()} rather than \rcode{confint.default()}. See STATS 730 for the reason why.
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Submissions to CRAN using Poisson regression\ldots}
+\framesubtitle{Confidence intervals for effects\ldots}
+
+So, our Executive Summary would say that the expected annual number of submissions to CRAN multiplies by between \Sexpr{cis2[1]} and \Sexpr{cis2[2]} times each year.
+That is, it increases by between 75\% and 108\% per year.
+
+\medskip\medskip
+
+[This compares to a median multiplier of between \Sexpr{cis[1]} and \Sexpr{cis[2]} times each year from the naive \rcode{lm} fit to $\log(y).$]
+
+\medskip\medskip
+
+{\large Note that the GLM model is making statements about the {\bf mean} rather than the {\bf median}. This is because the GLM does not transform $y$.}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Submissions to CRAN using Poisson regression\ldots}
+\framesubtitle{Confidence interval for expected number of submissions}
+
+And finally, we will use the quasi-Poisson model to estimate the expected number of submissions in 2017. 
+We first calculate the confidence interval on the linear predictor scale, and then exponentiate.
+
+<<RC-H13-031>>=
+pred2017.quasi=predict(CRAN.quasigfit, predCRAN.df, se.fit=TRUE)
+# CI for log mean
+lower = pred2017.quasi$fit-1.96*pred2017.quasi$se.fit
+upper = pred2017.quasi$fit+1.96*pred2017.quasi$se.fit
+#CI for mean value
+pred2017.ci.mean=exp(c(lower, upper))
+pred2017.ci.mean
+@
+\medskip
+
+So our Executive Summary would say that the expected number of submissions to CRAN in 2017 is between \Sexpr{format(round(pred2017.ci.mean[1], -2), scientific = FALSE)} and \Sexpr{format(round(pred2017.ci.mean[2], -2), scientific=FALSE)}.
+
+\medskip
+
+This compares to the estimated median number being between \Sexpr{round(exp(pred2017[2]), -2)} and \Sexpr{format(round(exp(pred2017[3]), -2), scientific = FALSE)} from the naive \rcode{lm} fit to $\log(y)$.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Submissions to CRAN using Poisson regression\ldots}
+\framesubtitle{Confidence interval for expected number of submissions...}
+
+The above calculations are done for us using the \rcode{predictGLM} function.
+\bigskip
+
+The confidence interval on the linear predictor scale is
+
+<<RC-H13-031.5>>=
+predictGLM(CRAN.quasigfit, predCRAN.df)
+@
+
+and on the scale of the response variable is
+
+<<RC-H13-031.6>>=
+predictGLM(CRAN.quasigfit, predCRAN.df,type="response")
+@
+\bigskip \bigskip
+{\bf NOTE:} For GLMs, it is not straightforward to obtain prediction intervals for new values of the response. This is left to STATS 330.
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Closing Remarks}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}
+\frametitle{Linear vs generalized linear model}
+The linear model that we fitted to the logged CRAN data on slide \pageref{pg:CRAN LM} has some undesirable properties. 
+\bigskip
+
+\begin{itemize}
+  \item Logged count data do not have equal variance.\footnote{In fact, if $Y$ is Poisson, then $\Var(\log(Y))=\infty$!!!}
+  \item Logged count data are highly variable for small expected counts.
+  \item Logged count data can not handle a zero count, since $\log(0)$ is negative infinity.
+\end{itemize}
+\bigskip
+
+The influence plot from the LM fitted to the logged CRAN data showed that the 2nd and 3rd observations were the most influential. This is very dangerous, as these are the most unreliable data points. 
+ 
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Linear vs generalized linear model}
+A \rcode{GLM} is a more natural way to model count data. 
+\begin{itemize}
+  \item It does not transform $y$.
+  \item Inference is about {\bf means} (rather than medians).
+  \item It accounts for the fact that the variance of $Y$ increases with the mean.
+  \item It implicitly allows the higher counts to have more influence.\footnote{This is because the coefficient of variation, CV, is greater for the smaller counts (the CV is the noise-to-signal ratio, $\sd(Y)/\E[Y]=\frac{1}{\sqrt{\mu}}$).}
+\end{itemize}
+\bigskip
+
+The GLM better models the CRAN data:
+\begin{itemize}
+  \item The plot of fitted values versus residuals clearly shows the sudden increase at year 8.
+  \item The influence plot better shows the true influence of each observation.
+  \item It results in narrower confidence intervals for the expected annual increase and expected future counts.
+\end{itemize}
+\bigskip
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Linear vs generalized linear model}
+The two key points of difference are:
+\medskip
+
+\begin{itemize}
+\item $Y|x$ is assumed to be a Poisson distributed count variable (rather than a
+normally distributed continuous variable).
+
+\item
+Instead of our model being of additive form
+\[ \E[Y|x] = {\beta_0 +  \beta_1 x + \dots} \]
+it is of multiplicative form
+\[ \E[Y|x] = \exp(\beta_0 +  \beta_1 x + \dots) \]
+or equivalently
+\[ \log (\E[Y|x]) = \beta_0 +  \beta_1 x + \dots \]
+\end{itemize}
+\bigskip
+
+% Here, ``linear model'' might be $\beta_0 +  \beta_1 x$, say 
+% (in the case of a simple linear regression with explanatory variable $x$)
+{\bf NOTE:} The GLM transforms the linear model rather than transforming $Y$.
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Linear on log scale vs generalized linear model}
+In Chapter 6 we logged our response variable before fitting the linear model.
+This assumes that the logged reponses are normally distributed and that
+
+\[ \E[\log(Y|x)] = \beta_0 +  \beta_1 x + \dots \]
+
+We saw that, under the above model 
+\[ \E[Y|x] \ne \exp(\beta_0 +  \beta_1 x + \dots)\]
+and that was why we had to make inference about population medians.
+\bigskip \bigskip
+
+In comparison, in the GLM the order of $\log$ and $\E$ is reversed
+\[ \log (\E[Y|x]) = \beta_0 +  \beta_1 x + \dots \]
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\BeginSection{Relevant \rcode{R}-code}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}[fragile]
+\frametitle{Most of the \rcode{R}-code you need for this chapter}
+We started by identifying what our response is -- in this case a count. Therefore our response data is definitely not from a normal distribution. As $Y$ is a count variable we propose to model it using the Poisson distribution.
+\bigskip
+
+Instead of using \rcode{lm} we use \rcode{glm}, and add \rcode{family=poisson}.
+
+<<RC-H13-32, eval=F, comment=NA>>= 
+CRAN.gfit= glm(Number~Year,family=poisson,data=CRAN.df)
+summary(CRAN.gfit)
+@
+
+Look at  fitted vs residual plot and make sure there's no trend you've missed and/or atypical observations.
+
+<<RC-H13-33, eval=F, comment=NA>>=
+plot(CRAN.gfit, which = 1)
+@
+
+Do {\bf NOT} check for normality!
+
+Influence can still be assessed using \rcode{cooks20x}, but be aware that larger counts will naturally tend to be more influential than smaller counts.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Most of the \rcode{R}-code you need for this chapter...}
+
+To check if the data are consistent with the Poisson model you use
+
+<<RC-H13-34, eval=F, comment=NA>>=
+1 - pchisq(CRAN.gfit$deviance,CRAN.gfit$df.residual)
+@
+
+and if the \pval{} is very small (i.e., less that 0.05) then you can to deal with this 
+using the quasi-Poisson model: 
+
+<<RC-H13-35, eval=F, comment=NA>>=
+CRAN.quasigfit = glm(Number ~ Year, family = quasipoisson, data = CRAN.df)
+@
+\medskip
+
+Once you've chosen your final model you can interpret the effect of the variables as a 
+multiplicative change in the {\bf mean} or expected value:
+<<RC-H13-36, eval=F, comment=NA>>=
+exp(confint(CRAN.quasigfit))
+@
+
+If you wish to estimate a 95\% CI for an expected value 
+use \rcode{predictGLM}, or do it the hard way as follows:
+
+<<RC-H13-37, eval=F, comment=NA>>=
+pred2017.quasi=predict(CRAN.quasigfit, predCRAN.df,se.fit=TRUE)
+# CI for log mean
+lower = pred2017.quasi$fit-1.96*pred2017.quasi$se.fit
+upper = pred2017.quasi$fit+1.96*pred2017.quasi$se.fit
+#CI for mean value
+pred2017.ci.mean=exp(c(lower, upper))
+pred2017.ci.mean
+@
+
+\end{frame}
+
+\end{document}

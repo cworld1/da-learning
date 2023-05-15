@@ -1,0 +1,7 @@
+\beamer@sectionintoc {1}{Binary (Bernoulli) data, odds and log-odds }{3}{0}{1}
+\beamer@sectionintoc {2}{Modelling log-odds}{10}{0}{2}
+\beamer@sectionintoc {3}{Modelling the response when it is binary \newline (ungrouped data) via {\color {darkgreen}\texttt {glm}}}{17}{0}{3}
+\beamer@sectionintoc {4}{Modelling the response when it is binomial \newline (grouped binary data) via {\color {darkgreen}\texttt {glm}}}{33}{0}{4}
+\beamer@sectionintoc {5}{Example 1: Space shuttle {\em Challenger} accident}{43}{0}{5}
+\beamer@sectionintoc {6}{Example 2: Catching the right size fish}{53}{0}{6}
+\beamer@sectionintoc {7}{Relevant {\color {darkgreen}\texttt {R}}-code.}{67}{0}{7}

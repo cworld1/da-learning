@@ -1,0 +1,8 @@
+\beamer@sectionintoc {1}{Fitting the linear model by minimizing the sum of the squared residuals}{3}{0}{1}
+\beamer@sectionintoc {2}{The standard assumptions of the linear model}{11}{0}{2}
+\beamer@sectionintoc {3}{Checks of model assumptions -- independence, EOV and normality}{17}{0}{3}
+\beamer@sectionintoc {4}{Checking for points of undue influence using {\color {darkgreen}\texttt {cooks20x}}}{26}{0}{4}
+\beamer@sectionintoc {5}{Making inference from your model (provided the assumptions check out)}{38}{0}{5}
+\beamer@sectionintoc {6}{Confidence intervals for coefficients and fitted values, and prediction intervals for individual predictions}{47}{0}{6}
+\beamer@sectionintoc {7}{A recipe for subsequent analyses}{53}{0}{7}
+\beamer@sectionintoc {8}{Relevant {\color {darkgreen}\texttt {R}}-code}{56}{0}{8}

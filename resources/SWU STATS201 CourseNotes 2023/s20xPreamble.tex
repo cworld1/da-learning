@@ -1,0 +1,94 @@
+\usepackage{graphicx}
+\usepackage{verbatim}
+\usepackage{etoolbox}
+\usepackage{everysel}
+% \usepackage{enumitem}
+
+%% This package allows text highlighting
+\usepackage{soul}
+
+%% This sets the theme of the presentation which controls
+%% the formatting of the slides
+\usetheme{Boadilla}
+
+%% Turn off the navigation symbols
+\setbeamertemplate{navigation symbols}{} 
+
+%% Change the default itemize [ball]s to [circle]s
+\setbeamertemplate{itemize items}[circle]
+
+%% Change the default enumerate [ball]s to plain text
+\setbeamertemplate{enumerate items}[default]
+
+%% Load the enumitem package and ensure it works nicely with beamer
+% \setitemize{label=\usebeamerfont*{itemize item}
+%   \usebeamercolor[fg]{itemize item}
+%   \usebeamertemplate{itemize item}}
+% \setenumerate{label=\usebeamerfont*{enumerate item}
+%   \usebeamercolor[fg]{enumerate item}
+%   \usebeamertemplate{enumerate item}}
+
+%% Set the author block so STATS 201/8 appears on every
+\author{STATS 201/8}
+
+%% Clear the date block
+\date{}
+
+
+%% This makes all equations blue
+\AtBeginEnvironment{equation*}{\color{blue}}
+\AtBeginEnvironment{align*}{\color{blue}}
+\everymath{\color{blue}}
+
+%% This puts a 0 point space between paragraphs, means we don't need to use vspace, or list environments if 
+%% we don't want to
+\setlength{\parskip}{0pt}
+
+
+%% Russell: removes spaces after R input/output?
+\setlength{\topsep}{0.5mm}
+
+%% David: In addition to Russel's command to remove spaces after R input/output, these commands remove the space between R input/output.
+%% Stackoverflow link: https://stackoverflow.com/questions/35734525/reduce-space-between-code-chunks-and-code-output-in-rmarkdown-beamer-presentatio
+%% \setlength{\OuterFrameSep}{-2pt}
+\makeatletter
+\preto{\@verbatim}{\topsep=-1pt \partopsep=-1pt }
+\makeatother
+
+%% Some useful colors
+\definecolor{darkgreen}{rgb}{0.176,0.486,0.031}
+\definecolor{redbrown}{HTML}{950605}
+\definecolor{darkred}{HTML}{d80605}
+
+
+%% nice little macro for changing the font of R code
+\newcommand{\rcode}[1]{{\color{darkgreen}\texttt{#1}}}
+
+%% macro for bold blue italics
+\newcommand{\blueBoldEmph}[1]{{\color{blue}\textbf{\emph{#1}}}}
+
+% ~iid macro
+\newcommand{\iid }{\stackrel{iid}{\sim}}
+
+%% Macro for t-test amd P-value
+\newcommand{\ttest}{\emph{t}-test}
+\newcommand{\pval}{\emph{P}-value}
+
+%% Statistics operators 
+\DeclareMathOperator{\Bias}{Bias}
+\DeclareMathOperator{\Cov}{Cov}
+\DeclareMathOperator*{\Cor}{Cor}
+\DeclareMathOperator{\E}{E}
+\DeclareMathOperator{\MSE}{MSE}
+\DeclareMathOperator{\Odds}{Odds}
+\DeclareMathOperator{\OR}{OR}
+\DeclareMathOperator{\PMSE}{PMSE}
+\DeclareMathOperator{\sd}{sd}
+\DeclareMathOperator{\se}{se}
+\DeclareMathOperator*{\Var}{Var}
+\DeclareMathOperator{\logit}{logit}
+
+%% Should see if can make this a mathop
+\newcommand{\comb}[2]{\mbox{$\big(_{#2}^{#1}\big)$}}
+
+

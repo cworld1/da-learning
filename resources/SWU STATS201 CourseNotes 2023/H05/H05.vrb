@@ -1,0 +1,36 @@
+\frametitle{Most of the \rcode{R}-code you need for this chapter}
+
+You do not need to create indicator variables as \rcode{R} does this for you. It will choose the baseline for you, so be careful.  You can change this if needed -- you will see an example of this soon.
+\medskip
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlstd{examattend.fit} \hlkwb{=} \hlkwd{lm}\hlstd{(Exam}\hlopt{~} \hlstd{Attend,} \hlkwc{data} \hlstd{= Stats20x.df)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+This is equivalent to
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{t.test}\hlstd{(Exam}\hlopt{~} \hlstd{Attend,} \hlkwc{var.equal}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{data} \hlstd{= Stats20x.df)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\bigskip
+
+If it is clear that the two groups have massively different variances then one approach would be to abandon the use of a linear model and use the modified t-test without the equality of variance assumption\footnote{The modified t-test approach will {\bf never} be used in this class.}
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{t.test}\hlstd{(Exam}\hlopt{~} \hlstd{Attend,} \hlkwc{var.equal}\hlstd{=}\hlnum{FALSE}\hlstd{,} \hlkwc{data} \hlstd{= Stats20x.df)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\medskip
+
+{\bf However}, in most cases the technique shown in the next Chapter is a better way to cope with inequality of variance.
+
+

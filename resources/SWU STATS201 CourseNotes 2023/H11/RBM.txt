@@ -1,0 +1,6 @@
+Kathy's version omits the Rsq calc (p14 of original)
+
+Replace K's use on emmeans to get group means, use aggregate(y,grp,fun=mean) instead.
+
+On page 32, K hasn't removed multipleComp
+
