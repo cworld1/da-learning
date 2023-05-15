@@ -33,6 +33,7 @@ Get started
 一些电子教材对作者学习上帮助颇多，没有这些资料，就没有这部笔记。在此对这些教材的原作者深表感谢。读者若对此项目笔记抱有疑惑，也可以仔细阅读以下教材以作弥补。
 
 - [STATS 201 : Data Analysis](https://courseoutline.auckland.ac.nz/dco/course/STATS/201/1215)
+- [STATS201 book SWU 2023](../resources/STATS201_book_SWU_2023.pdf)
 
 ## Table of Contents
 
