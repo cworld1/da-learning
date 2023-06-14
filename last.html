@@ -1,0 +1,691 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="zh-Hans" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>写在最后 &#8212; Data Analysis Learning</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script kind="utterances">
+
+    var commentsRunWhenDOMLoaded = cb => {
+    if (document.readyState != 'loading') {
+        cb()
+    } else if (document.addEventListener) {
+        document.addEventListener('DOMContentLoaded', cb)
+    } else {
+        document.attachEvent('onreadystatechange', function() {
+        if (document.readyState == 'complete') cb()
+        })
+    }
+}
+
+var addUtterances = () => {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = "https://utteranc.es/client.js";
+    script.async = "async";
+
+    script.setAttribute("repo", "cworld1/da-learning");
+    script.setAttribute("issue-term", "pathname");
+    script.setAttribute("theme", "github-light");
+    script.setAttribute("label", "💬 comment");
+    script.setAttribute("crossorigin", "anonymous");
+
+    sections = document.querySelectorAll("div.section");
+    if (sections !== null) {
+        section = sections[sections.length-1];
+        section.appendChild(script);
+    }
+}
+commentsRunWhenDOMLoaded(addUtterances);
+</script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'last';</script>
+    <link rel="canonical" href="https://da.cworld.top/last.html" />
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="16. Analysis of contingency tables" href="16-anal-of-continue-table.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="zh-Hans"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="index.html">
+                    Data Analysis Learning
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="00-at-the-beginning.html">At the beginning</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Main Chapters</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="01-get-start-with-regres.html">1. Getting Started with Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02-basics-of-simp-linear-regres.html">2. Basics of Simple Linear Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03-null-model.html">3. The null model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04-fit-curves-with-linear-model.html">4. Fitting curves with the linear model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05-linear-model-with-a-categ-explan-var.html">5. Linear models with a categorical (factor) explanatory variable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06-multiplicative-linear-models.html">6. Multiplicative linear models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07-power-law-linear-models.html">7. Power law linear models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08-linear-model-with-both-var.html">8. Linear models with both numeric and factor explanatory variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09-linear-model-with-both-var-without-interact.html">9. Linear models with both numeric and factor explanatory variables without interaction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10-multi-linear-regress-model.html">10. Multiple linear regression models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11-linear-models-with-a-single-factor-explanatory-having-var-levels.html">11. Linear models with a single factor explanatory variable having three or more levels (One-way analysis of variance)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12-linear-model-with%20two-explan-factor-var.html">12. Linear models with two explanatory factor variables (Two-way analysis of variance)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13-model-count-data-using-poisson-distribute.html">13. Modelling count data using the Poisson distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14-pois-model-of-count-data.html">14. Poisson modelling of count data: Two examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15-model-proporte-data-use-bino-distribute.html">15. Chapter 15: Modelling proportion data using the binomial distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16-anal-of-continue-table.html">16. Analysis of contingency tables</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">About Project</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">写在最后</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://blog.cworld.top">CWorld's Blog</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/cworld1/da-learning" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/cworld1/da-learning/edit/main/docs/last.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/cworld1/da-learning/issues/new?title=Issue%20on%20page%20%2Flast.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/last.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>写在最后</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">考题构造</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">相关模型</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lm-model-1-12-chapter">lm model (1-12 chapter)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#glm-model-13-16-chapter">glm model (13-16 chapter)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">模型研究</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">其他知识点</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">卡方</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#log">log 使用条件</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">公式书写</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="id1">
+<h1>写在最后<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h1>
+<p>至此，所有内容你都学完了。恭喜！让我们复习一下这些内容。当然接下来的内容也是考试重点考察内容。</p>
+<section id="id2">
+<h2>考题构造<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h2>
+<p>总构造：5+12 题。其中：</p>
+<ul class="simple">
+<li><p>选择题 3.5*12</p></li>
+<li><p>综合题 58</p></li>
+</ul>
+<blockquote>
+<div><p>注：multi-choice 是从多个选一个</p>
+</div></blockquote>
+</section>
+<section id="id3">
+<h2>相关模型<a class="headerlink" href="#id3" title="Permalink to this heading">#</a></h2>
+<section id="lm-model-1-12-chapter">
+<h3>lm model (1-12 chapter)<a class="headerlink" href="#lm-model-1-12-chapter" title="Permalink to this heading">#</a></h3>
+<p>前提假设：正态分布</p>
+<ul>
+<li><p>简单线性（Simple Linear Regression）</p>
+<p>Formula: <span class="math notranslate nohighlight">\(y = β_0 + β_1x_i + ε_i,\ ε_i \sim N(0, σ^2)\)</span> where <span class="math notranslate nohighlight">\(β_1 &gt; 0\)</span>.</p>
+</li>
+<li><p>零模型（The Null Model）</p>
+<p>Formula: <span class="math notranslate nohighlight">\(y = \beta_0 + x\)</span></p>
+</li>
+<li><p>多项式（Curved Model (Like Quadratic Model)）</p>
+<p>Formula: <span class="math notranslate nohighlight">\(y = β_0 + β_1 x + β_2 x^2 + ε_i\)</span></p>
+</li>
+<li><p>多变量</p></li>
+<li><p>多变量交互</p></li>
+<li><p>指数</p></li>
+<li><p>幂</p></li>
+</ul>
+</section>
+<section id="glm-model-13-16-chapter">
+<h3>glm model (13-16 chapter)<a class="headerlink" href="#glm-model-13-16-chapter" title="Permalink to this heading">#</a></h3>
+<p>前提假设：泊松分布、二项分布</p>
+<p>泊松一般是一到二道题</p>
+</section>
+</section>
+<section id="id4">
+<h2>模型研究<a class="headerlink" href="#id4" title="Permalink to this heading">#</a></h2>
+<ol class="arabic">
+<li><p>对数据绘制图形，评价图形中数据变化的趋势</p>
+<p>什么样的趋势，自变量和因变量的关系</p>
+</li>
+<li><p>选择合适的模型进行拟合（包括 lm 和 glm）</p>
+<p>要求会写不同模型的代码、拟合函数。注意不要忘了分布的书写</p>
+</li>
+<li><p>残差三分析：同分布、正态检验、异常值</p></li>
+<li><p>模型本身的数据分析（<code class="docutils literal notranslate"><span class="pre">summary(model)</span></code>）</p>
+<ul>
+<li><p>公式</p></li>
+<li><p>t 检验</p>
+<p>t-value 含义：预估变量值 - 假设H_0（假设能接受的该变量值） / 标准差</p>
+<p>由 t-value 和自由度一起分析得到 p-value，从而得出我们能否接受该假设。（对于三十几行以内的数据而言，t 绝对值大于 1.96 就基本等价于 p 小于 0.05，大于95%置信区间）当然零假设本身就落在95%置信区间也可以。</p>
+<p>但是我们的summary里面是设定的零假设为0。</p>
+</li>
+<li><p>p 检验</p>
+<p>p-value：大于等于 0.05 则可以接受，小于 0.05 不能接受</p>
+</li>
+<li><p>r 方</p>
+<p>误差：模型解释的偏差+观测的误差</p>
+<p>r 方即模型能解释误差的百分比，模型能解释的误差越少，就说明数据越不受控，不能直接拒绝。</p>
+</li>
+<li><p>参数的95%置信区间</p>
+<p>含义：哪一个解释更有用，解释是什么？</p>
+</li>
+<li><p>自由度</p>
+<p>原数据有多少行：残差自由度 + 参数变量个数（零模型自由度加一也行，但一般不用）</p>
+</li>
+</ul>
+</li>
+<li><p>预测 predict</p>
+<p>代码里参数有两个，prediction预测个体，confidence预测均值（个体预测范围更大）</p>
+<p>注意有时还要套用exp（看y有没有变形）</p>
+</li>
+<li><p>method and assumption checks：问题是什么，数据什么情况，拟合什么具体模型（解释单变量、多变量在模型里的含义），r方是多少</p></li>
+<li><p>executive summary：解释拟合参数的含义（解释参数死都需要变形，每单位参数的变化，导致预测值变化多少、变成原来多少倍），回答题目问题</p></li>
+</ol>
+</section>
+<section id="id5">
+<h2>其他知识点<a class="headerlink" href="#id5" title="Permalink to this heading">#</a></h2>
+<section id="id6">
+<h3>卡方<a class="headerlink" href="#id6" title="Permalink to this heading">#</a></h3>
+<p>什么是 1 - 卡方？</p>
+<p>代码中一般是 <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">-</span> <span class="pre">pchisq(36.59,</span> <span class="pre">18)</span></code> 这样的。</p>
+<p>The p-value for testing the null hypothesis that the data are 泊松/二项 distributed, the p-value is below 0.05 (above 0.05), rejecting the null hypothesis.</p>
+<p>the null hypothesis is that the binomial variance
+assumption holds, the residual deviance is chi-squared with 18 degrees of freedom if this assumption is true.</p>
+<p>in this case, the p-value is below 0.05, rejecting the null hypothesis.</p>
+</section>
+<section id="log">
+<h3>log 使用条件<a class="headerlink" href="#log" title="Permalink to this heading">#</a></h3>
+<ul class="simple">
+<li><p>数值数据（曲线拟合log，使用后变成直线）</p></li>
+<li><p>分类数据（箱线图观察，log后宽度变成一致了就是好的）</p></li>
+</ul>
+</section>
+<section id="id7">
+<h3>公式书写<a class="headerlink" href="#id7" title="Permalink to this heading">#</a></h3>
+<ul class="simple">
+<li><p>正态分布：<span class="math notranslate nohighlight">\(E(Exam_i) = \beta_0 + \beta_1 Test_i + \epsilon\)</span> where <span class="math notranslate nohighlight">\(\epsilon \sim N(0, \sigma^2)\)</span></p></li>
+<li><p>泊松分布：<span class="math notranslate nohighlight">\(log(Exam_i) = \beta_0 + \beta_1 Test_i + \epsilon\)</span> where ...</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="16-anal-of-continue-table.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">16. </span>Analysis of contingency tables</p>
+      </div>
+    </a>
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">考题构造</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">相关模型</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lm-model-1-12-chapter">lm model (1-12 chapter)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#glm-model-13-16-chapter">glm model (13-16 chapter)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">模型研究</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">其他知识点</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">卡方</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#log">log 使用条件</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">公式书写</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By CWorld
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,823 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="zh-Hans" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>14. Poisson modelling of count data: Two examples &#8212; Data Analysis Learning</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script kind="utterances">
+
+    var commentsRunWhenDOMLoaded = cb => {
+    if (document.readyState != 'loading') {
+        cb()
+    } else if (document.addEventListener) {
+        document.addEventListener('DOMContentLoaded', cb)
+    } else {
+        document.attachEvent('onreadystatechange', function() {
+        if (document.readyState == 'complete') cb()
+        })
+    }
+}
+
+var addUtterances = () => {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = "https://utteranc.es/client.js";
+    script.async = "async";
+
+    script.setAttribute("repo", "cworld1/da-learning");
+    script.setAttribute("issue-term", "pathname");
+    script.setAttribute("theme", "github-light");
+    script.setAttribute("label", "💬 comment");
+    script.setAttribute("crossorigin", "anonymous");
+
+    sections = document.querySelectorAll("div.section");
+    if (sections !== null) {
+        section = sections[sections.length-1];
+        section.appendChild(script);
+    }
+}
+commentsRunWhenDOMLoaded(addUtterances);
+</script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '14-pois-model-of-count-data';</script>
+    <link rel="canonical" href="https://da.cworld.top/14-pois-model-of-count-data.html" />
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="15. Chapter 15: Modelling proportion data using the binomial distribution" href="15-model-proporte-data-use-bino-distribute.html" />
+    <link rel="prev" title="13. Modelling count data using the Poisson distribution" href="13-model-count-data-using-poisson-distribute.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="zh-Hans"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="index.html">
+                    Data Analysis Learning
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="00-at-the-beginning.html">At the beginning</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Main Chapters</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="01-get-start-with-regres.html">1. Getting Started with Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02-basics-of-simp-linear-regres.html">2. Basics of Simple Linear Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03-null-model.html">3. The null model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04-fit-curves-with-linear-model.html">4. Fitting curves with the linear model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05-linear-model-with-a-categ-explan-var.html">5. Linear models with a categorical (factor) explanatory variable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06-multiplicative-linear-models.html">6. Multiplicative linear models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07-power-law-linear-models.html">7. Power law linear models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08-linear-model-with-both-var.html">8. Linear models with both numeric and factor explanatory variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09-linear-model-with-both-var-without-interact.html">9. Linear models with both numeric and factor explanatory variables without interaction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10-multi-linear-regress-model.html">10. Multiple linear regression models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11-linear-models-with-a-single-factor-explanatory-having-var-levels.html">11. Linear models with a single factor explanatory variable having three or more levels (One-way analysis of variance)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12-linear-model-with%20two-explan-factor-var.html">12. Linear models with two explanatory factor variables (Two-way analysis of variance)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13-model-count-data-using-poisson-distribute.html">13. Modelling count data using the Poisson distribution</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">14. Poisson modelling of count data: Two examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15-model-proporte-data-use-bino-distribute.html">15. Chapter 15: Modelling proportion data using the binomial distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16-anal-of-continue-table.html">16. Analysis of contingency tables</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">About Project</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="last.html">写在最后</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://blog.cworld.top">CWorld's Blog</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/cworld1/da-learning" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/cworld1/da-learning/edit/main/docs/14-pois-model-of-count-data.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/cworld1/da-learning/issues/new?title=Issue%20on%20page%20%2F14-pois-model-of-count-data.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/14-pois-model-of-count-data.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Poisson modelling of count data: Two examples</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-1-earthquake-frequency">14.1. Example 1: Earthquake frequency</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-2-snapper-counts-in-and-around-marine-reserves">14.2. Example 2: Snapper counts in and around marine reserves</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="poisson-modelling-of-count-data-two-examples">
+<h1><span class="section-number">14. </span>Poisson modelling of count data: Two examples<a class="headerlink" href="#poisson-modelling-of-count-data-two-examples" title="Permalink to this heading">#</a></h1>
+<p>本节需要的包：</p>
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input above-output-prompt docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">require</span><span class="p">(</span><span class="n">s20x</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<details class="hide below-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell output</span>
+<span class="expanded">Hide code cell output</span>
+</summary>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>载入需要的程辑包：s20x
+
+Warning message:
+&quot;程辑包&#39;s20x&#39;是用R版本4.2.3 来建造的&quot;
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<section id="example-1-earthquake-frequency">
+<h2><span class="section-number">14.1. </span>Example 1: Earthquake frequency<a class="headerlink" href="#example-1-earthquake-frequency" title="Permalink to this heading">#</a></h2>
+<p>古腾堡•里希特定律说，在一定时期内，预期的地震数量会随着地震的大小而成倍地减少。其公式为：</p>
+<div class="math notranslate nohighlight">
+\[
+\log_{10}N=a-bM
+\]</div>
+<p>where N is the expected number of earthquakes of magnitude M or more on the Richter scale. Here, a and b are unknown parameters. 其中N是里氏震级M级以上的地震的预期数量。这里，a和b是未知参数。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">Quakes.df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">read.table</span><span class="p">(</span><span class="s">&quot;../data/EarthquakeMagnitudes.txt&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">header</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span>
+<span class="n">Quakes.df</span><span class="o">$</span><span class="n">Locn</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as.factor</span><span class="p">(</span><span class="n">Quakes.df</span><span class="o">$</span><span class="n">Locn</span><span class="p">)</span>
+<span class="c1"># Print first 4 SC observations</span>
+<span class="nf">subset</span><span class="p">(</span><span class="n">Quakes.df</span><span class="p">,</span><span class="w"> </span><span class="n">subset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">Locn</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;SC&quot;</span><span class="p">))[</span><span class="m">1</span><span class="o">:</span><span class="m">4</span><span class="p">,</span><span class="w"> </span><span class="p">]</span>
+<span class="c1"># Print first 4 WA observations</span>
+<span class="nf">subset</span><span class="p">(</span><span class="n">Quakes.df</span><span class="p">,</span><span class="w"> </span><span class="n">subset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">Locn</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;WA&quot;</span><span class="p">))[</span><span class="m">1</span><span class="o">:</span><span class="m">4</span><span class="p">,</span><span class="w"> </span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 4 × 3</caption>
+<thead>
+	<tr><th></th><th scope=col>Locn</th><th scope=col>Magnitude</th><th scope=col>Freq</th></tr>
+	<tr><th></th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;int&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>1</th><td>SC</td><td>5.25</td><td>32</td></tr>
+	<tr><th scope=row>2</th><td>SC</td><td>5.50</td><td>27</td></tr>
+	<tr><th scope=row>3</th><td>SC</td><td>5.75</td><td>10</td></tr>
+	<tr><th scope=row>4</th><td>SC</td><td>6.00</td><td> 9</td></tr>
+</tbody>
+</table>
+</div><div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 4 × 3</caption>
+<thead>
+	<tr><th></th><th scope=col>Locn</th><th scope=col>Magnitude</th><th scope=col>Freq</th></tr>
+	<tr><th></th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;int&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>10</th><td>WA</td><td>5.25</td><td>13</td></tr>
+	<tr><th scope=row>11</th><td>WA</td><td>5.50</td><td> 6</td></tr>
+	<tr><th scope=row>12</th><td>WA</td><td>5.75</td><td> 2</td></tr>
+	<tr><th scope=row>13</th><td>WA</td><td>6.00</td><td> 1</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">Freq</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Magnitude</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Quakes.df</span><span class="p">,</span><span class="w"> </span><span class="n">pch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">substr</span><span class="p">(</span><span class="n">Locn</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/4c42f8a00c017c8ee09451528add81d3793f07d48f667fcf5d3583abf5efff64.png" src="_images/4c42f8a00c017c8ee09451528add81d3793f07d48f667fcf5d3583abf5efff64.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">Quake.gfit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">glm</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Freq</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Locn</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Magnitude</span><span class="p">,</span>
+<span class="w">    </span><span class="n">family</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">poisson</span><span class="p">,</span>
+<span class="w">    </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Quakes.df</span>
+<span class="p">)</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">Quake.gfit</span><span class="p">,</span><span class="w"> </span><span class="n">which</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/2bca59eb4a801d2943e1fcd9d9f32d267bfddea8f12768820e4c21a94541eab5.png" src="_images/2bca59eb4a801d2943e1fcd9d9f32d267bfddea8f12768820e4c21a94541eab5.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">Quake.gfit</span><span class="p">,</span><span class="w"> </span><span class="n">which</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/746f6ae7243f1f5e776ffc125b4c51f2fdd95a1751fd2fd1d99ba23ae847fe7f.png" src="_images/746f6ae7243f1f5e776ffc125b4c51f2fdd95a1751fd2fd1d99ba23ae847fe7f.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">summary</span><span class="p">(</span><span class="n">Quake.gfit</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
+glm(formula = Freq ~ Locn * Magnitude, family = poisson, data = Quakes.df)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.3261  -0.3225  -0.1172   0.1241   1.6190  
+
+Coefficients:
+                 Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)       11.6923     1.1762   9.941  &lt; 2e-16 ***
+LocnWA             7.3923     3.9500   1.871   0.0613 .  
+Magnitude         -1.5648     0.2055  -7.616 2.61e-14 ***
+LocnWA:Magnitude  -1.5884     0.7199  -2.206   0.0274 *  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+(Dispersion parameter for poisson family taken to be 1)
+
+    Null deviance: 176.1767  on 17  degrees of freedom
+Residual deviance:   8.2295  on 14  degrees of freedom
+AIC: 65.11
+
+Number of Fisher Scoring iterations: 5
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="m">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nf">pchisq</span><span class="p">(</span><span class="m">8.23</span><span class="p">,</span><span class="w"> </span><span class="m">14</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">0.877002515280767</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">Quake.cis</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">confint</span><span class="p">(</span><span class="n">Quake.gfit</span><span class="p">)</span>
+<span class="nf">exp</span><span class="p">(</span><span class="n">Quake.cis</span><span class="p">[</span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="p">])</span>
+<span class="c1">## To interpret as percentage decreases</span>
+<span class="m">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="m">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nf">exp</span><span class="p">(</span><span class="n">Quake.cis</span><span class="p">[</span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="p">]))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Waiting for profiling to be done...
+</pre></div>
+</div>
+<div class="output text_html"><style>
+.dl-inline {width: auto; margin:0; padding: 0}
+.dl-inline>dt, .dl-inline>dd {float: none; width: auto; display: inline-block}
+.dl-inline>dt::after {content: ":\0020"; padding-right: .5ex}
+.dl-inline>dt:not(:first-of-type) {padding-left: .5ex}
+</style><dl class=dl-inline><dt>2.5 %</dt><dd>0.137474251413585</dd><dt>97.5 %</dt><dd>0.308243734868518</dd></dl>
+</div><div class="output text_html"><style>
+.dl-inline {width: auto; margin:0; padding: 0}
+.dl-inline>dt, .dl-inline>dd {float: none; width: auto; display: inline-block}
+.dl-inline>dt::after {content: ":\0020"; padding-right: .5ex}
+.dl-inline>dt:not(:first-of-type) {padding-left: .5ex}
+</style><dl class=dl-inline><dt>2.5 %</dt><dd>86.2525748586415</dd><dt>97.5 %</dt><dd>69.1756265131482</dd></dl>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">Quakes.df</span><span class="o">$</span><span class="n">Locn2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">factor</span><span class="p">(</span><span class="n">Quakes.df</span><span class="o">$</span><span class="n">Locn</span><span class="p">,</span><span class="w"> </span><span class="n">levels</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;WA&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SC&quot;</span><span class="p">))</span>
+
+<span class="n">Quake2.gfit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">glm</span><span class="p">(</span><span class="n">Freq</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Locn2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Magnitude</span><span class="p">,</span><span class="w"> </span><span class="n">family</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">poisson</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Quakes.df</span><span class="p">)</span>
+<span class="p">(</span><span class="n">Quake.WA.ci</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">exp</span><span class="p">(</span><span class="nf">confint</span><span class="p">(</span><span class="n">Quake2.gfit</span><span class="p">)[</span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="p">]))</span>
+
+<span class="c1">## To interpret as percentage decreases</span>
+<span class="m">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="m">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">Quake.WA.ci</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Waiting for profiling to be done...
+</pre></div>
+</div>
+<div class="output text_html"><style>
+.dl-inline {width: auto; margin:0; padding: 0}
+.dl-inline>dt, .dl-inline>dd {float: none; width: auto; display: inline-block}
+.dl-inline>dt::after {content: ":\0020"; padding-right: .5ex}
+.dl-inline>dt:not(:first-of-type) {padding-left: .5ex}
+</style><dl class=dl-inline><dt>2.5 %</dt><dd>0.00907766110939229</dd><dt>97.5 %</dt><dd>0.140175444866894</dd></dl>
+</div><div class="output text_html"><style>
+.dl-inline {width: auto; margin:0; padding: 0}
+.dl-inline>dt, .dl-inline>dd {float: none; width: auto; display: inline-block}
+.dl-inline>dt::after {content: ":\0020"; padding-right: .5ex}
+.dl-inline>dt:not(:first-of-type) {padding-left: .5ex}
+</style><dl class=dl-inline><dt>2.5 %</dt><dd>99.0922338890608</dd><dt>97.5 %</dt><dd>85.9824555133106</dd></dl>
+</div></div>
+</div>
+</section>
+<section id="example-2-snapper-counts-in-and-around-marine-reserves">
+<h2><span class="section-number">14.2. </span>Example 2: Snapper counts in and around marine reserves<a class="headerlink" href="#example-2-snapper-counts-in-and-around-marine-reserves" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">Snap.df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">read.table</span><span class="p">(</span><span class="s">&quot;../data/SnapperCROPvsHAHEI.txt&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">header</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span>
+<span class="nf">with</span><span class="p">(</span><span class="n">Snap.df</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">Locn</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as.factor</span><span class="p">(</span><span class="n">Locn</span><span class="p">)</span>
+<span class="w">    </span><span class="n">Reserve</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as.factor</span><span class="p">(</span><span class="n">Reserve</span><span class="p">)</span>
+<span class="p">})</span>
+<span class="n">Snap.df</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 18 × 3</caption>
+<thead>
+	<tr><th scope=col>Locn</th><th scope=col>Reserve</th><th scope=col>Freq</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;int&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>Leigh</td><td>N</td><td> 2</td></tr>
+	<tr><td>Leigh</td><td>N</td><td> 1</td></tr>
+	<tr><td>Leigh</td><td>N</td><td> 0</td></tr>
+	<tr><td>Leigh</td><td>Y</td><td> 5</td></tr>
+	<tr><td>Leigh</td><td>Y</td><td>11</td></tr>
+	<tr><td>Leigh</td><td>Y</td><td> 7</td></tr>
+	<tr><td>Leigh</td><td>Y</td><td> 8</td></tr>
+	<tr><td>Leigh</td><td>Y</td><td> 7</td></tr>
+	<tr><td>Leigh</td><td>Y</td><td>14</td></tr>
+	<tr><td>Hahei</td><td>N</td><td> 1</td></tr>
+	<tr><td>Hahei</td><td>N</td><td> 0</td></tr>
+	<tr><td>Hahei</td><td>N</td><td> 1</td></tr>
+	<tr><td>Hahei</td><td>N</td><td> 0</td></tr>
+	<tr><td>Hahei</td><td>Y</td><td> 3</td></tr>
+	<tr><td>Hahei</td><td>Y</td><td> 2</td></tr>
+	<tr><td>Hahei</td><td>Y</td><td> 1</td></tr>
+	<tr><td>Hahei</td><td>Y</td><td> 5</td></tr>
+	<tr><td>Hahei</td><td>Y</td><td> 3</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "r"
+        },
+        kernelOptions: {
+            name: "ir",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'ir'</script>
+
+                </article>
+              
+
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="13-model-count-data-using-poisson-distribute.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">13. </span>Modelling count data using the Poisson distribution</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="15-model-proporte-data-use-bino-distribute.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">15. </span>Chapter 15: Modelling proportion data using the binomial distribution</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-1-earthquake-frequency">14.1. Example 1: Earthquake frequency</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-2-snapper-counts-in-and-around-marine-reserves">14.2. Example 2: Snapper counts in and around marine reserves</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By CWorld
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

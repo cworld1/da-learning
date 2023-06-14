@@ -1,0 +1,1067 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="zh-Hans" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>13. Modelling count data using the Poisson distribution &#8212; Data Analysis Learning</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script kind="utterances">
+
+    var commentsRunWhenDOMLoaded = cb => {
+    if (document.readyState != 'loading') {
+        cb()
+    } else if (document.addEventListener) {
+        document.addEventListener('DOMContentLoaded', cb)
+    } else {
+        document.attachEvent('onreadystatechange', function() {
+        if (document.readyState == 'complete') cb()
+        })
+    }
+}
+
+var addUtterances = () => {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = "https://utteranc.es/client.js";
+    script.async = "async";
+
+    script.setAttribute("repo", "cworld1/da-learning");
+    script.setAttribute("issue-term", "pathname");
+    script.setAttribute("theme", "github-light");
+    script.setAttribute("label", "💬 comment");
+    script.setAttribute("crossorigin", "anonymous");
+
+    sections = document.querySelectorAll("div.section");
+    if (sections !== null) {
+        section = sections[sections.length-1];
+        section.appendChild(script);
+    }
+}
+commentsRunWhenDOMLoaded(addUtterances);
+</script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '13-model-count-data-using-poisson-distribute';</script>
+    <link rel="canonical" href="https://da.cworld.top/13-model-count-data-using-poisson-distribute.html" />
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="14. Poisson modelling of count data: Two examples" href="14-pois-model-of-count-data.html" />
+    <link rel="prev" title="12. Linear models with two explanatory factor variables (Two-way analysis of variance)" href="12-linear-model-with%20two-explan-factor-var.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="zh-Hans"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="index.html">
+                    Data Analysis Learning
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="00-at-the-beginning.html">At the beginning</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Main Chapters</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="01-get-start-with-regres.html">1. Getting Started with Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02-basics-of-simp-linear-regres.html">2. Basics of Simple Linear Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03-null-model.html">3. The null model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04-fit-curves-with-linear-model.html">4. Fitting curves with the linear model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05-linear-model-with-a-categ-explan-var.html">5. Linear models with a categorical (factor) explanatory variable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06-multiplicative-linear-models.html">6. Multiplicative linear models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07-power-law-linear-models.html">7. Power law linear models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08-linear-model-with-both-var.html">8. Linear models with both numeric and factor explanatory variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09-linear-model-with-both-var-without-interact.html">9. Linear models with both numeric and factor explanatory variables without interaction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10-multi-linear-regress-model.html">10. Multiple linear regression models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11-linear-models-with-a-single-factor-explanatory-having-var-levels.html">11. Linear models with a single factor explanatory variable having three or more levels (One-way analysis of variance)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12-linear-model-with%20two-explan-factor-var.html">12. Linear models with two explanatory factor variables (Two-way analysis of variance)</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">13. Modelling count data using the Poisson distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14-pois-model-of-count-data.html">14. Poisson modelling of count data: Two examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15-model-proporte-data-use-bino-distribute.html">15. Chapter 15: Modelling proportion data using the binomial distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16-anal-of-continue-table.html">16. Analysis of contingency tables</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">About Project</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="last.html">写在最后</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://blog.cworld.top">CWorld's Blog</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/cworld1/da-learning" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/cworld1/da-learning/edit/main/docs/13-model-count-data-using-poisson-distribute.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/cworld1/da-learning/issues/new?title=Issue%20on%20page%20%2F13-model-count-data-using-poisson-distribute.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/13-model-count-data-using-poisson-distribute.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Modelling count data using the Poisson distribution</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-nature-of-count-data">13.1. The nature of count data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#number-of-r-packages-submitted-to-the-comprehensive-r-archive-network-cran">13.2. Number of R packages submitted to the Comprehensive R Archive Network (CRAN)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-poisson-distribution">13.3. The Poisson Distribution</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-generalized-linear-model-glm">13.4. The generalized linear model (GLM)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interpretting-the-glm-output">13.5. Interpretting the GLM output</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="modelling-count-data-using-the-poisson-distribution">
+<h1><span class="section-number">13. </span>Modelling count data using the Poisson distribution<a class="headerlink" href="#modelling-count-data-using-the-poisson-distribution" title="Permalink to this heading">#</a></h1>
+<p>本节需要的包：</p>
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input above-output-prompt docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">require</span><span class="p">(</span><span class="n">s20x</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<details class="hide below-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell output</span>
+<span class="expanded">Hide code cell output</span>
+</summary>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>载入需要的程辑包：s20x
+
+Warning message:
+&quot;程辑包&#39;s20x&#39;是用R版本4.2.3 来建造的&quot;
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<section id="the-nature-of-count-data">
+<h2><span class="section-number">13.1. </span>The nature of count data<a class="headerlink" href="#the-nature-of-count-data" title="Permalink to this heading">#</a></h2>
+<p>在很多研究中变量将是一个计数。（非负整数）</p>
+<p>在统计的说法，一个计数变量是离散变量的一个例子，因为它可以是离散的值分开。(相比之下，一个变量正态分布是一个连续变量，因为如果可以带任何值连续)。</p>
+<p>In this course we shall encounter three types of count data:</p>
+<ul>
+<li><p>Counts of the number of “events” occurring. “事件”发生的次数</p>
+<p>where ideally, the events occur independently of one another and with no specific upper limit on the maximum number. 其中，在理想情况下，事件的发生是相互独立的，并且没有对最大数量的具体上限。</p>
+</li>
+<li><p>Counts of the number of “successes” from a fixed number of trials. 从固定数量的试验中计算出 &quot;成功 &quot;的数量</p>
+<p>E.g., the number of Heads from tossing a coin 10 times. In this case, the response variable y is the proportion of successes.</p>
+</li>
+<li><p>Counts of the number of items in a category. 一个类别中的项目数的计数</p>
+<p>E.g., The count of A, B, and C grades in the course.</p>
+</li>
+</ul>
+</section>
+<section id="number-of-r-packages-submitted-to-the-comprehensive-r-archive-network-cran">
+<h2><span class="section-number">13.2. </span>Number of R packages submitted to the Comprehensive R Archive Network (CRAN)<a class="headerlink" href="#number-of-r-packages-submitted-to-the-comprehensive-r-archive-network-cran" title="Permalink to this heading">#</a></h2>
+<p>In the following example we will model a count variable (number of R packages submitted to the CRAN over the years) using what we know to date: the linear model via the function <code class="docutils literal notranslate"><span class="pre">lm()</span></code>.</p>
+<p>我们将把它与一种更普遍、更合适的计数建模方式进行对比：通过函数的广义线性模型（GLM）<code class="docutils literal notranslate"><span class="pre">glm()</span></code>。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">CRAN.df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">read.table</span><span class="p">(</span><span class="s">&quot;../data/CRAN.txt&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">header</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span>
+<span class="n">CRAN.df</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 12 × 2</caption>
+<thead>
+	<tr><th scope=col>Year</th><th scope=col>Number</th></tr>
+	<tr><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>2005</td><td>   1</td></tr>
+	<tr><td>2006</td><td>   4</td></tr>
+	<tr><td>2007</td><td>   2</td></tr>
+	<tr><td>2008</td><td>  10</td></tr>
+	<tr><td>2009</td><td>  32</td></tr>
+	<tr><td>2010</td><td>  44</td></tr>
+	<tr><td>2011</td><td>  89</td></tr>
+	<tr><td>2012</td><td> 594</td></tr>
+	<tr><td>2013</td><td> 830</td></tr>
+	<tr><td>2014</td><td>1185</td></tr>
+	<tr><td>2015</td><td>1944</td></tr>
+	<tr><td>2016</td><td>4512</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Let's plotting the data</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">## One-by-two figure layout</span>
+<span class="nf">par</span><span class="p">(</span><span class="n">mfrow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">))</span>
+<span class="c1">## Scatter plot using raw y</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">Number</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Year</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CRAN.df</span><span class="p">)</span>
+<span class="c1">## Scatter plot using log y</span>
+<span class="nf">plot</span><span class="p">(</span><span class="nf">log</span><span class="p">(</span><span class="n">Number</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Year</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CRAN.df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/d7f05f1b932f381c65204f14967c55ad850da9f81f87c75b16e6ca75df528930.png" src="_images/d7f05f1b932f381c65204f14967c55ad850da9f81f87c75b16e6ca75df528930.png" />
+</div>
+</div>
+<p>The relationship between year and number of submissions looks reasonably linear on the log scale, so we’ll fit a linear model to <code class="docutils literal notranslate"><span class="pre">log(Y)</span></code>.</p>
+<p>注意：凡是做了 log 处理的数据，都是估计的中位数，而不是平均数。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">CRAN.fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="nf">log</span><span class="p">(</span><span class="n">Number</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Year</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CRAN.df</span><span class="p">)</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">CRAN.fit</span><span class="p">,</span><span class="w"> </span><span class="n">which</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
+<span class="c1"># 还有一句被我吞了，我说的</span>
+<span class="nf">cooks20x</span><span class="p">(</span><span class="n">CRAN.fit</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/56cfe360d4fcabb17d1e10a24053376352c0ba911cd542f5ecb4892b3b2f0bfc.png" src="_images/56cfe360d4fcabb17d1e10a24053376352c0ba911cd542f5ecb4892b3b2f0bfc.png" />
+<img alt="_images/4ce75d34648a221f36c1e88dc36125e6bb66e1340627efaceb343a1147e0a59d.png" src="_images/4ce75d34648a221f36c1e88dc36125e6bb66e1340627efaceb343a1147e0a59d.png" />
+</div>
+</div>
+<p>The Cook’s distance for observation 3 exceeds our threshold of 0.4. However, with only 12 observations this is perhaps not of great concern. 观察3的库克距离超过了我们的阈值0.4。然而，由于只有12个观测值，这也许并不值得关注。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">summary</span><span class="p">(</span><span class="n">CRAN.fit</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
+lm(formula = log(Number) ~ Year, data = CRAN.df)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-0.9174 -0.2607 -0.0668  0.3143  0.8517 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -1.574e+03  8.245e+01  -19.09 3.39e-09 ***
+Year         7.849e-01  4.101e-02   19.14 3.30e-09 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.4904 on 10 degrees of freedom
+Multiple R-squared:  0.9734,	Adjusted R-squared:  0.9708 
+F-statistic: 366.4 on 1 and 10 DF,  p-value: 3.295e-09
+</pre></div>
+</div>
+</div>
+</div>
+<p>Back-transform to get the multiplicative effect of year. 注意这里有写 exp，还原了数据</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">## Estimated annual multiplier</span>
+<span class="nf">exp</span><span class="p">(</span><span class="n">CRAN.fit</span><span class="o">$</span><span class="n">coef</span><span class="p">[</span><span class="s">&quot;Year&quot;</span><span class="p">])</span>
+<span class="c1">## Confidence interval</span>
+<span class="nf">exp</span><span class="p">(</span><span class="nf">confint</span><span class="p">(</span><span class="n">CRAN.fit</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><strong>Year:</strong> 2.19223728471024</div><div class="output text_html"><table class="dataframe">
+<caption>A matrix: 2 × 2 of type dbl</caption>
+<thead>
+	<tr><th></th><th scope=col>2.5 %</th><th scope=col>97.5 %</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>(Intercept)</th><td>0.00000</td><td>0.00000</td></tr>
+	<tr><th scope=row>Year</th><td>2.00081</td><td>2.40198</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>So, the Executive Summary would have said that the median annual number of submissions to CRAN multiplies by between 2.00 to 2.40 times each year. In other words, it increases by between 100% and 140% per annum. 因此，执行摘要替代，相较于头一年，每年提交给CRAN的中位数是2.00到2.40倍之间。换句话说，它每年增加 100% 到 140% 之间。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">predCRAN.df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span><span class="n">Year</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2017</span><span class="p">)</span>
+<span class="c1">## Prediction on the log scale</span>
+<span class="n">pred2017</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="n">CRAN.fit</span><span class="p">,</span><span class="w"> </span><span class="n">predCRAN.df</span><span class="p">,</span><span class="w"> </span><span class="n">interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;confidence&quot;</span><span class="p">)</span>
+<span class="c1">## Back-transform for the median of the number of submissions in 2017</span>
+<span class="nf">exp</span><span class="p">(</span><span class="n">pred2017</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A matrix: 1 × 3 of type dbl</caption>
+<thead>
+	<tr><th></th><th scope=col>fit</th><th scope=col>lwr</th><th scope=col>upr</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>1</th><td>12833.05</td><td>6550.586</td><td>25140.85</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>So, the Executive Summary would have said that the median of the number of submissions to CRAN in 2017 is between 6550 and 25100.</p>
+<p>&quot;如果你只有一把锤子，你往往会把每个问题都看成是钉子。&quot;（亚伯拉罕•马斯洛）</p>
+<p>【我们将 &quot;锤子&quot; 改为 &quot;线性模型&quot;，将 &quot;钉子&quot; 改为 &quot;正态分布&quot;】</p>
+</section>
+<section id="the-poisson-distribution">
+<h2><span class="section-number">13.3. </span>The Poisson Distribution<a class="headerlink" href="#the-poisson-distribution" title="Permalink to this heading">#</a></h2>
+<p>The Poisson is a distribution that takes values on the non-negative { 0,1,2,3,... } integers and it has no upper limit. 泊松是一种在非负{0,1,2,3，…}整数上取值的分布，它没有上限。</p>
+<p>The probability that the non-negative integer value y will be observed if generated by a Pois(μ) distribution is given by the following formula 如果由POIS(μ)分布生成，则观察到非负整数值y的概率由以下公式给出:</p>
+<div class="math notranslate nohighlight">
+\[
+\text{Pr}(y)=\frac{\exp(-\mu)\mu^y}{y!}
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(y!=\operatorname{factorial(y)} =1\times2\times...\times\bigl(y-1\bigr)\times y\bigl(\text{and}\ 0!=1\bigr)\)</span></p>
+<p>For y = 12 and μ = 9.61, this could be calculated in using the code:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">12</span>
+<span class="n">mu</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">9.61</span>
+<span class="p">(</span><span class="nf">exp</span><span class="p">(</span><span class="o">-</span><span class="n">mu</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mu</span><span class="o">^</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nf">factorial</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">0.0868507787370292</div></div>
+</div>
+<p>In R, the in-built function <code class="docutils literal notranslate"><span class="pre">dpois(y,</span> <span class="pre">μ)</span></code> calculates these Poisson probabilities. E.g., the probability that y = 12 will be observed from a Pois(9 61) distribution is</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">dpois</span><span class="p">(</span><span class="m">12</span><span class="p">,</span><span class="w"> </span><span class="m">9.61</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">0.0868507787370291</div></div>
+</div>
+<p>You can also generate random Poisson values. E.g., here are 20 random values from a Pois(10) distribution,</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">rpois</span><span class="p">(</span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="m">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>8</li><li>10</li><li>9</li><li>16</li><li>9</li><li>16</li><li>10</li><li>11</li><li>5</li><li>15</li><li>11</li><li>13</li><li>7</li><li>11</li><li>10</li><li>6</li><li>11</li><li>4</li><li>8</li><li>11</li></ol>
+</div></div>
+</div>
+<p>假设任何一个星期五晚上的实际人数可以用平均数为3的泊松分布（Pois(3)）来描述，那么酒精中毒者人数的分布是怎样的？</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">barplot</span><span class="p">(</span><span class="nf">dpois</span><span class="p">(</span><span class="m">0</span><span class="o">:</span><span class="m">12</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">),</span><span class="w"> </span><span class="n">names</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="o">:</span><span class="m">12</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/9aed9bd54bfd41ea2c7edf6b3cd217ff972cc198eb848aaaeff492564c50bfb9.png" src="_images/9aed9bd54bfd41ea2c7edf6b3cd217ff972cc198eb848aaaeff492564c50bfb9.png" />
+</div>
+</div>
+<p>由图可以看出泊松分布可能会有长尾、左偏效应。</p>
+<p>The probabilities for the number of victims from 0 to 20 are:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">round</span><span class="p">(</span><span class="nf">dpois</span><span class="p">(</span><span class="m">0</span><span class="o">:</span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">),</span><span class="w"> </span><span class="m">6</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>0.049787</li><li>0.149361</li><li>0.224042</li><li>0.224042</li><li>0.168031</li><li>0.100819</li><li>0.050409</li><li>0.021604</li><li>0.008102</li><li>0.002701</li><li>0.00081</li><li>0.000221</li><li>5.5e-05</li><li>1.3e-05</li><li>3e-06</li><li>1e-06</li><li>0</li><li>0</li><li>0</li><li>0</li><li>0</li></ol>
+</div></div>
+</div>
+<p>但如果均值很大呢？或者说只要足够大，泊松分布就会变成正态分布。</p>
+<p>More Poisson distributions:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">par</span><span class="p">(</span><span class="n">mfrow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">))</span><span class="w"> </span><span class="c1">## Two-by-One figure layout</span>
+<span class="nf">barplot</span><span class="p">(</span><span class="nf">dpois</span><span class="p">(</span><span class="m">0</span><span class="o">:</span><span class="m">25</span><span class="p">,</span><span class="w"> </span><span class="m">10</span><span class="p">),</span><span class="w"> </span><span class="n">names</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="o">:</span><span class="m">25</span><span class="p">)</span><span class="w"> </span><span class="c1">## Pois(10)</span>
+<span class="nf">barplot</span><span class="p">(</span><span class="nf">dpois</span><span class="p">(</span><span class="m">50</span><span class="o">:</span><span class="m">150</span><span class="p">,</span><span class="w"> </span><span class="m">100</span><span class="p">),</span><span class="w"> </span><span class="n">names</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">50</span><span class="o">:</span><span class="m">150</span><span class="p">,</span><span class="w"> </span><span class="n">las</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="c1">## Pois(100)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/afc24e1e8564de94aa137badb1f6a2ab20d4dd9d86c6c9ef1a89df66b04d899e.png" src="_images/afc24e1e8564de94aa137badb1f6a2ab20d4dd9d86c6c9ef1a89df66b04d899e.png" />
+</div>
+</div>
+<p>Variability increases with the mean μ. In fact, the variance of a
+Pois(μ) is also μ. That is, if Y is Pois(μ) distributed then 如果Y是Pois(μ)分布的，则</p>
+<div class="math notranslate nohighlight">
+\[
+Var(Y ) = E(Y ) = μ
+\]</div>
+<p>The Poisson distribution is right-skewed for small values of μ, but looks very much like a (discretised) normal distribution for large μ. 对于μ的小值，泊松分布是右偏的，但对于大μ，泊松分布看起来非常像（离散的）正态分布。</p>
+<p>一般来说我们以 30 为界限，30 往后就差不多，30往内称两者有较大差异。</p>
+</section>
+<section id="the-generalized-linear-model-glm">
+<h2><span class="section-number">13.4. </span>The generalized linear model (GLM)<a class="headerlink" href="#the-generalized-linear-model-glm" title="Permalink to this heading">#</a></h2>
+<p>广义线性模型。</p>
+<div class="math notranslate nohighlight">
+\[
+Y\sim\operatorname{Poisson}(\mu)
+\]</div>
+<p>where the Poisson parameter (<span class="math notranslate nohighlight">\(μ = E[Y]\)</span>) changes with respect to an x variable as follows:</p>
+<div class="math notranslate nohighlight">
+\[
+\mu=\exp(\beta_0+\beta_1x)
+\]</div>
+<p>注意：由于变形上是对 x 进行变形而不是 y，所以我们估计的就不是中位值了，而是均值。</p>
+<p>The relationship = <span class="math notranslate nohighlight">\(\mu=\exp(\beta_0+\beta_1x)\)</span> can equivalently be expressed as 等效的表示为</p>
+<div class="math notranslate nohighlight">
+\[
+\log(\mu)=\log E[Y|x]=\beta_0+\beta_1x
+\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">CRAN.gfit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">glm</span><span class="p">(</span><span class="n">Number</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Year</span><span class="p">,</span><span class="w"> </span><span class="n">family</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">poisson</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CRAN.df</span><span class="p">)</span>
+<span class="nf">summary</span><span class="p">(</span><span class="n">CRAN.gfit</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
+glm(formula = Number ~ Year, family = poisson, data = CRAN.df)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-7.7487  -4.4233  -2.1953  -0.1449  12.5634  
+
+Coefficients:
+              Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept) -1.282e+03  1.384e+01  -92.64   &lt;2e-16 ***
+Year         6.401e-01  6.868e-03   93.20   &lt;2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+(Dispersion parameter for poisson family taken to be 1)
+
+    Null deviance: 19374.51  on 11  degrees of freedom
+Residual deviance:   402.61  on 10  degrees of freedom
+AIC: 481.27
+
+Number of Fisher Scoring iterations: 4
+</pre></div>
+</div>
+</div>
+</div>
+<p>坏了，这下 R 方消失了，只有自由度。别慌，后面继续讲。</p>
+<p>First, check the residuals to see if they look random.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">CRAN.gfit</span><span class="p">,</span><span class="w"> </span><span class="n">which</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/0f43ccc177d8ffef418c72f349e0e6d57b6eda9cb7b7ec6149facc1556e09970.png" src="_images/0f43ccc177d8ffef418c72f349e0e6d57b6eda9cb7b7ec6149facc1556e09970.png" />
+</div>
+</div>
+<p>It is not as easy to check the assumptions of a GLM compared to a linear model.</p>
+<p>There is another that is essential: Checking the Poisson assumption that the variances of the counts are equal to their means. 检查泊松假设，即计数的方差与它们的平均值相等。</p>
+<p>In this example, the residual deviance is 402.61, with 10 df. The P-value is</p>
+<p>（下面这个函数叫做卡方检验，代入值为自由度）</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="m">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nf">pchisq</span><span class="p">(</span><span class="m">402.61</span><span class="p">,</span><span class="w"> </span><span class="m">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">0</div></div>
+</div>
+<p>If this P-value is small then we conclude that our model is not adequate. That is clearly the case with the CRAN data. 如果这个P值很小，那么我们的结论是，我们的模型是不充分的。这显然是CRAN数据的情况。</p>
+<p>Without quasi-Poisson correction:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">CRAN.gfit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">glm</span><span class="p">(</span><span class="n">Number</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Year</span><span class="p">,</span><span class="w"> </span><span class="n">family</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">poisson</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CRAN.df</span><span class="p">)</span>
+<span class="nf">summary</span><span class="p">(</span><span class="n">CRAN.gfit</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
+glm(formula = Number ~ Year, family = poisson, data = CRAN.df)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-7.7487  -4.4233  -2.1953  -0.1449  12.5634  
+
+Coefficients:
+              Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept) -1.282e+03  1.384e+01  -92.64   &lt;2e-16 ***
+Year         6.401e-01  6.868e-03   93.20   &lt;2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+(Dispersion parameter for poisson family taken to be 1)
+
+    Null deviance: 19374.51  on 11  degrees of freedom
+Residual deviance:   402.61  on 10  degrees of freedom
+AIC: 481.27
+
+Number of Fisher Scoring iterations: 4
+</pre></div>
+</div>
+</div>
+</div>
+<p>对比一下使用 “quasipoisson”（卡方泊松，类泊松）的模型：</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">CRAN.quasigfit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">glm</span><span class="p">(</span><span class="n">Number</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Year</span><span class="p">,</span><span class="w"> </span><span class="n">family</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">quasipoisson</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CRAN.df</span><span class="p">)</span>
+<span class="nf">summary</span><span class="p">(</span><span class="n">CRAN.quasigfit</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
+glm(formula = Number ~ Year, family = quasipoisson, data = CRAN.df)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-7.7487  -4.4233  -2.1953  -0.1449  12.5634  
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -1.282e+03  8.889e+01  -14.42 5.09e-08 ***
+Year         6.401e-01  4.411e-02   14.51 4.81e-08 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+(Dispersion parameter for quasipoisson family taken to be 41.25925)
+
+    Null deviance: 19374.51  on 11  degrees of freedom
+Residual deviance:   402.61  on 10  degrees of freedom
+AIC: NA
+
+Number of Fisher Scoring iterations: 4
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let’s check the influence of the observations.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">CRAN.quasigfit</span><span class="p">,</span><span class="w"> </span><span class="n">which</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/9e0bf2d7c8ab0ed1d3fb373011dd17bfc705a808645df48ea896d433ba8878a6.png" src="_images/9e0bf2d7c8ab0ed1d3fb373011dd17bfc705a808645df48ea896d433ba8878a6.png" />
+</div>
+</div>
+</section>
+<section id="interpretting-the-glm-output">
+<h2><span class="section-number">13.5. </span>Interpretting the GLM output<a class="headerlink" href="#interpretting-the-glm-output" title="Permalink to this heading">#</a></h2>
+<p>Recall that our model for the expected number of submissions to the CRAN is</p>
+<div class="math notranslate nohighlight">
+\[
+\mu=\exp(\beta_0+\beta_1\times Year)=\exp(\beta_0)\times\exp(\beta_1)^{Year}
+\]</div>
+<p>so we need to exponentiate our estimate and its confidence interval. 所以我们需要对我们的估计值及其置信区间进行指数化。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">## The estimated annual multiplier</span>
+<span class="nf">exp</span><span class="p">(</span><span class="n">CRAN.quasigfit</span><span class="o">$</span><span class="n">coef</span><span class="p">[</span><span class="s">&quot;Year&quot;</span><span class="p">])</span>
+
+<span class="c1"># get confidence intervals for the parameters.</span>
+<span class="nf">exp</span><span class="p">(</span><span class="nf">confint</span><span class="p">(</span><span class="n">CRAN.quasigfit</span><span class="p">))</span>
+<span class="c1"># Sometimes you might see `confint.default()` used instead.</span>
+<span class="nf">exp</span><span class="p">(</span><span class="nf">confint.default</span><span class="p">(</span><span class="n">CRAN.quasigfit</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><strong>Year:</strong> 1.89661418646857</div><div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Waiting for profiling to be done...
+</pre></div>
+</div>
+<div class="output text_html"><table class="dataframe">
+<caption>A matrix: 2 × 2 of type dbl</caption>
+<thead>
+	<tr><th></th><th scope=col>2.5 %</th><th scope=col>97.5 %</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>(Intercept)</th><td>0.000000</td><td>0.000000</td></tr>
+	<tr><th scope=row>Year</th><td>1.745819</td><td>2.075781</td></tr>
+</tbody>
+</table>
+</div><div class="output text_html"><table class="dataframe">
+<caption>A matrix: 2 × 2 of type dbl</caption>
+<thead>
+	<tr><th></th><th scope=col>2.5 %</th><th scope=col>97.5 %</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>(Intercept)</th><td>0.000000</td><td>0.000000</td></tr>
+	<tr><th scope=row>Year</th><td>1.739517</td><td>2.067898</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>That is, it increases by between 75% and 108% per year.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "r"
+        },
+        kernelOptions: {
+            name: "ir",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'ir'</script>
+
+                </article>
+              
+
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="12-linear-model-with%20two-explan-factor-var.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">12. </span>Linear models with two explanatory factor variables (Two-way analysis of variance)</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="14-pois-model-of-count-data.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">14. </span>Poisson modelling of count data: Two examples</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-nature-of-count-data">13.1. The nature of count data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#number-of-r-packages-submitted-to-the-comprehensive-r-archive-network-cran">13.2. Number of R packages submitted to the Comprehensive R Archive Network (CRAN)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-poisson-distribution">13.3. The Poisson Distribution</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-generalized-linear-model-glm">13.4. The generalized linear model (GLM)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interpretting-the-glm-output">13.5. Interpretting the GLM output</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By CWorld
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

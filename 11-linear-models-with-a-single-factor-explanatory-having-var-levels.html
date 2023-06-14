@@ -1,0 +1,820 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="zh-Hans" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>11. Linear models with a single factor explanatory variable having three or more levels (One-way analysis of variance) &#8212; Data Analysis Learning</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script kind="utterances">
+
+    var commentsRunWhenDOMLoaded = cb => {
+    if (document.readyState != 'loading') {
+        cb()
+    } else if (document.addEventListener) {
+        document.addEventListener('DOMContentLoaded', cb)
+    } else {
+        document.attachEvent('onreadystatechange', function() {
+        if (document.readyState == 'complete') cb()
+        })
+    }
+}
+
+var addUtterances = () => {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = "https://utteranc.es/client.js";
+    script.async = "async";
+
+    script.setAttribute("repo", "cworld1/da-learning");
+    script.setAttribute("issue-term", "pathname");
+    script.setAttribute("theme", "github-light");
+    script.setAttribute("label", "💬 comment");
+    script.setAttribute("crossorigin", "anonymous");
+
+    sections = document.querySelectorAll("div.section");
+    if (sections !== null) {
+        section = sections[sections.length-1];
+        section.appendChild(script);
+    }
+}
+commentsRunWhenDOMLoaded(addUtterances);
+</script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '11-linear-models-with-a-single-factor-explanatory-having-var-levels';</script>
+    <link rel="canonical" href="https://da.cworld.top/11-linear-models-with-a-single-factor-explanatory-having-var-levels.html" />
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="12. Linear models with two explanatory factor variables (Two-way analysis of variance)" href="12-linear-model-with%20two-explan-factor-var.html" />
+    <link rel="prev" title="10. Multiple linear regression models" href="10-multi-linear-regress-model.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="zh-Hans"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="index.html">
+                    Data Analysis Learning
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="00-at-the-beginning.html">At the beginning</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Main Chapters</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="01-get-start-with-regres.html">1. Getting Started with Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02-basics-of-simp-linear-regres.html">2. Basics of Simple Linear Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03-null-model.html">3. The null model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04-fit-curves-with-linear-model.html">4. Fitting curves with the linear model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05-linear-model-with-a-categ-explan-var.html">5. Linear models with a categorical (factor) explanatory variable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06-multiplicative-linear-models.html">6. Multiplicative linear models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07-power-law-linear-models.html">7. Power law linear models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08-linear-model-with-both-var.html">8. Linear models with both numeric and factor explanatory variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09-linear-model-with-both-var-without-interact.html">9. Linear models with both numeric and factor explanatory variables without interaction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10-multi-linear-regress-model.html">10. Multiple linear regression models</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">11. Linear models with a single factor explanatory variable having three or more levels (One-way analysis of variance)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12-linear-model-with%20two-explan-factor-var.html">12. Linear models with two explanatory factor variables (Two-way analysis of variance)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13-model-count-data-using-poisson-distribute.html">13. Modelling count data using the Poisson distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14-pois-model-of-count-data.html">14. Poisson modelling of count data: Two examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15-model-proporte-data-use-bino-distribute.html">15. Chapter 15: Modelling proportion data using the binomial distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16-anal-of-continue-table.html">16. Analysis of contingency tables</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">About Project</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="last.html">写在最后</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://blog.cworld.top">CWorld's Blog</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/cworld1/da-learning" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/cworld1/da-learning/edit/main/docs/11-linear-models-with-a-single-factor-explanatory-having-var-levels.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/cworld1/da-learning/issues/new?title=Issue%20on%20page%20%2F11-linear-models-with-a-single-factor-explanatory-having-var-levels.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/11-linear-models-with-a-single-factor-explanatory-having-var-levels.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Linear models with a single factor explanatory variable having three or more levels (One-way analysis of variance)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-with-a-5-level-explanatory-factor-variable">11.1. Example with a 5-level explanatory factor variable</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interpreting-the-output">11.2. Interpreting the output</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-multiple-comparisons-problem">11.3. The multiple comparisons problem</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="linear-models-with-a-single-factor-explanatory-variable-having-three-or-more-levels-one-way-analysis-of-variance">
+<h1><span class="section-number">11. </span>Linear models with a single factor explanatory variable having three or more levels (One-way analysis of variance)<a class="headerlink" href="#linear-models-with-a-single-factor-explanatory-variable-having-three-or-more-levels-one-way-analysis-of-variance" title="Permalink to this heading">#</a></h1>
+<p>本节需要的包：</p>
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input above-output-prompt docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">require</span><span class="p">(</span><span class="n">s20x</span><span class="p">)</span>
+<span class="nf">require</span><span class="p">(</span><span class="n">dplyr</span><span class="p">)</span>
+<span class="nf">require</span><span class="p">(</span><span class="n">emmeans</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<details class="hide below-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell output</span>
+<span class="expanded">Hide code cell output</span>
+</summary>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>载入需要的程辑包：s20x
+
+Warning message:
+&quot;程辑包&#39;s20x&#39;是用R版本4.2.3 来建造的&quot;
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<section id="example-with-a-5-level-explanatory-factor-variable">
+<h2><span class="section-number">11.1. </span>Example with a 5-level explanatory factor variable<a class="headerlink" href="#example-with-a-5-level-explanatory-factor-variable" title="Permalink to this heading">#</a></h2>
+<p>The explanatory factor variable was group, with five levels:</p>
+<ul class="simple">
+<li><p>G1 males living alone,</p></li>
+<li><p>G2 males living with one interested female,</p></li>
+<li><p>G3 males living with eight interested females,</p></li>
+<li><p>G4 males living with one uninterested female, and</p></li>
+<li><p>G5 males living with eight uninterested females.</p></li>
+</ul>
+<p>Let us take a look at the data:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">s20x</span><span class="p">)</span>
+<span class="n">Fruitfly.df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">read.csv</span><span class="p">(</span><span class="s">&quot;../data/Fruitfly.csv&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">header</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">T</span><span class="p">)</span>
+<span class="n">Fruitfly.df</span><span class="o">$</span><span class="n">group</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">factor</span><span class="p">(</span><span class="n">Fruitfly.df</span><span class="o">$</span><span class="n">group</span><span class="p">)</span>
+<span class="nf">boxplot</span><span class="p">(</span><span class="n">days</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">group</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Fruitfly.df</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Longevity (days)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/643d69a895b3dc30e7cc8bbb74ed1c3837e81abfa66d10385954ce881c957052.png" src="_images/643d69a895b3dc30e7cc8bbb74ed1c3837e81abfa66d10385954ce881c957052.png" />
+</div>
+</div>
+<p>As seen in previous chapters that involved categorical explanatory variables, our model specification uses indicator variables. In this case:</p>
+<div class="math notranslate nohighlight">
+\[
+\text{days}=\beta_0+\beta_1\times\mathtt{D2}+\beta_2\times\mathtt{D3}+\beta_3\times\mathtt{D4}+\beta_4\times\mathtt{D5}+\epsilon
+\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">Fruitfly.fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">days</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">group</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Fruitfly.df</span><span class="p">)</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">Fruitfly.fit</span><span class="p">,</span><span class="w"> </span><span class="n">which</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
+<span class="nf">normcheck</span><span class="p">(</span><span class="n">Fruitfly.fit</span><span class="p">)</span>
+<span class="nf">cooks20x</span><span class="p">(</span><span class="n">Fruitfly.fit</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/92da878faa8b7e9e244a58553bcdfc836b0d805a14613c0d6d0d86ffa91f9799.png" src="_images/92da878faa8b7e9e244a58553bcdfc836b0d805a14613c0d6d0d86ffa91f9799.png" />
+<img alt="_images/7fe2285a5562d473a41e5376db31ef7934993a57ee658c28fe3a7cc1cdc4c3c3.png" src="_images/7fe2285a5562d473a41e5376db31ef7934993a57ee658c28fe3a7cc1cdc4c3c3.png" />
+<img alt="_images/73eed8471f358985a633f44eef2fe6915f8d8f0f1754a95b771b84cb35adde31.png" src="_images/73eed8471f358985a633f44eef2fe6915f8d8f0f1754a95b771b84cb35adde31.png" />
+</div>
+</div>
+<p>We can trust the fitted model. What can we conclude?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">anova</span><span class="p">(</span><span class="n">Fruitfly.fit</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A anova: 2 × 5</caption>
+<thead>
+	<tr><th></th><th scope=col>Df</th><th scope=col>Sum Sq</th><th scope=col>Mean Sq</th><th scope=col>F value</th><th scope=col>Pr(&gt;F)</th></tr>
+	<tr><th></th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>group</th><td>  4</td><td>11939.28</td><td>2984.8200</td><td>13.61195</td><td>3.515622e-09</td></tr>
+	<tr><th scope=row>Residuals</th><td>120</td><td>26313.52</td><td> 219.2793</td><td>      NA</td><td>          NA</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</section>
+<section id="interpreting-the-output">
+<h2><span class="section-number">11.2. </span>Interpreting the output<a class="headerlink" href="#interpreting-the-output" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">summary</span><span class="p">(</span><span class="n">Fruitfly.fit</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
+lm(formula = days ~ group, data = Fruitfly.df)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-35.76  -8.76   0.20  11.20  32.44 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   63.560      2.962  21.461  &lt; 2e-16 ***
+groupG2        1.240      4.188   0.296    0.768    
+groupG3       -0.200      4.188  -0.048    0.962    
+groupG4       -6.800      4.188  -1.624    0.107    
+groupG5      -24.840      4.188  -5.931 2.98e-08 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 14.81 on 120 degrees of freedom
+Multiple R-squared:  0.3121,	Adjusted R-squared:  0.2892 
+F-statistic: 13.61 on 4 and 120 DF,  p-value: 3.516e-09
+</pre></div>
+</div>
+</div>
+</div>
+<p>Some researchers like to examine the group means and their deviations from the overall (or so-called“grand”) mean. 一些研究人员喜欢检查群体平均数及其与总体（或所谓的“大”）平均数的偏差。These deviations are commonly called group “effects”.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">grand.mean</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">Fruitfly.df</span><span class="o">$</span><span class="n">days</span><span class="p">)</span>
+<span class="n">grand.mean</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">57.44</div></div>
+</div>
+<p>The estimated group means are just the sample means within each group. 7 We can quickly obtain these using the incredibly useful <code class="docutils literal notranslate"><span class="pre">dplyr</span></code> package:估计组意味着只是在每组样本均值。我们可以快速获得这些使用非常有用的包:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="nf">dplyr</span><span class="p">())</span>
+<span class="n">Df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">Fruitfly.df</span><span class="w"> </span><span class="o">|&gt;</span>
+<span class="w">    </span><span class="nf">group_by</span><span class="p">(</span><span class="n">group</span><span class="p">)</span><span class="w"> </span><span class="o">|&gt;</span>
+<span class="w">    </span><span class="nf">summarize</span><span class="p">(</span><span class="n">group.mean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">days</span><span class="p">))</span><span class="w"> </span><span class="o">|&gt;</span>
+<span class="w">    </span><span class="nf">data.frame</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning message:
+&quot;程辑包&#39;dplyr&#39;是用R版本4.2.3 来建造的&quot;
+
+载入程辑包：&#39;dplyr&#39;
+
+
+The following objects are masked from &#39;package:stats&#39;:
+
+    filter, lag
+
+
+The following objects are masked from &#39;package:base&#39;:
+
+    intersect, setdiff, setequal, union
+</pre></div>
+</div>
+</div>
+</div>
+<p>The estimated group means are:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">Df</span><span class="o">$</span><span class="n">group.mean</span>
+<span class="n">Df</span><span class="o">$</span><span class="n">group.mean</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">grand.mean</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>63.56</li><li>64.8</li><li>63.36</li><li>56.76</li><li>38.72</li></ol>
+</div><div class="output text_html"><style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>6.12</li><li>7.36</li><li>5.92</li><li>-0.68</li><li>-18.72</li></ol>
+</div></div>
+</div>
+</section>
+<section id="the-multiple-comparisons-problem">
+<h2><span class="section-number">11.3. </span>The multiple comparisons problem<a class="headerlink" href="#the-multiple-comparisons-problem" title="Permalink to this heading">#</a></h2>
+<p>The following R code fits a simple linear regression model to iid (independent and identically distributed) normal data.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="m">30</span><span class="w"> </span><span class="c1">## Our explanatory variable</span>
+<span class="n">y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">rnorm</span><span class="p">(</span><span class="m">30</span><span class="p">)</span><span class="w"> </span><span class="c1">## y has NO relationship with x</span>
+<span class="nf">summary</span><span class="p">(</span><span class="nf">lm</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">x</span><span class="p">))</span><span class="o">$</span><span class="n">coef</span><span class="w"> </span><span class="c1">## Print only the coefficient table</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A matrix: 2 × 4 of type dbl</caption>
+<thead>
+	<tr><th></th><th scope=col>Estimate</th><th scope=col>Std. Error</th><th scope=col>t value</th><th scope=col>Pr(&gt;|t|)</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>(Intercept)</th><td>-0.51763352</td><td>0.37980672</td><td>-1.3628867</td><td>0.1837793</td></tr>
+	<tr><th scope=row>x</th><td> 0.02053823</td><td>0.02139403</td><td> 0.9599985</td><td>0.3452731</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>如果多次运行此代码，会发现大约5%的时间斜率会满足 p-value &lt; 0.05。</p>
+<p>Let’s get simultaneous 95% confidence intervals for all 10 comparisons via the <code class="docutils literal notranslate"><span class="pre">pairs</span></code> and <code class="docutils literal notranslate"><span class="pre">emmeans</span></code> functions of the package.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">emmeans</span><span class="p">)</span>
+<span class="n">Fruitfly.pairs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">pairs</span><span class="p">(</span><span class="nf">emmeans</span><span class="p">(</span><span class="n">Fruitfly.fit</span><span class="p">,</span><span class="w"> </span><span class="o">~</span><span class="n">group</span><span class="p">,</span><span class="w"> </span><span class="n">infer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">T</span><span class="p">))</span>
+<span class="n">Fruitfly.pairs</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning message:
+&quot;程辑包&#39;emmeans&#39;是用R版本4.2.3 来建造的&quot;
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> contrast estimate   SE  df t.ratio p.value
+ G1 - G2     -1.24 4.19 120  -0.296  0.9983
+ G1 - G3      0.20 4.19 120   0.048  1.0000
+ G1 - G4      6.80 4.19 120   1.624  0.4854
+ G1 - G5     24.84 4.19 120   5.931  &lt;.0001
+ G2 - G3      1.44 4.19 120   0.344  0.9970
+ G2 - G4      8.04 4.19 120   1.920  0.3127
+ G2 - G5     26.08 4.19 120   6.227  &lt;.0001
+ G3 - G4      6.60 4.19 120   1.576  0.5158
+ G3 - G5     24.64 4.19 120   5.883  &lt;.0001
+ G4 - G5     18.04 4.19 120   4.307  0.0003
+
+P value adjustment: tukey method for comparing a family of 5 estimates 
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "r"
+        },
+        kernelOptions: {
+            name: "ir",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'ir'</script>
+
+                </article>
+              
+
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="10-multi-linear-regress-model.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">10. </span>Multiple linear regression models</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="12-linear-model-with%20two-explan-factor-var.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">12. </span>Linear models with two explanatory factor variables (Two-way analysis of variance)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-with-a-5-level-explanatory-factor-variable">11.1. Example with a 5-level explanatory factor variable</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interpreting-the-output">11.2. Interpreting the output</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-multiple-comparisons-problem">11.3. The multiple comparisons problem</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By CWorld
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -210,9 +210,16 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="08-linear-model-with-both-var.html">8. Linear models with both numeric and factor explanatory variables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="09-linear-model-with-both-var-without-interact.html">9. Linear models with both numeric and factor explanatory variables without interaction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="10-multi-linear-regress-model.html">10. Multiple linear regression models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11-linear-models-with-a-single-factor-explanatory-having-var-levels.html">11. Linear models with a single factor explanatory variable having three or more levels (One-way analysis of variance)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12-linear-model-with%20two-explan-factor-var.html">12. Linear models with two explanatory factor variables (Two-way analysis of variance)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13-model-count-data-using-poisson-distribute.html">13. Modelling count data using the Poisson distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14-pois-model-of-count-data.html">14. Poisson modelling of count data: Two examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15-model-proporte-data-use-bino-distribute.html">15. Chapter 15: Modelling proportion data using the binomial distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16-anal-of-continue-table.html">16. Analysis of contingency tables</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">About Project</span></p>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="last.html">写在最后</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://blog.cworld.top">CWorld's Blog</a></li>
 </ul>
 
@@ -520,7 +527,7 @@ document.write(`
 .dl-inline>dt, .dl-inline>dd {float: none; width: auto; display: inline-block}
 .dl-inline>dt::after {content: ":\0020"; padding-right: .5ex}
 .dl-inline>dt:not(:first-of-type) {padding-left: .5ex}
-</style><dl class=dl-inline><dt>2.5%</dt><dd>1171.99734042553</dd><dt>97.5%</dt><dd>1446.14095744681</dd></dl>
+</style><dl class=dl-inline><dt>2.5%</dt><dd>1181.10638297872</dd><dt>97.5%</dt><dd>1435.80585106383</dd></dl>
 </div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
 lm(formula = price ~ 1, data = Houses.df)
 
@@ -575,7 +582,7 @@ Residual standard error: 679.7 on 93 degrees of freedom
 .dl-inline>dt, .dl-inline>dd {float: none; width: auto; display: inline-block}
 .dl-inline>dt::after {content: ":\0020"; padding-right: .5ex}
 .dl-inline>dt:not(:first-of-type) {padding-left: .5ex}
-</style><dl class=dl-inline><dt>2.5%</dt><dd>1040</dd><dt>97.5%</dt><dd>1320.25</dd></dl>
+</style><dl class=dl-inline><dt>2.5%</dt><dd>1039.875</dd><dt>97.5%</dt><dd>1320</dd></dl>
 </div></div>
 </div>
 <p>房价在上面的例子中,我们正在与 iid（Independent and Identically Distributed Data，独立和同分布数据）数据,所以很自然的使用示例值来估计人口值。在下一节中我们将看到，线性模型框架还可以用来进行推理所提供的值，记录反应变量为正态分布。这种方法的优点是它也适用于更一般的情况下我们有解释变量可能与响应变量联系在一起。我们也会看到登录响应数据结果拟合线性模型解释变量的影响作用在中位数用乘法。</p>

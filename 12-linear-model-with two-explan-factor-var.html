@@ -1,0 +1,884 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="zh-Hans" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>12. Linear models with two explanatory factor variables (Two-way analysis of variance) &#8212; Data Analysis Learning</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script kind="utterances">
+
+    var commentsRunWhenDOMLoaded = cb => {
+    if (document.readyState != 'loading') {
+        cb()
+    } else if (document.addEventListener) {
+        document.addEventListener('DOMContentLoaded', cb)
+    } else {
+        document.attachEvent('onreadystatechange', function() {
+        if (document.readyState == 'complete') cb()
+        })
+    }
+}
+
+var addUtterances = () => {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = "https://utteranc.es/client.js";
+    script.async = "async";
+
+    script.setAttribute("repo", "cworld1/da-learning");
+    script.setAttribute("issue-term", "pathname");
+    script.setAttribute("theme", "github-light");
+    script.setAttribute("label", "💬 comment");
+    script.setAttribute("crossorigin", "anonymous");
+
+    sections = document.querySelectorAll("div.section");
+    if (sections !== null) {
+        section = sections[sections.length-1];
+        section.appendChild(script);
+    }
+}
+commentsRunWhenDOMLoaded(addUtterances);
+</script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '12-linear-model-with two-explan-factor-var';</script>
+    <link rel="canonical" href="https://da.cworld.top/12-linear-model-with two-explan-factor-var.html" />
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="13. Modelling count data using the Poisson distribution" href="13-model-count-data-using-poisson-distribute.html" />
+    <link rel="prev" title="11. Linear models with a single factor explanatory variable having three or more levels (One-way analysis of variance)" href="11-linear-models-with-a-single-factor-explanatory-having-var-levels.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="zh-Hans"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="index.html">
+                    Data Analysis Learning
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="00-at-the-beginning.html">At the beginning</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Main Chapters</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="01-get-start-with-regres.html">1. Getting Started with Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02-basics-of-simp-linear-regres.html">2. Basics of Simple Linear Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03-null-model.html">3. The null model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04-fit-curves-with-linear-model.html">4. Fitting curves with the linear model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05-linear-model-with-a-categ-explan-var.html">5. Linear models with a categorical (factor) explanatory variable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06-multiplicative-linear-models.html">6. Multiplicative linear models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07-power-law-linear-models.html">7. Power law linear models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08-linear-model-with-both-var.html">8. Linear models with both numeric and factor explanatory variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09-linear-model-with-both-var-without-interact.html">9. Linear models with both numeric and factor explanatory variables without interaction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10-multi-linear-regress-model.html">10. Multiple linear regression models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11-linear-models-with-a-single-factor-explanatory-having-var-levels.html">11. Linear models with a single factor explanatory variable having three or more levels (One-way analysis of variance)</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">12. Linear models with two explanatory factor variables (Two-way analysis of variance)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13-model-count-data-using-poisson-distribute.html">13. Modelling count data using the Poisson distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14-pois-model-of-count-data.html">14. Poisson modelling of count data: Two examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15-model-proporte-data-use-bino-distribute.html">15. Chapter 15: Modelling proportion data using the binomial distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16-anal-of-continue-table.html">16. Analysis of contingency tables</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">About Project</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="last.html">写在最后</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://blog.cworld.top">CWorld's Blog</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/cworld1/da-learning" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/cworld1/da-learning/edit/main/docs/12-linear-model-with two-explan-factor-var.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/cworld1/da-learning/issues/new?title=Issue%20on%20page%20%2F12-linear-model-with two-explan-factor-var.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/12-linear-model-with two-explan-factor-var.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Linear models with two explanatory factor variables (Two-way analysis of variance)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-using-test-success-and-attendance-to-explain-exam-score">12.1. Example: Using test success and attendance to explain exam score</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fitting-the-interaction-model">12.2. Fitting the interaction model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interpretting-the-output-using-pairwise-differences">12.3. Interpretting the output using pairwise differences</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-2-using-gender-and-attendance-to-explain-exam-score">12.4. Example 2: Using gender and attendance to explain exam score</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="linear-models-with-two-explanatory-factor-variables-two-way-analysis-of-variance">
+<h1><span class="section-number">12. </span>Linear models with two explanatory factor variables (Two-way analysis of variance)<a class="headerlink" href="#linear-models-with-two-explanatory-factor-variables-two-way-analysis-of-variance" title="Permalink to this heading">#</a></h1>
+<p>本节需要的包：</p>
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input above-output-prompt docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">require</span><span class="p">(</span><span class="n">s20x</span><span class="p">)</span>
+<span class="nf">require</span><span class="p">(</span><span class="n">emmeans</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<details class="hide below-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell output</span>
+<span class="expanded">Hide code cell output</span>
+</summary>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading required package: s20x
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading required package: emmeans
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<section id="example-using-test-success-and-attendance-to-explain-exam-score">
+<h2><span class="section-number">12.1. </span>Example: Using test success and attendance to explain exam score<a class="headerlink" href="#example-using-test-success-and-attendance-to-explain-exam-score" title="Permalink to this heading">#</a></h2>
+<p>在第8章中，我们调查了一个学生的考试成绩对考试分数的影响是否取决于他们是否经常出席。我们发现那些经常出席的学生，比不出席者每多得到一分测试分数都有更高的“回报”。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">## Importing data into R</span>
+<span class="n">Stats20x.df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">read.table</span><span class="p">(</span><span class="s">&quot;../data/STATS20x.txt&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">header</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span>
+<span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Attend</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">factor</span><span class="p">(</span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Attend</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We next transform the numeric <code class="docutils literal notranslate"><span class="pre">Test</span></code> variable into a factor with two levels, <code class="docutils literal notranslate"><span class="pre">pass</span></code> and <code class="docutils literal notranslate"><span class="pre">nopass</span></code>.</p>
+<p>Let us create the new factor variable <code class="docutils literal notranslate"><span class="pre">Pass.test</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Pass.test</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">with</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Stats20x.df</span><span class="p">,</span>
+<span class="w">    </span><span class="nf">factor</span><span class="p">(</span><span class="nf">ifelse</span><span class="p">(</span><span class="n">Test</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;pass&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;nopass&quot;</span><span class="p">))</span>
+<span class="p">)</span>
+<span class="c1">## Check to see if the call above does what we expect</span>
+<span class="n">min</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">min</span><span class="p">(</span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Test</span><span class="p">[</span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Pass.test</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;pass&quot;</span><span class="p">])</span>
+<span class="n">max</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">max</span><span class="p">(</span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Test</span><span class="p">[</span><span class="n">Stats20x.df</span><span class="o">$</span><span class="n">Pass.test</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;nopass&quot;</span><span class="p">])</span>
+<span class="nf">cat</span><span class="p">(</span><span class="s">&quot;min =&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">min</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;, max =&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">max</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;\n&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>min = 10 , max = 20 
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">interactionPlots</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Pass.test</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Attend</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/938de6ba6da002c4dbb1a74b6a6d36910afcad1ef8f6927621971693793e1e49.png" src="_images/938de6ba6da002c4dbb1a74b6a6d36910afcad1ef8f6927621971693793e1e49.png" />
+</div>
+</div>
+<p>这里我们看到，“平时参与课堂”的通过测试似乎明显比大多数其他学生。请注意,我们没有平行线，从而表明可能有两个因素之间的交互。</p>
+<p>如下所示，我们可以重新排列布局的互动情节逆转的顺序给出的解释变量是在右手边的模型公式参数。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># 只是交换了下位置，但是图形不一样了</span>
+<span class="nf">interactionPlots</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Attend</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Pass.test</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/43bd8b21b9773197bed4532a96b7837693605f762156e61fd247c58db7bcb1f4.png" src="_images/43bd8b21b9773197bed4532a96b7837693605f762156e61fd247c58db7bcb1f4.png" />
+</div>
+</div>
+</section>
+<section id="fitting-the-interaction-model">
+<h2><span class="section-number">12.2. </span>Fitting the interaction model<a class="headerlink" href="#fitting-the-interaction-model" title="Permalink to this heading">#</a></h2>
+<p>Let us fit the model with interaction, and check the assumptions.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">Exam.fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Attend</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Pass.test</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="p">)</span>
+<span class="c1"># 再来最后一次经典三步走（后面的内容基本就不是标准离散正态分布的数据了）</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">Exam.fit</span><span class="p">,</span><span class="w"> </span><span class="n">which</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
+<span class="nf">normcheck</span><span class="p">(</span><span class="n">Exam.fit</span><span class="p">)</span>
+<span class="nf">cooks20x</span><span class="p">(</span><span class="n">Exam.fit</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/cfa5e8b5cde0a1c5abaf18624da9d744978de06512d6010ca8f15e8fbbc2077e.png" src="_images/cfa5e8b5cde0a1c5abaf18624da9d744978de06512d6010ca8f15e8fbbc2077e.png" />
+<img alt="_images/cfdfb32a71b8f026f455b313de43ed03cdaa0a63fa150d93f61c3cabffb5a3fc.png" src="_images/cfdfb32a71b8f026f455b313de43ed03cdaa0a63fa150d93f61c3cabffb5a3fc.png" />
+<img alt="_images/3e842de34e4e381fe669088d8f0a336a71a5a290d0fda50e52aee3d72b07319c.png" src="_images/3e842de34e4e381fe669088d8f0a336a71a5a290d0fda50e52aee3d72b07319c.png" />
+</div>
+</div>
+<p>No unduly influential data points.</p>
+<p>We conclude that we can trust the output. Let us see what it is telling us. 我们得出结论，我们可以信任的输出。让我们看看它告诉我们什么。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">anova</span><span class="p">(</span><span class="n">Exam.fit</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A anova: 4 × 5</caption>
+<thead>
+	<tr><th></th><th scope=col>Df</th><th scope=col>Sum Sq</th><th scope=col>Mean Sq</th><th scope=col>F value</th><th scope=col>Pr(&gt;F)</th></tr>
+	<tr><th></th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>Attend</th><td>  1</td><td> 7630.7947</td><td>7630.7947</td><td>25.852484</td><td>1.144472e-06</td></tr>
+	<tr><th scope=row>Pass.test</th><td>  1</td><td>  831.7618</td><td> 831.7618</td><td> 2.817938</td><td>9.541536e-02</td></tr>
+	<tr><th scope=row>Attend:Pass.test</th><td>  1</td><td>  209.5401</td><td> 209.5401</td><td> 0.709904</td><td>4.008926e-01</td></tr>
+	<tr><th scope=row>Residuals</th><td>142</td><td>41913.6842</td><td> 295.1668</td><td>       NA</td><td>          NA</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>附加：怎么通过这个算R方？</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">sum</span><span class="p">(</span><span class="nf">anova</span><span class="p">(</span><span class="n">Exam.fit</span><span class="p">)</span><span class="o">$</span><span class="s">&quot;Sum Sq&quot;</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">3</span><span class="p">])</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="nf">anova</span><span class="p">(</span><span class="n">Exam.fit</span><span class="p">)</span><span class="o">$</span><span class="s">&quot;Sum Sq&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">0.171433483932168</div></div>
+</div>
+<p>Let us investigate what our model tells us in terms of the estimated parameters:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">summary</span><span class="p">(</span><span class="n">Exam.fit</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
+lm(formula = Exam ~ Attend * Pass.test, data = Stats20x.df)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-47.634 -11.684  -0.634  12.349  46.300 
+
+Coefficients:
+                        Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)               42.700      2.716  15.719  &lt; 2e-16 ***
+AttendYes                 15.934      3.249   4.905 2.52e-06 ***
+Pass.testpass             -3.700      7.522  -0.492    0.624    
+AttendYes:Pass.testpass   -8.506     10.095  -0.843    0.401    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 17.18 on 142 degrees of freedom
+Multiple R-squared:  0.1714,	Adjusted R-squared:  0.1539 
+F-statistic: 9.793 on 3 and 142 DF,  p-value: 6.495e-06
+</pre></div>
+</div>
+</div>
+</div>
+<p>The formula for the above two-way ANOVA can be written as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{gathered}
+Exam =\beta_{0}+\beta_{1}\times\text{Attend}_{Yes}+\beta_{2}\times\text{Pass.test}_{pass}+ \\
+\beta_3\times\text{Attempt}_{yes}\times\text{Pass.test}_{pass}+\varepsilon 
+\end{gathered}
+\end{split}\]</div>
+<p>where and are indicator variables, and <span class="math notranslate nohighlight">\(\varepsilon\overset{iid}{\sim}N(0,\sigma^2)\)</span>.</p>
+<p>如前一章所示，另一个选择是去除基线的和为-1的模型公式。其他的并发症之一是,我们必须使用,而不是在指定的交互项。</p>
+</section>
+<section id="interpretting-the-output-using-pairwise-differences">
+<h2><span class="section-number">12.3. </span>Interpretting the output using pairwise differences<a class="headerlink" href="#interpretting-the-output-using-pairwise-differences" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">emmeans</span><span class="p">)</span>
+<span class="n">exam.pairs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">pairs</span><span class="p">(</span><span class="nf">emmeans</span><span class="p">(</span><span class="n">Exam.fit</span><span class="p">,</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Attend</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Pass.test</span><span class="p">),</span><span class="w"> </span><span class="n">infer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span>
+<span class="n">exam.pairs</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> contrast               estimate   SE  df lower.CL upper.CL t.ratio p.value
+ No nopass - Yes nopass   -15.93 3.25 142  -24.380    -7.49  -4.905  &lt;.0001
+ No nopass - No pass        3.70 7.52 142  -15.854    23.25   0.492  0.9608
+ No nopass - Yes pass      -3.73 7.04 142  -22.028    14.57  -0.530  0.9517
+ Yes nopass - No pass      19.63 7.24 142    0.821    38.45   2.713  0.0372
+ Yes nopass - Yes pass     12.21 6.73 142   -5.299    29.71   1.813  0.2717
+ No pass - Yes pass        -7.43 9.56 142  -32.277    17.42  -0.777  0.8647
+
+Confidence level used: 0.95 
+Conf-level adjustment: tukey method for comparing a family of 4 estimates 
+P value adjustment: tukey method for comparing a family of 4 estimates 
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-2-using-gender-and-attendance-to-explain-exam-score">
+<h2><span class="section-number">12.4. </span>Example 2: Using gender and attendance to explain exam score<a class="headerlink" href="#example-2-using-gender-and-attendance-to-explain-exam-score" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">interactionPlots</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Attend</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Gender</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/3383995f5dba5cf88a8efa2215e9929b757ea21de3e2c217326ee86063a936c4.png" src="_images/3383995f5dba5cf88a8efa2215e9929b757ea21de3e2c217326ee86063a936c4.png" />
+</div>
+</div>
+<p>Let us fit an interaction model and check the assumptions.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">Exam.fit2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Attend</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Gender</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="p">)</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">Exam.fit2</span><span class="p">,</span><span class="w"> </span><span class="n">which</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
+<span class="nf">normcheck</span><span class="p">(</span><span class="n">Exam.fit2</span><span class="p">)</span>
+<span class="nf">cooks20x</span><span class="p">(</span><span class="n">Exam.fit2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/03834d3760176eccdc59b02c96f0d20690062ad62994f8d8c40042824e00c46b.png" src="_images/03834d3760176eccdc59b02c96f0d20690062ad62994f8d8c40042824e00c46b.png" />
+<img alt="_images/f23c57503e096019bc48cb273883d533249f2d5ddc3f50f8a0e2f8a60ae2fcca.png" src="_images/f23c57503e096019bc48cb273883d533249f2d5ddc3f50f8a0e2f8a60ae2fcca.png" />
+<img alt="_images/8a931d1d043769a4f85afed0192b9c55754a75f9a952790e52810ea5bd95ee4b.png" src="_images/8a931d1d043769a4f85afed0192b9c55754a75f9a952790e52810ea5bd95ee4b.png" />
+</div>
+</div>
+<p>We can trust the model. Lets see what it is telling us.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">anova</span><span class="p">(</span><span class="n">Exam.fit2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A anova: 4 × 5</caption>
+<thead>
+	<tr><th></th><th scope=col>Df</th><th scope=col>Sum Sq</th><th scope=col>Mean Sq</th><th scope=col>F value</th><th scope=col>Pr(&gt;F)</th></tr>
+	<tr><th></th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>Attend</th><td>  1</td><td> 7630.79473</td><td>7630.79473</td><td>25.43929532</td><td>1.371947e-06</td></tr>
+	<tr><th scope=row>Gender</th><td>  1</td><td>  346.65959</td><td> 346.65959</td><td> 1.15568245</td><td>2.841860e-01</td></tr>
+	<tr><th scope=row>Attend:Gender</th><td>  1</td><td>   13.87415</td><td>  13.87415</td><td> 0.04625319</td><td>8.300248e-01</td></tr>
+	<tr><th scope=row>Residuals</th><td>142</td><td>42594.45235</td><td> 299.96093</td><td>         NA</td><td>          NA</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>There is definitely no evidence of an interaction, so we’ll apply Occam’s razor and fit a simpler main-effects model (i.e., no interaction term). 这绝对是没有交互的证据，所以我们运用奥卡姆定律适合简单主效应模型(即没有交互项)。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">Exam.fit3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Attend</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Gender</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="p">)</span>
+<span class="nf">anova</span><span class="p">(</span><span class="n">Exam.fit3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A anova: 3 × 5</caption>
+<thead>
+	<tr><th></th><th scope=col>Df</th><th scope=col>Sum Sq</th><th scope=col>Mean Sq</th><th scope=col>F value</th><th scope=col>Pr(&gt;F)</th></tr>
+	<tr><th></th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>Attend</th><td>  1</td><td> 7630.7947</td><td>7630.7947</td><td>25.610103</td><td>1.263935e-06</td></tr>
+	<tr><th scope=row>Gender</th><td>  1</td><td>  346.6596</td><td> 346.6596</td><td> 1.163442</td><td>2.825689e-01</td></tr>
+	<tr><th scope=row>Residuals</th><td>143</td><td>42608.3265</td><td> 297.9603</td><td>       NA</td><td>          NA</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>We see that the gender is also not significant here, so we again apply Occam’s razor and remove this term.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">Exam.fit4</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Attend</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stats20x.df</span><span class="p">)</span>
+<span class="nf">summary</span><span class="p">(</span><span class="n">Exam.fit4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
+lm(formula = Exam ~ Attend, data = Stats20x.df)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-46.780 -13.108  -0.217  12.642  46.783 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   42.217      2.547  16.578  &lt; 2e-16 ***
+AttendYes     15.563      3.077   5.058 1.27e-06 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 17.27 on 144 degrees of freedom
+Multiple R-squared:  0.1508,	Adjusted R-squared:  0.145 
+F-statistic: 25.58 on 1 and 144 DF,  p-value: 1.271e-06
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "r"
+        },
+        kernelOptions: {
+            name: "ir",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'ir'</script>
+
+                </article>
+              
+
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="11-linear-models-with-a-single-factor-explanatory-having-var-levels.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">11. </span>Linear models with a single factor explanatory variable having three or more levels (One-way analysis of variance)</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="13-model-count-data-using-poisson-distribute.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">13. </span>Modelling count data using the Poisson distribution</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-using-test-success-and-attendance-to-explain-exam-score">12.1. Example: Using test success and attendance to explain exam score</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fitting-the-interaction-model">12.2. Fitting the interaction model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interpretting-the-output-using-pairwise-differences">12.3. Interpretting the output using pairwise differences</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-2-using-gender-and-attendance-to-explain-exam-score">12.4. Example 2: Using gender and attendance to explain exam score</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By CWorld
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
