@@ -26,6 +26,7 @@ parts:
       - file: 13-model-count-data-using-poisson-distribute
       - file: 14-pois-model-of-count-data
       - file: 15-model-proporte-data-use-bino-distribute
+      - file: 16-anal-of-continue-table
 
   - caption: About Project
     chapters:
