@@ -21,7 +21,10 @@ parts:
       - file: 08-linear-model-with-both-var
       - file: 09-linear-model-with-both-var-without-interact
       - file: 10-multi-linear-regress-model
-
+      - file: 11-linear-models-with-a-single-factor-explanatory-having-var-levels
+      - file: 12-linear-model-with two-explan-factor-var
+      - file: 13-model-count-data-using-poisson-distribute
+      - file: 14-pois-model-of-count-data
 
   - caption: About Project
     chapters:
