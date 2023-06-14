@@ -30,5 +30,6 @@ parts:
 
   - caption: About Project
     chapters:
+      - file: last
       - url: https://blog.cworld.top
         title: CWorld's Blog
