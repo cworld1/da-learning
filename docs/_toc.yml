@@ -25,6 +25,7 @@ parts:
       - file: 12-linear-model-with two-explan-factor-var
       - file: 13-model-count-data-using-poisson-distribute
       - file: 14-pois-model-of-count-data
+      - file: 15-model-proporte-data-use-bino-distribute
 
   - caption: About Project
     chapters:
