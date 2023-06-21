@@ -214,12 +214,12 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="12-linear-model-with%20two-explan-factor-var.html">12. Linear models with two explanatory factor variables (Two-way analysis of variance)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="13-model-count-data-using-poisson-distribute.html">13. Modelling count data using the Poisson distribution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="14-pois-model-of-count-data.html">14. Poisson modelling of count data: Two examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="15-model-proporte-data-use-bino-distribute.html">15. Chapter 15: Modelling proportion data using the binomial distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15-model-proporte-data-use-bino-distribute.html">15. Modelling proportion data using the binomial distribution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="16-anal-of-continue-table.html">16. Analysis of contingency tables</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">About Project</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="last.html">写在最后</a></li>
+<li class="toctree-l1"><a class="reference internal" href="last.html">At the last</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://blog.cworld.top">CWorld's Blog</a></li>
 </ul>
 
@@ -563,8 +563,12 @@ document.write(`
 <span class="w">    </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;blue&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="n">pch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">19</span>
 <span class="p">)</span>
-<span class="nf">points</span><span class="p">(</span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="n">examtest.fit</span><span class="p">,</span><span class="w"> </span><span class="n">newdata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span><span class="n">Test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span><span class="p">)),</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;blue&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">pch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">19</span><span class="p">)</span>
-<span class="nf">points</span><span class="p">(</span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="n">examtest.fit</span><span class="p">,</span><span class="w"> </span><span class="n">newdata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span><span class="n">Test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">20</span><span class="p">)),</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;blue&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">pch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">19</span><span class="p">)</span>
+<span class="nf">points</span><span class="p">(</span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="n">examtest.fit</span><span class="p">,</span>
+<span class="w">    </span><span class="n">newdata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span><span class="n">Test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span><span class="p">)</span>
+<span class="p">),</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;blue&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">pch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">19</span><span class="p">)</span>
+<span class="nf">points</span><span class="p">(</span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="n">examtest.fit</span><span class="p">,</span>
+<span class="w">    </span><span class="n">newdata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span><span class="n">Test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">20</span><span class="p">)</span>
+<span class="p">),</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;blue&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">pch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">19</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -747,7 +751,7 @@ F-statistic: 112.1 on 1 and 145 DF,  p-value: &lt; 2.2e-16
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># 消除一次项</span>
-<span class="n">examnull.fit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">course.df</span><span class="p">)</span>
+<span class="n">examnull.fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">Exam</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">course.df</span><span class="p">)</span>
 <span class="nf">summary</span><span class="p">(</span><span class="n">examnull.fit</span><span class="p">)</span>
 <span class="c1"># 对比之前的 Summary</span>
 <span class="nf">summary</span><span class="p">(</span><span class="n">examtest.fit</span><span class="p">)</span>

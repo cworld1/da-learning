@@ -214,12 +214,12 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="12-linear-model-with%20two-explan-factor-var.html">12. Linear models with two explanatory factor variables (Two-way analysis of variance)</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">13. Modelling count data using the Poisson distribution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="14-pois-model-of-count-data.html">14. Poisson modelling of count data: Two examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="15-model-proporte-data-use-bino-distribute.html">15. Chapter 15: Modelling proportion data using the binomial distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15-model-proporte-data-use-bino-distribute.html">15. Modelling proportion data using the binomial distribution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="16-anal-of-continue-table.html">16. Analysis of contingency tables</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">About Project</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="last.html">写在最后</a></li>
+<li class="toctree-l1"><a class="reference internal" href="last.html">At the last</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://blog.cworld.top">CWorld's Blog</a></li>
 </ul>
 
@@ -692,7 +692,7 @@ F-statistic: 366.4 on 1 and 10 DF,  p-value: 3.295e-09
 <img alt="_images/9aed9bd54bfd41ea2c7edf6b3cd217ff972cc198eb848aaaeff492564c50bfb9.png" src="_images/9aed9bd54bfd41ea2c7edf6b3cd217ff972cc198eb848aaaeff492564c50bfb9.png" />
 </div>
 </div>
-<p>由图可以看出泊松分布可能会有长尾、左偏效应。</p>
+<p>由图可以看出泊松分布可能会有长尾、右偏效应。</p>
 <p>The probabilities for the number of victims from 0 to 20 are:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -888,6 +888,7 @@ Number of Fisher Scoring iterations: 4
 <img alt="_images/9e0bf2d7c8ab0ed1d3fb373011dd17bfc705a808645df48ea896d433ba8878a6.png" src="_images/9e0bf2d7c8ab0ed1d3fb373011dd17bfc705a808645df48ea896d433ba8878a6.png" />
 </div>
 </div>
+<p>我们看到，观察点8和12超过了我们的0.4门槛。然而，必须谨慎地解释这一点。与正常的线性回归不同，在泊松回归中，预计μ值较高的观测值会比μ值较低的观测值有更大的影响。</p>
 </section>
 <section id="interpretting-the-glm-output">
 <h2><span class="section-number">13.5. </span>Interpretting the GLM output<a class="headerlink" href="#interpretting-the-glm-output" title="Permalink to this heading">#</a></h2>
@@ -936,6 +937,9 @@ Number of Fisher Scoring iterations: 4
 </div></div>
 </div>
 <p>That is, it increases by between 75% and 108% per year.</p>
+<blockquote>
+<div><p>请注意，GLM模型是对均值而不是对中位值进行陈述的。 这是因为GLM没有对y进行转换。</p>
+</div></blockquote>
 </section>
 </section>
 
